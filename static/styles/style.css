@@ -1,0 +1,168 @@
+body {
+  margin: 0;
+  height: 100%;
+  background-color: #a9a9a9;
+  font-family:  "Open Sans Condensed", "Open Sans", helvetica, sans-serif;
+  font-weight: 300;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  /* grid-gap: 10px; */
+  /* background-color: #2196f3; */
+  /* padding: 10px; */
+}
+
+.grid-container > div {
+  background-color: rgba(255, 255, 255, 0.8);
+  text-align: left;
+  /* padding: 20px 0; */
+  font-size: 16px;
+}
+
+.header {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  color: white;
+}
+
+#detail {
+    /* grid-column-start: 2; */
+    /* grid-column-end: 3; */
+}
+
+.claim {
+    /* grid-column-start: 1; */
+    /* grid-column-end: 2; */
+    background-color: #4caf50;
+    padding: 20px 20px;
+}
+
+.grid-header {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  /* background-color: #2196f3; */
+  /* grid-gap: 10px; */
+}
+
+.grid-header > div {
+  background-color: #282a3c;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 18px;
+}
+
+#select-file{
+  padding: 30px 0;
+}
+
+#logo-griffith{
+  padding: 10px;
+  padding-left: 0px;
+  margin-left: 0px;
+}
+
+/* input[type="file"]{
+
+} */
+
+.button {
+  background-color: brown; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  border-radius: 5px;
+  margin: 4px 0px;
+  cursor: pointer;
+}
+
+#claim-table {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  /* width: 800px; */
+}
+
+#claim-table td,
+#claim-table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+#claim-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#claim-table tr:hover {
+  background-color: #ddd;
+}
+
+#claim-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background-color:brown;
+  color: white;
+}
+
+.detail {
+  /* width: ; */
+  /* text-align: left; */
+  padding: 20px 20px;
+  border-left: 2px brown solid;
+}
+
+.content {
+  padding: 20px 30px;
+}
+
+#more {display: none;}
+
+.detail > div > span {
+  font-size: 16px;
+  padding-right: 20px;
+}
+
+#info-claim{
+  /* background-color: lightblue; */
+  /* width: 110px; */
+  height: 400px;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+#radio-credibility {
+  text-align: center;
+  padding: 20px 0px;
+}
+
+.validation-claim{
+  text-align: center;
+  padding: 20px 0px 10px 0px;
+}
+
+.btn-validation {
+  margin: 0px 10px;
+  width: 90px;
+}
+
+#title-claim {
+  padding: 0px 0px 10px 0px;
+}
+
+
+.tag-claim > span {
+  background-color: aquamarine;
+  padding: 2px 10px;
+  border-radius: 5px;
+}
+
+#btn-readmore {
+  padding: 2px;
+  background-color:green;
+}
