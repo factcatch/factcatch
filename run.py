@@ -1,8 +1,11 @@
 from flask_cors import CORS, cross_origin
-from flask import Flask, render_template, request
-from flask import jsonify
+from flask import Flask, render_template, request, redirect,flash,url_for,session
+from flask import jsonify,json
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from werkzeug.utils import secure_filename
+import os
+from services import FactCheckingServices
 
 # database_uri = 'postgresql://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
 #     dbuser='postgres',
@@ -18,16 +21,55 @@ app = Flask(__name__)
 #     PRODUCTION = False,
 # )
 
-app.config['JSON_AS_ASCII'] = False
+UPLOAD_FOLDER = "./static/data/"
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','json'}
 
 
-# db = SQLAlchemy(app)
+app.config["JSON_AS_ASCII"] = False
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.secret_key = "super secret key"
 
 
-@app.route('/')
-def hello():
-    return render_template('home.html')
 
-if __name__ == '__main__':
+@app.route("/", methods=["GET", "POST"])
+def home():
+    if session.get("filename") is not None:
+        data = FactCheckingServices.getFactCandidate(session["filename"])
+    else:
+        data = FactCheckingServices.getFactCandidate("default.json")
+    return render_template("home.html",data=data)
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            session['filename'] = file.filename
+            return redirect('/')
+
+@app.route('/process',methods=['GET','POST'])
+def process():
+    content = request.form
+    claimId = content["claimId"]
+    cred = content["cred"]
+    FactCheckingServices.inferrence(claimId,cred)
+    return redirect('/')
+
+
+if __name__ == "__main__":
     CORS(app)
-    app.run(debug=True, host='localhost', threaded=True, port=5050)
+    app.run(debug=True, host="localhost", threaded=True, port=5050)
+
