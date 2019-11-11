@@ -1,5 +1,5 @@
 from flask_cors import CORS, cross_origin
-from flask import Flask, render_template, request, redirect,flash,url_for,session
+from flask import Flask, render_template, request, redirect,flash,url_for,session,send_file
 from flask import jsonify,json
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
@@ -30,11 +30,10 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.secret_key = "super secret key"
 
 
-
 @app.route("/", methods=["GET", "POST"])
 def home():
     if session.get("filename") is not None:
-        data = FactCheckingServices.getFactCandidate(session["filename"])
+        data = FactCheckingServices.getTopClaim(session["filename"],0,30)
     else:
         data = FactCheckingServices.getFactCandidate("default.json")
     return render_template("home.html",data=data)
@@ -57,14 +56,23 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            FactCheckingServices.generateDataframe(filename)
             session['filename'] = file.filename
             return redirect('/')
+
+@app.route('/download',methods=['GET'])
+def getSnapshot():
+    filename = session.get("filename") if session.get("filename") is not None else "default.json"
+    filename = filename[:-4] + 'csv'
+    path_file = os.path.join(app._static_folder,'data',filename)
+    return send_file(path_file,as_attachment=True)
+
 
 @app.route('/process',methods=['GET','POST'])
 def process():
     content = request.form
     claimId = content["claimId"]
-    cred = content["cred"]
+    cred = content["Credibility"]
     FactCheckingServices.inferrence(claimId,cred)
     return redirect('/')
 

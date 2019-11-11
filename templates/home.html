@@ -3,10 +3,28 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script>
 </head>
 
 <body>
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Modal Header</h2>
+            </div>
+            <div class="modal-body">
+                <p>Some text in the Modal Body</p>
+                <p>Some other text...</p>
+            </div>
+            <div class="modal-footer">
+                <h3>Modal Footer</h3>
+            </div>
+        </div>
+    </div>
     <div class="grid-container">
         <div class="header">
             <div class="grid-header">
@@ -21,31 +39,36 @@
                     </form>
                 </div>
                 <div>
-                    <button class="button" onclick="loadDoc()">Take Snapshot</button>
-                    <button class="button">Optimize Budget Allocation</button>
+                    <a class="button" href="/download">Take Snapshot</a>
+                    <button class="button" id="myBtn">Optimize Budget Allocation</button>
                     <button class="button">Stop Feedback</button>
                 </div>
             </div>
         </div>
-        <div class="claim">
-            <table id="claim-table" class="content">
+        <div class="claim" id="block-claim">
+            <table class="claim-table content">
                 <tr>
-                    <th>No.</th>
-                    <th>Claim</th>
-                    <th>Prob</th>
-                    <th>Credibility</th>
-                    <th>Expert</th>
+                    <th style="width: 5%">Rank</th>
+                    <th style="width: 80%">Claim</th>
+                    <th style="width: 7.5%">Prob</th>
+                    <th style="width: 7.5%">Credibility</th>
                 </tr>
-                {% for claim in data%}
-                <tr onclick="selectClaim({{ loop.index }},{{ claim }})" id="{{ claim.Claim_ID }}">
-                    <td>{{ loop.index }}</td>
-                    <td class="claim-short">{{ claim["Claim"] }}</td>
-                    <td>0.86</td>
-                    <td>1</td>
-                    <td>1</td>
-                </tr>
-                {% endfor %}
             </table>
+            <div id="block-claim2">
+                <table class="claim-table content">
+                    {% for claim in data%}
+                    <tr onclick="selectClaim({{ loop.index }},{{ claim }})" id="{{ claim['Claim_ID'] }}"
+                        class="item-claim">
+                        <td style="width:5%">{{ loop.index }}</td>
+                        <td class="claim-short" style="text-align: left;width: 80%; font-size:15px;padding: 10px 8px">
+                            {{ claim["Claim"] }}</td>
+                        <td style="width:7.5%">{{ claim["Prob"] }}</td>
+                        <td style="width: 7.5%">{{ claim["Credibility"] }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
         </div>
         <div class="detail content">
             <div id="header-claim">
@@ -73,7 +96,7 @@
                         <span id="more">
                             {{ data[0]["Description"][100:]}}
                         </span>
-                        
+
                         <button onclick="readMore()" id="btn-readmore" class="button">Read more</button>
                 </div>
                 <div>
@@ -102,28 +125,29 @@
                         <!-- 4 December 2015 -->
                     </p>
                 </div>
-                <div class="tag-claim">
+                <div id="tag-claim">
                     {% for tag in data[0]["Tags"]%}
-                    <span> #{{ tag }} </span>
+                    <span class="tag-claim-item"> #{{ tag }} </span>
                     {% endfor %}
                 </div>
             </div>
-
             <div>
                 <form method=post action="/process">
                     <input type="hidden" name="claimId" value="{{ data[0].Claim_ID }}">
-                    <div id="radio-credibility" class="validation-claim">
-                        <input type="radio" name="cred" value="1"> Credibility
-                        <input type="radio" name="cred" value="0"> Non-Credibility
-                    </div>
+                    <!-- <div id="radio-credibility" class="validation-claim"> -->
+                    <!-- <input type="radio" name="cred" value="1"> Credibility -->
+                    <!-- <input type="radio" name="cred" value="0"> Non-Credibility -->
+                    <!-- </div> -->
                     <div class="validation-claim">
-                        <input type=submit class="button btn-validation" id="submit-claim" onclick="loadDoc()" value="Submit">
-                        <button type="button" class="button btn-validation">Next</button>
-                        <button type="button" class="button btn-validation">Log</button>
+                        <input type=submit class="button btn-validation" name="Credibility" value="Credibility">
+                        <input type=submit class="button btn-validation" name="Credibility" value="Non-Credibility">
+                        <!-- <button type="button" class="button btn-validation">Next</button> -->
+                        <!-- <button type="button" class="button btn-validation">Log</button> -->
                     </div>
                 </form>
             </div>
         </div>
+
     </div>
 </body>
 

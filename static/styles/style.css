@@ -21,6 +21,7 @@ body {
   font-size: 16px;
 }
 
+
 .header {
   grid-column-start: 1;
   grid-column-end: 3;
@@ -58,7 +59,7 @@ body {
   padding: 30px 0;
 }
 
-#logo-griffith{
+#logo-griffith {
   padding: 10px;
   padding-left: 0px;
   margin-left: 0px;
@@ -82,40 +83,69 @@ body {
   cursor: pointer;
 }
 
-#claim-table {
+.claim-table {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   border-collapse: collapse;
   width: 100%;
+  /* overflow: auto; */
+  /* max-height: 500px; */
 }
 
 
 
-#claim-table td,
-#claim-table th {
+.claim-table td,
+.claim-table th {
   border: 1px solid #ddd;
   padding: 8px;
   font-size: 14px;
   text-align: center;
-  
-}
-
-#claim-table tr {
   cursor: pointer;
 }
 
-#claim-table tr:nth-child(even) {
+/* tr > th{
+  background-color: red;
+} */
+
+/* .claim-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  /* text-align: left; */
+} */
+
+.claim-table tr {
+  cursor: pointer;
+}
+
+/* .claim-table tr:nth-child(even) {
   background-color: #f2f2f2;
+} */
+
+.claim-table tr:hover {
+  /* background-color: #a9a9a9; */
+  /* text-align: left; */
 }
 
-#claim-table tr:hover {
-  background-color: #ddd;
-}
 
-#claim-table th {
+.claim-table th {
   padding-top: 12px;
   padding-bottom: 12px;
   background-color:brown;
   color: white;
+}
+
+
+.claim-short {
+  /* text-align: left; */
+}
+
+#block-claim {
+  height: 550px;
+  /* overflow: auto; */
+}
+#block-claim2 {
+  height: 85%;
+  overflow: auto;
 }
 
 .detail {
@@ -139,11 +169,13 @@ body {
 #info-claim{
   /* background-color: lightblue; */
   /* width: 110px; */
-  height: 400px;
+  height: 420px;
   overflow: auto;
   overflow-x: hidden;
   /* overflow-y: hidden; */
 }
+
+
 
 #radio-credibility {
   text-align: center;
@@ -157,15 +189,28 @@ body {
 
 .btn-validation {
   margin: 0px 10px;
-  width: 90px;
+  padding: 10px;
+  /* width: 90px; */
 }
 
 #header-claim {
   padding: 0px 0px 10px 0px;
+  height: 50px;
+}
+
+::-webkit-scrollbar{
+  display: none;
 }
 
 
 .tag-claim > span {
+  background-color: aquamarine;
+  padding: 2px 10px;
+  border-radius: 5px;
+  margin-right : 5px;
+}
+
+.tag-claim-item {
   background-color: aquamarine;
   padding: 2px 10px;
   border-radius: 5px;
@@ -189,5 +234,6 @@ body {
 }
 
 .row-clicked{
-  background-color: blueviolet;
+  background-color: green;
+  color: white;
 }

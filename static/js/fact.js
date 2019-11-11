@@ -16,7 +16,12 @@ function readMore() {
 }
 
 function selectClaim(index,claim){
-  // document.getElementById(claim["Claim_ID"]).classList.add("row-clicked");
+  console.log(index);
+  var itemClicked = document.getElementsByClassName("row-clicked");
+  if (itemClicked.length != 0){
+    itemClicked.item(0).classList.remove("row-clicked");
+  }
+  document.getElementById(claim["Claim_ID"]).classList.add("row-clicked");
   document.querySelector('input[type=hidden]').setAttribute("value",claim["Claim_ID"]);
   document.getElementById("no-claim").innerHTML = index + '.';
   document.getElementById("title-claim").innerHTML = claim.Claim;
@@ -26,17 +31,28 @@ function selectClaim(index,claim){
   document.getElementById("example-claim").innerHTML = claim.Example;
   document.getElementById("originally-published-claim").innerHTML = claim["Originally Published"];
   document.getElementById("last-updated-claim").innerHTML = claim["Last Updated"];
-
+  var tags = claim["Tags"];
+  var i,tagHTML='';
+  for (i=0;i<tags.length;i++){
+      tagHTML += '<span class="tag-claim-item">#'+tags[i]+'</span>';
+  }
+  // for tag in tags:
+  //   console.log(tag);
+  document.getElementById("tag-claim").innerHTML = tagHTML; //claim["Tags"];
 }
 
-function loadDoc() {
+function get(route) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-    //   console.log(document.getElementById("#info-claim").style);
-    //   document.getElementById("#info-claim").innerHTML = this.responseText;
     }
   };
-  // xhttp.open("GET", "http://localhost:5050", true);
-  // xhttp.send();
+  url = "http://localhost:5050/" + route;
+  console.log(url);
+  xhttp.open("GET",url,true);
+  xhttp.send();
+}
+
+function post(){
+
 }
