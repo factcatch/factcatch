@@ -2,27 +2,32 @@
 <html lang="en">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/font.css') }}">
+    <!-- <link href='https://fonts.googleapis.com/css?family=Open+Sans|Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'> -->
     <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script>
 </head>
 
 <body>
-    <div id="myModal" class="modal">
+    <div id="budget-modal" class="modal">
         <!-- Modal content -->
         <div class="modal-content">
             <div class="modal-header">
                 <span class="close">&times;</span>
-                <h2>Modal Header</h2>
+                <h2>Optimize Budget Allocation</h2>
             </div>
             <div class="modal-body">
-                <p>Some text in the Modal Body</p>
-                <p>Some other text...</p>
+                    <form method=post action="/" enctype=multipart/form-data>
+                        <h4>Budget</h4>
+                        <input type=number value=0 name=budget style="font-size: 18px;">
+                        <input type="submit" value="OK" class="button">
+                    </form>
             </div>
-            <div class="modal-footer">
+            <!-- <div class="modal-footer">
                 <h3>Modal Footer</h3>
-            </div>
+            </div> -->
         </div>
     </div>
     <div class="grid-container">
@@ -30,7 +35,8 @@
             <div class="grid-header">
                 <div id="logo-griffith">
                     <a href="/">
-                        <img width="180px" height="60px" src="./static/img/logo.png">
+                        <!-- <img width="180px" height="60px" src="./static/img/logo.png"> -->
+                        <div>Fact Checking</div>
                     </a>
                 </div>
                 <div id="select-file">
@@ -48,10 +54,10 @@
         <div class="claim" id="block-claim">
             <table class="claim-table content">
                 <tr>
-                    <th style="width: 5%">Rank</th>
-                    <th style="width: 80%">Claim</th>
-                    <th style="width: 7.5%">Prob</th>
-                    <th style="width: 7.5%">Credibility</th>
+                    <th style="width: 40px">Rank</th>
+                    <th style="width: 65%">Claim</th>
+                    <th style="width: 50px">Prob</th>
+                    <th style="width: 70px">Credibility</th>
                 </tr>
             </table>
             <div id="block-claim2">
@@ -59,11 +65,11 @@
                     {% for claim in data%}
                     <tr onclick="selectClaim({{ loop.index }},{{ claim }})" id="{{ claim['Claim_ID'] }}"
                         class="item-claim">
-                        <td style="width:5%">{{ loop.index }}</td>
-                        <td class="claim-short" style="text-align: left;width: 80%; font-size:15px;padding: 10px 8px">
+                        <td style="width:40px">{{ loop.index }}</td>
+                        <td style="text-align: left;width: 65%; font-size:15px;padding-top: 10px;padding-bottom: 10px;">
                             {{ claim["Claim"] }}</td>
-                        <td style="width:7.5%">{{ claim["Prob"] }}</td>
-                        <td style="width: 7.5%">{{ claim["Credibility"] }}</td>
+                        <td style="width:50px">{{ claim["Prob"] }}</td>
+                        <td style="width: 70px">{{ claim["Credibility"] }}</td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -150,5 +156,6 @@
 
     </div>
 </body>
+<script type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script>
 
 </html>
