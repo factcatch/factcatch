@@ -35,7 +35,8 @@ def home():
     if session.get("filename") is not None:
         data = FactCheckingServices.getTopClaim(session["filename"],0,30)
     else:
-        data = FactCheckingServices.getFactCandidate("default.json")
+        # data = FactCheckingServices.getFactCandidate("default.json")
+        data = FactCheckingServices.getTopClaim("default.json",0,10)
     return render_template("home.html",data=data)
 
 

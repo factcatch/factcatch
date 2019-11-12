@@ -21,18 +21,6 @@ def getDataFrame(filename,start,end):
         df = generateDataframe(filename)
     return df.to_dict('records')[start:end]
 
-def getFactCandidate(filename):
-    data = getData(filename)
-    claim = []
-    for d in data:
-        d["Prob"] = 0.5
-        d["Credibility"] = 1
-        claim.append(d)
-    df = pd.DataFrame(claim)
-    df_filename = os.path.join(current_app._static_folder,'data',filename[:-4] + 'csv')
-    df.to_csv(df_filename,index=False)
-    return df
-
 def generateDataframe(filename):
     data = getData(filename)
     claim = []
