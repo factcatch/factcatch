@@ -78,6 +78,11 @@ def process():
     return redirect('/')
 
 
+@app.route("/neuron",methods=['GET'])
+def neuron():
+    return render_template("neuron.html")
+
+
 if __name__ == "__main__":
     CORS(app)
     app.run(debug=True, host="localhost", threaded=True, port=5050)

@@ -6,8 +6,18 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/font.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/graph.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- <link href='https://fonts.googleapis.com/css?family=Open+Sans|Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'> -->
-    <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script>
+    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script> -->
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+
 </head>
 
 <body>
@@ -19,11 +29,10 @@
                 <h2>Optimize Budget Allocation</h2>
             </div>
             <div class="modal-body">
-                    <form method=post action="/" enctype=multipart/form-data>
-                        <h4>Budget</h4>
-                        <input type=number value=0 name=budget style="font-size: 18px;">
-                        <input type="submit" value="OK" class="button">
-                    </form>
+                <form method=post action="/" enctype=multipart/form-data> <h4>Budget</h4>
+                    <input type=number value=0 name=budget style="font-size: 18px;">
+                    <input type="submit" value="OK" class="button">
+                </form>
             </div>
             <!-- <div class="modal-footer">
                 <h3>Modal Footer</h3>
@@ -46,7 +55,7 @@
                 </div>
                 <div>
                     <button class="button">
-                        <a href="/download" style="color: white" >Take Snapshot</a>
+                        <a href="/download" style="color: white">Take Snapshot</a>
                     </button>
                     <!-- <a class="button" href="/download">Take Snapshot</a> -->
                     <button class="button" id="myBtn">Optimize Budget Allocation</button>
@@ -58,13 +67,18 @@
             <table class="claim-table content">
                 <tr>
                     <th style="width: 40px">Rank</th>
-                    <th style="width: 65%">Claim</th>
+                    <th style="width: 65%" class="topnav">
+                        <span> Claim </span>
+                        <input type="text" id="input-for-claim" onkeyup="searchClaim()" style="display:none"
+                            placeholder="Search for claims.." title="Type in a name">
+                        <i class="fa fa-search" onclick="toggleSearch()" />
+                    </th>
                     <th style="width: 50px">Prob</th>
                     <th style="width: 70px">Credibility</th>
                 </tr>
             </table>
             <div id="block-claim2">
-                <table class="claim-table content">
+                <table class="claim-table content" id="list-claim">
                     {% for claim in data%}
                     <tr onclick="selectClaim({{ loop.index }},{{ claim }})" id="{{ claim['Claim_ID'] }}"
                         class="item-claim">
@@ -77,88 +91,214 @@
                     {% endfor %}
                 </table>
             </div>
-
         </div>
         <div class="detail content">
             <div id="header-claim">
                 <span id="no-claim">1.</span>
                 <span id="title-claim">{{ data[0]["Claim"] }}</span>
             </div>
-            <div id="info-claim">
-                <div>
-                    <h4>
-                        Origins
-                    </h4>
-                    <p id="origins-claim">
-                        {{ data[0]["Origins"] }}
-                    </p>
+            <div style="max-height: 400px;">
+                <div class="tab">
+                    <button class="tablinks" onclick="openCity(event,'info-claim')" id="defaultOpen">Detail</button>
+                    <button class="tablinks" onclick="openCity(event, 'relations')">Relations</button>
                 </div>
-                <div>
-                    <h4>
-                        Description
-                    </h4>
-                    <span>
-                        <span id="description-short">
-                            {{ data[0]["Description"][:100] }}
-                        </span>
-                        <span id="dots">...</span>
-                        <span id="more">
-                            {{ data[0]["Description"][100:]}}
-                        </span>
+                <div id="info-claim" class="tabcontent item-tab">
+                    <!-- <span onclick="this.parentElement.style.display='none'" class="topright">&times</span> -->
+                    <!-- <h3>London</h3> -->
+                    <!-- <div id="info-claim"> -->
+                    <div>
+                        <div>
+                            <h4>
+                                Origins
+                            </h4>
+                            <p id="origins-claim">
+                                {{ data[0]["Origins"] }}
+                            </p>
+                        </div>
+                        <div>
+                            <h4>
+                                Description
+                            </h4>
+                            <span>
+                                <span id="description-short">
+                                    {{ data[0]["Description"][:100] }}
+                                </span>
+                                <span id="dots">...</span>
+                                <span id="more">
+                                    {{ data[0]["Description"][100:]}}
+                                </span>
 
-                        <button onclick="readMore()" id="btn-readmore" class="button">Read more</button>
-                </div>
-                <div>
-                    <h4>
-                        Example
-                    </h4>
-                    <p id="example-claim">
-                        {{ data[0]["Example"] }}
-                    </p>
-                </div>
-                <div>
-                    <h4>
-                        Originally Published
-                    </h4>
-                    <p id="originally-published-claim">
-                        {{ data[0]["Originally Published"] }}
-                        <!-- 22 July 2015 -->
-                    </p>
-                </div>
-                <div>
-                    <h4>
-                        Last Updated
-                    </h4>
-                    <p id="last-updated-claim">
-                        {{ data[0]["Last Updated"] }}
-                        <!-- 4 December 2015 -->
-                    </p>
-                </div>
-                <div id="tag-claim">
-                    {% for tag in data[0]["Tags"]%}
-                    <span class="tag-claim-item"> #{{ tag }} </span>
-                    {% endfor %}
-                </div>
-            </div>
-            <div>
-                <form method=post action="/process">
-                    <input type="hidden" name="claimId" value="{{ data[0].Claim_ID }}">
-                    <!-- <div id="radio-credibility" class="validation-claim"> -->
-                    <!-- <input type="radio" name="cred" value="1"> Credibility -->
-                    <!-- <input type="radio" name="cred" value="0"> Non-Credibility -->
-                    <!-- </div> -->
-                    <div class="validation-claim">
-                        <input type=submit class="button btn-validation" name="Credibility" value="Credibility">
-                        <input type=submit class="button btn-validation" name="Credibility" value="Non-Credibility">
-                        <!-- <button type="button" class="button btn-validation">Next</button> -->
-                        <!-- <button type="button" class="button btn-validation">Log</button> -->
+                                <button onclick="readMore()" id="btn-readmore" class="button">Read more</button>
+                        </div>
+                        <div>
+                            <h4>
+                                Example
+                            </h4>
+                            <p id="example-claim">
+                                {{ data[0]["Example"] }}
+                            </p>
+                        </div>
+                        <div>
+                            <h4>
+                                Originally Published
+                            </h4>
+                            <p id="originally-published-claim">
+                                {{ data[0]["Originally Published"] }}
+                                <!-- 22 July 2015 -->
+                            </p>
+                        </div>
+                        <div>
+                            <h4>
+                                Last Updated
+                            </h4>
+                            <p id="last-updated-claim">
+                                {{ data[0]["Last Updated"] }}
+                                <!-- 4 December 2015 -->
+                            </p>
+                        </div>
+                        <div id="tag-claim">
+                            {% for tag in data[0]["Tags"]%}
+                            <span class="tag-claim-item"> #{{ tag }} </span>
+                            {% endfor %}
+                        </div>
                     </div>
-                </form>
+                </div>
+
+
+                <div id="relations" class="tabcontent item-tab">
+                    <!-- <span onclick="this.parentElement.style.display='none'" class="topright">&times</span> -->
+                    <div id="relation-claim">
+                    </div>
+                </div>
+
+                <div>
+                    <form method=post action="/process">
+                        <input type="hidden" name="claimId" value="{{ data[0].Claim_ID }}">
+                        <!-- <div id="radio-credibility" class="validation-claim"> -->
+                        <!-- <input type="radio" name="cred" value="1"> Credibility -->
+                        <!-- <input type="radio" name="cred" value="0"> Non-Credibility -->
+                        <!-- </div> -->
+                        <div class="validation-claim">
+                            <input type=submit class="button btn-validation" name="Credibility" value="Credibility">
+                            <input type=submit class="button btn-validation" name="Credibility" value="Non-Credibility">
+                            <!-- <button type="button" class="button btn-validation">Next</button> -->
+                            <!-- <button type="button" class="button btn-validation">Log</button> -->
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
+
 
     </div>
 </body>
 <script type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/search.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script>
+
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='js/graph.js') }}"></script> -->
+<script>
+    var width = 900,
+        height = 500,
+        nodeSize = 15;
+
+    // var color = d3.scale.category20();
+    function colorScale(layer) {
+        var rangeColor;
+        switch (layer) {
+            case 1:
+                rangeColor = ["gray", "blue"]
+                break;
+            case 2:
+                rangeColor = ["gray", "red"]
+                break;
+            case 3:
+                rangeColor = ["gray", "orange"]
+                break
+            default:
+                break;
+        }
+        var colorScale = d3.scaleLinear()
+            .domain([0, 100])
+            .range(rangeColor);
+        return colorScale;
+    }
+
+
+
+    var svg = d3.select("#relation-claim").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    d3.json("{{ url_for('static', filename='data/data-neuron.json') }}", function (error, graph) {
+        var nodes = graph.nodes;
+        var linkNodes = graph.links;
+
+        // get network size
+        var netsize = {};
+        nodes.forEach(function (d) {
+            if (d.layer in netsize) {
+                netsize[d.layer] += 1;
+            } else {
+                netsize[d.layer] = 1;
+            }
+            d["lidx"] = netsize[d.layer];
+        });
+
+        // calc distances between nodes
+        var largestLayerSize = Math.max.apply(
+            null, Object.keys(netsize).map(function (i) { return netsize[i]; }));
+
+        var xdist = width / Object.keys(netsize).length,
+            ydist = (height - 15) / largestLayerSize;
+
+        // create node locations
+        nodes.map(function (d) {
+            d["x"] = (d.layer - 0.5) * xdist * 0.75;
+            // d["y"] = (d.lidx - 0.5) * ydist * 0.7;
+            d["y"] = (((d.lidx - 0.5) + ((largestLayerSize - netsize[d.layer]) / 2)) * ydist * 0.7) + 2;
+        });
+
+        // autogenerate links
+        var links = [];
+        linkNodes.map(function (d, i) {
+            links.push({ "source": d.source, "target": d.target, "value": 1 });
+        }).filter(function (d) { return typeof d !== "undefined"; });
+
+        // draw links
+        var link = svg.selectAll(".link")
+            .data(links)
+            .enter().append("line")
+            .attr("class", "link")
+            .attr("x1", function (d) { return nodes[d.source].x; })
+            .attr("y1", function (d) { return nodes[d.source].y; })
+            .attr("x2", function (d) { return nodes[d.target].x; })
+            .attr("y2", function (d) { return nodes[d.target].y; })
+            .style("stroke-width", function (d) { return 2; });
+
+        // draw nodes
+        var node = svg.selectAll(".node")
+            .data(nodes)
+            .enter().append("g")
+            .attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            }
+            );
+
+        var circle = node.append("circle")
+            .attr("class", "node")
+            .attr("r", nodeSize)
+            .style("fill", function (d) { return colorScale(d.layer)(d.reliability); });
+
+
+        node.append("a")
+            .attr("href", "https://www.youtube.com/")
+            .append("text")
+            .attr("dx", "-55px")
+            .attr("dy", "-25px")
+            .attr("font-size", "12px")
+            .text(function (d) { return d.label; });
+    });
+</script>
 
 </html>
