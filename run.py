@@ -84,9 +84,9 @@ def process():
     return redirect('/')
 
 
-@app.route("/neuron",methods=['GET'])
+@app.route("/conservation",methods=['GET'])
 def neuron():
-    return render_template("neuron.html")
+    return render_template("conversation.html")
 
 
 if __name__ == "__main__":
