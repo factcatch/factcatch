@@ -3,6 +3,9 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <meta charset="UTF-8"> -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/font.css') }}">
@@ -167,7 +170,7 @@
 
                 <div id="relations" class="tabcontent item-tab">
                     <!-- <span onclick="this.parentElement.style.display='none'" class="topright">&times</span> -->
-                    <div id="relation-claim">
+                    <div id="relation-claim" style="overflow: auto; width: 900px; height: 370px;">
                     </div>
                 </div>
 
@@ -198,8 +201,11 @@
 
 <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/graph.js') }}"></script> -->
 <script>
+    // var width = 900,
+    //     height = 500,
+    //     nodeSize = 15;
     var width = 900,
-        height = 500,
+        height = 2500,
         nodeSize = 15;
 
     // var color = d3.scale.category20();
@@ -230,75 +236,83 @@
         .attr("width", width)
         .attr("height", height);
 
-    d3.json("{{ url_for('static', filename='data/data-neuron.json') }}", function (error, graph) {
-        var nodes = graph.nodes;
-        var linkNodes = graph.links;
+    // d3.json("{{ url_for('static', filename='data/data-neuron.json') }}", function (error, graph) {
+    // var nodes = graph.nodes;
+    // var linkNodes = graph.links;
+    // var nodes = '{{  data[0]["Google Results"]["nodes"] }}';
+    // var linkNodes = '{{ data[0]["Google Results"]["links"] }}';
+    // var results = '{{  data[0]["Google Results"] }}';
+    var results = JSON.parse('{{  data[0]["Google Results"] | safe}}');
+    var nodes = results.nodes;
+    var linkNodes = results.links;
+    console.log(nodes);
+    console.log(linkNodes);
 
-        // get network size
-        var netsize = {};
-        nodes.forEach(function (d) {
-            if (d.layer in netsize) {
-                netsize[d.layer] += 1;
-            } else {
-                netsize[d.layer] = 1;
-            }
-            d["lidx"] = netsize[d.layer];
-        });
-
-        // calc distances between nodes
-        var largestLayerSize = Math.max.apply(
-            null, Object.keys(netsize).map(function (i) { return netsize[i]; }));
-
-        var xdist = width / Object.keys(netsize).length,
-            ydist = (height - 15) / largestLayerSize;
-
-        // create node locations
-        nodes.map(function (d) {
-            d["x"] = (d.layer - 0.5) * xdist * 0.75;
-            // d["y"] = (d.lidx - 0.5) * ydist * 0.7;
-            d["y"] = (((d.lidx - 0.5) + ((largestLayerSize - netsize[d.layer]) / 2)) * ydist * 0.7) + 2;
-        });
-
-        // autogenerate links
-        var links = [];
-        linkNodes.map(function (d, i) {
-            links.push({ "source": d.source, "target": d.target, "value": 1 });
-        }).filter(function (d) { return typeof d !== "undefined"; });
-
-        // draw links
-        var link = svg.selectAll(".link")
-            .data(links)
-            .enter().append("line")
-            .attr("class", "link")
-            .attr("x1", function (d) { return nodes[d.source].x; })
-            .attr("y1", function (d) { return nodes[d.source].y; })
-            .attr("x2", function (d) { return nodes[d.target].x; })
-            .attr("y2", function (d) { return nodes[d.target].y; })
-            .style("stroke-width", function (d) { return 2; });
-
-        // draw nodes
-        var node = svg.selectAll(".node")
-            .data(nodes)
-            .enter().append("g")
-            .attr("transform", function (d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            }
-            );
-
-        var circle = node.append("circle")
-            .attr("class", "node")
-            .attr("r", nodeSize)
-            .style("fill", function (d) { return colorScale(d.layer)(d.reliability); });
-
-
-        node.append("a")
-            .attr("href", "https://www.youtube.com/")
-            .append("text")
-            .attr("dx", "-55px")
-            .attr("dy", "-25px")
-            .attr("font-size", "12px")
-            .text(function (d) { return d.label; });
+    // get network size
+    var netsize = {};
+    nodes.forEach(function (d) {
+        if (d.layer in netsize) {
+            netsize[d.layer] += 1;
+        } else {
+            netsize[d.layer] = 1;
+        }
+        d["lidx"] = netsize[d.layer];
     });
+
+    // calc distances between nodes
+    var largestLayerSize = Math.max.apply(
+        null, Object.keys(netsize).map(function (i) { return netsize[i]; }));
+
+    var xdist = width / Object.keys(netsize).length,
+        ydist = (height - 15) / largestLayerSize;
+
+    // create node locations
+    nodes.map(function (d) {
+        d["x"] = (d.layer - 0.5) * xdist * 0.75;
+        // d["y"] = (d.lidx - 0.5) * ydist * 0.7;
+        d["y"] = (((d.lidx - 0.5) + ((largestLayerSize - netsize[d.layer]) / 2)) * ydist * 0.7) + 2;
+    });
+
+    // autogenerate links
+    var links = [];
+    linkNodes.map(function (d, i) {
+        links.push({ "source": d.source, "target": d.target, "value": 1 });
+    }).filter(function (d) { return typeof d !== "undefined"; });
+
+    // draw links
+    var link = svg.selectAll(".link")
+        .data(links)
+        .enter().append("line")
+        .attr("class", "link")
+        .attr("x1", function (d) { return nodes[d.source].x; })
+        .attr("y1", function (d) { return nodes[d.source].y; })
+        .attr("x2", function (d) { return nodes[d.target].x; })
+        .attr("y2", function (d) { return nodes[d.target].y; })
+        .style("stroke-width", function (d) { return 2; });
+
+    // draw nodes
+    var node = svg.selectAll(".node")
+        .data(nodes)
+        .enter().append("g")
+        .attr("transform", function (d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        }
+        );
+
+    var circle = node.append("circle")
+        .attr("class", "node")
+        .attr("r", nodeSize)
+        .style("fill", function (d) { return colorScale(d.layer)(d.reliability); });
+
+
+    node.append("a")
+        .attr("href", "https://www.youtube.com/")
+        .append("text")
+        .attr("dx", "-55px")
+        .attr("dy", "-25px")
+        .attr("font-size", "12px")
+        .text(function (d) { return d.label; });
+    // });
 </script>
 
 </html>

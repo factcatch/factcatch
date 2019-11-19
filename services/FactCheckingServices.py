@@ -2,6 +2,7 @@ from flask import url_for,current_app
 import os
 import json
 import pandas as pd
+import random
 
 
 def getData(filename):
@@ -14,31 +15,88 @@ def getData(filename):
 
 def getDataFrame(filename,start,end):
     df_filename = os.path.join(current_app._static_folder,'data',filename[:-4] + 'csv')
+    df_gg_filename = os.path.join(current_app._static_folder,'data',filename[:-5] + '_google_results.csv')   
     try:
         df = pd.read_csv(df_filename,encoding='utf-8')
+        df_gg = pd.read_csv(df_gg_filename,encoding='utf-8')
         df = df.fillna('')
     except:
-        df = generateDataframe(filename)
-    return df.to_dict('records')[start:end]
+        df,df_gg = generateDataframe(filename)
+    return df.to_dict('records')[start:end],df_gg
+
 
 def generateDataframe(filename):
     data = getData(filename)
     claim = []
+    googleData = []
     for d in data:
-        d["Prob"] = 0.5
-        d["Credibility"] = 1
+        prob = random.uniform(0,1)
+        d["Prob"] = round(prob,2)
+        d["Credibility"] = round(prob)
+        google_results = d["Google Results"]
+        for page in google_results:
+            results = page["results"]
+            for result in results:
+                result["Claim_ID"] = d["Claim_ID"]
+                googleData.append(result)
         claim.append(d)
     df = pd.DataFrame(claim)
+    df_gg = pd.DataFrame(googleData)
     df_filename = os.path.join(current_app._static_folder,'data',filename[:-4] + 'csv')
+    df_gg_filename = os.path.join(current_app._static_folder,'data',filename[:-5] + '_google_results.csv')
     df.to_csv(df_filename,index=False)
-    return df
+    df_gg.to_csv(df_gg_filename,index=False)
+    return df,df_gg
 
 
 def getTopClaim(filename,startId,endId):
-    data = getDataFrame(filename,startId,endId)
+    data , googleResults = getDataFrame(filename,startId,endId)
     for id,d in enumerate(data):
         data[id]["Tags"] = str(data[id]["Tags"]).split(";")[:-1]
+        print(d["Claim_ID"])
+        data[id]["Google Results"] = json.dumps(generateGraph(googleResults.loc[googleResults["Claim_ID"] == d["Claim_ID"]]))
     return data
+
+def generateGraph(df_gg):
+    sources_domain = set()
+    docs_link = set()
+    for index,row in df_gg.iterrows():
+        sources_domain.add(row["domain"])
+        docs_link.add(row["link"])
+    sources_domain = list(sources_domain)
+    docs_link = list(docs_link)
+    nodes = [dictNode(s,1,round(random.uniform(0,1),2)) for s in sources_domain]
+    sources_domain.extend(docs_link)
+    # sources_domain.append("claim")
+    # nodes = [dictNode(s,1,round(random.uniform(0,1),2)) for s in sources_domain]
+    nodesDoc = [dictNode(d,2,100) for d in docs_link]
+    nodes.extend(nodesDoc)
+    nodes.append(dictNode("claim",3,100))
+    links = []
+    for index,row in df_gg.iterrows():
+        idSource = sources_domain.index(row["domain"])
+        idTarget = sources_domain.index(row["link"])
+        idClaim = len(sources_domain)
+        link = dictLink(idSource,idTarget)
+        linkDocClaim = dictLink(idTarget,idClaim)
+        links.append(link)
+        links.append(linkDocClaim)
+    return {"nodes":nodes,"links":links}
+
+
+def dictNode(label,layer,reliability):
+    return {
+        "label" : label,
+        "layer" : layer,
+        "reliability" : reliability*100
+    }
+
+def dictLink(source,target):
+    return {
+        "source" : source,
+        "target" : target,
+        "value" : 50
+    }
 
 
 def inferrence(claimId,cred):

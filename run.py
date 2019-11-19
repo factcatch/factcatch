@@ -1,6 +1,7 @@
 from flask_cors import CORS, cross_origin
 from flask import Flask, render_template, request, redirect,flash,url_for,session,send_file
 from flask import jsonify,json
+# import json
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from werkzeug.utils import secure_filename
@@ -11,7 +12,7 @@ from services import FactCheckingServices
 #     dbuser='postgres',
 #     dbpass=27101997,
 #     dbhost='localhost',
-#     dbname='tweets'
+#     dbname='fact_checking'
 # )
 
 app = Flask(__name__)
@@ -34,9 +35,14 @@ app.secret_key = "super secret key"
 def home():
     if session.get("filename") is not None:
         data = FactCheckingServices.getTopClaim(session["filename"],0,30)
+        # resultsGoogle = data[0]["Google Results"]
+        print(data[0]["Google Results"])
     else:
         # data = FactCheckingServices.getFactCandidate("default.json")
         data = FactCheckingServices.getTopClaim("default.json",0,10)
+        # resultsGoogle = json.dumps(data[0]["Google Results"])
+        # resultsGoogle = json.loads(resultsGoogle)
+        print(data[0]["Google Results"])
     return render_template("home.html",data=data)
 
 
