@@ -36,13 +36,14 @@ def home():
     if session.get("filename") is not None:
         data = FactCheckingServices.getTopClaim(session["filename"],0,30)
         # resultsGoogle = data[0]["Google Results"]
-        print(data[0]["Google Results"])
+        # print(data[0]["Sources Relation"])
+        print(data[0]["Claim_ID"])
     else:
         # data = FactCheckingServices.getFactCandidate("default.json")
         data = FactCheckingServices.getTopClaim("default.json",0,10)
         # resultsGoogle = json.dumps(data[0]["Google Results"])
         # resultsGoogle = json.loads(resultsGoogle)
-        print(data[0]["Google Results"])
+        print(data[0]["Claim_ID"])
     return render_template("home.html",data=data)
 
 

@@ -53,8 +53,15 @@ def getTopClaim(filename,startId,endId):
     data , googleResults = getDataFrame(filename,startId,endId)
     for id,d in enumerate(data):
         data[id]["Tags"] = str(data[id]["Tags"]).split(";")[:-1]
-        print(d["Claim_ID"])
+        # print(d["Claim_ID"])
         data[id]["Google Results"] = json.dumps(generateGraph(googleResults.loc[googleResults["Claim_ID"] == d["Claim_ID"]]))
+        domains = googleResults.loc[googleResults["Claim_ID"] == d["Claim_ID"]]
+        # print(domains.shape)
+        sources = []
+        for idx,row in domains.iterrows():
+            sources.append(row["domain"])
+        # print(sources)
+        data[id]["Sources Relation"] = json.dumps(getSourceRelation(sources,googleResults))
     return data
 
 def generateGraph(df_gg):
@@ -81,6 +88,9 @@ def generateGraph(df_gg):
         linkDocClaim = dictLink(idTarget,idClaim)
         links.append(link)
         links.append(linkDocClaim)
+
+    # get sources relations
+    # sourcesRelation = getSourceRelation(sources_domain,df_gg)
     return {"nodes":nodes,"links":links}
 
 
@@ -97,6 +107,58 @@ def dictLink(source,target):
         "target" : target,
         "value" : 50
     }
+
+def getSourceRelation(sources,df):
+    episodes = []
+    claims = set()
+    # index = 1
+    for id,source in enumerate(sources):
+        df_claim = df.loc[df["domain"] == source]
+        if df_claim.shape[0] <= 1:
+            continue
+        # print(df_claim.shape)
+        links = []
+        for id,row in df_claim.iterrows():
+            links.append(row["Claim_ID"])
+            claims.add(row["Claim_ID"])
+            # print(row["Claim_ID"])
+        episodes.append({
+            "type" : "episode",
+            "name" : source,
+            "description": "",
+            "episode" : id+1,
+            "date" : "",
+            "slug" : "episode-one-reverend-john-fife",
+            "links" : links
+        })
+        # index += 1
+    claims = list(claims)
+    # print(claims)
+    themes = []
+    for claim in claims[:int(len(claims)/2)]:
+        themes.append({
+            "type" : "theme",
+            "name" : claim,
+            "description" : "",
+            "slug" : "collapse-2"
+        })
+    perspectives = []
+    for claim in claims[int(len(claims)/2):]:
+        perspectives.append({
+            "type" : "perspective",
+            "name" : claim,
+            "descripttion" : "",
+            "slug" : "anthropocentric-value-source",
+            "count" : random.randint(0,50),
+            "group" : 381#random.randint(0,500)
+        })
+    return {"episodes" : episodes, "themes" : themes, "perspectives" : perspectives}
+
+
+        
+
+
+
 
 
 def inferrence(claimId,cred):
