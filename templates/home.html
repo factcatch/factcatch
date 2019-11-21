@@ -96,12 +96,13 @@
                         <div>Fact Checking</div>
                     </a>
                 </div>
-                <div id="select-file">
-                    <form method=post action="/upload" enctype=multipart/form-data> <input type=file name=file>
-                        <input type=submit value=Upload>
+                <div id="select-file" class="header-content">
+                    <form method=post action="/upload" enctype=multipart/form-data> 
+                    <input type="file" name="file" id="file" class="inputfile" data-multiple-caption="{count} files selected" multiple/>
+                    <input type=submit value=Upload id="upload-btn">
                     </form>
                 </div>
-                <div>
+                <div class="header-content" style="text-align: right;">
                     <button class="button">
                         <a href="/download" style="color: white">Take Snapshot</a>
                     </button>
@@ -146,7 +147,7 @@
                     <span id="no-claim">1.</span>
                     <span id="title-claim">{{ data[0]["Claim"] }}</span>
                 </div> -->
-                <div style="height: 530px;">
+                <div style="height: 560px;">
                     <div class="tab">
                         <button class="tablinks" onclick="openCity(event,'info-claim')" id="defaultOpen">Detail</button>
                         <button class="tablinks" onclick="openCity(event, 'relations')">Relations</button>
@@ -227,7 +228,7 @@
 
                     <div id="relations" class="tabcontent item-tab">
                         <!-- <span onclick="this.parentElement.style.display='none'" class="topright">&times</span> -->
-                        <div id="relation-claim" style="overflow: auto; width: 900px; height: 370px;">
+                        <div id="relation-claim" style="overflow: auto; width: 900px; height: 100%;">
                         </div>
                     </div>
 
@@ -265,12 +266,9 @@
     <script>
 
         function drawRelation(claim) {
-            d3.select("svg").remove();
+            d3.select(".chart > svg").remove();
 
-            // var data = JSON.parse('{{  data[0]["Sources Relation"] | safe}}');
             var sources = claim["Sources Relation"];
-            // sources = sources.replace(/\\n/g, "\\n");
-            // var data = JSON.parse(claim["Sources Relation"]);
             var data = JSON.parse(sources);
 
 
@@ -543,7 +541,7 @@
     //     height = 500,
     //     nodeSize = 15;
     var width = 900,
-        height = 2500,
+        height = 2000,
         nodeSize = 15;
 
     // var color = d3.scale.category20();
@@ -562,12 +560,11 @@
             default:
                 break;
         }
-        var colorScale = d3.scaleLinear()
+        var colorScale = d3.scale.linear()
             .domain([0, 100])
             .range(rangeColor);
         return colorScale;
     }
-
 
 
     var svg = d3.select("#relation-claim").append("svg")
@@ -583,6 +580,7 @@
     // var data = '{{  data[0]["Google Results"] | safe}}';
     // data = data.replace(/\\n/g, "\\n");
     var results = JSON.parse('{{  data[0]["Google Results"] | safe}}');
+    console.log(results);
     // var results = JSON.parse(data);
 
     var nodes = results.nodes;

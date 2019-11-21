@@ -19,8 +19,8 @@ h2 {
 }
 
 #logo-griffith > a > div {
-  font-size: 30px;
-  padding: 10px;
+  font-size: 35px;
+  /* padding: 5px; */
   padding-left: 0px;
   font-weight: bold;
   color: brown;
@@ -41,7 +41,7 @@ a {
 .grid-container > div {
   background-color: rgba(255, 255, 255, 0.8);
   text-align: left;
-  /* padding: 20px 0; */
+  /* padding: 5px; */
   font-size: 16px;
 }
 
@@ -66,7 +66,7 @@ a {
 
 #block-list-claim {
   padding: 0px;
-  height: 525px;
+  height: 530px;
   overflow: auto;
 }
 
@@ -78,6 +78,7 @@ a {
 .grid-header {
   display: grid;
   grid-template-columns: auto auto auto;
+  /* height: 60px; */
   /* background-color: #2196f3; */
   /* grid-gap: 10px; */
 }
@@ -85,12 +86,20 @@ a {
 .grid-header > div {
   background-color: #282a3c;
   text-align: center;
-  padding: 20px 0;
+  /* padding: 10px; */
   font-size: 18px;
 }
 
 #select-file{
-  padding: 30px 0;
+  padding: 18px;
+}
+
+.header-content {
+  padding: 18px;
+}
+
+.header-content > button {
+  margin-left: 10px;
 }
 
 #logo-griffith {
@@ -107,7 +116,7 @@ a {
   background-color: brown; /* Green */
   border: none;
   color: white;
-  padding: 10px 15px;
+  padding: 6px 10px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -372,7 +381,7 @@ th i {
 .topright:hover {color: red;}
 
 .item-tab {
-  height: 510px;
+  height: 520px;
 }
 
 ul {
@@ -403,7 +412,7 @@ li > div {
   background-color: brown;
   color: white;
   text-align: center;
-  padding: 12px 10px;
+  padding: 8px 10px;
 }
 
 #sources {
@@ -473,3 +482,28 @@ li > div {
     linear-gradient(to right, $purple, $red, $green, $turquoise, $blue, $light-blue);
   }
 }
+
+
+/* .inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.inputfile + label {
+  font-size: 18px;
+  font-weight: 300;
+  color: white;
+  /* background-color: black; */
+  display: inline-block;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+  background-color: brown;
+} */

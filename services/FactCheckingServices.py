@@ -20,6 +20,7 @@ def getDataFrame(filename,start,end):
         df = pd.read_csv(df_filename,encoding='utf-8')
         df_gg = pd.read_csv(df_gg_filename,encoding='utf-8')
         df = df.fillna('')
+        df_gg = df_gg.fillna('')
     except:
         df,df_gg = generateDataframe(filename)
     return df.to_dict('records')[start:end],df_gg
@@ -168,13 +169,6 @@ def getSourceRelation(sources,df):
             "group" : 381#random.randint(0,500)
         })
     return {"episodes" : episodes, "themes" : themes, "perspectives" : perspectives}
-
-
-        
-
-
-
-
 
 def inferrence(claimId,cred):
     print(claimId,cred)
