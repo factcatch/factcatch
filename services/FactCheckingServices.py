@@ -57,11 +57,11 @@ def getTopClaim(filename,startId,endId):
         data[id]["Google Results"] = json.dumps(generateGraph(googleResults.loc[googleResults["Claim_ID"] == d["Claim_ID"]]))
         domains = googleResults.loc[googleResults["Claim_ID"] == d["Claim_ID"]]
         # print(domains.shape)
-        sources = []
+        sources = set()
         for idx,row in domains.iterrows():
-            sources.append(row["domain"])
-        # print(sources)
-        data[id]["Sources Relation"] = json.dumps(getSourceRelation(sources,googleResults))
+            sources.add(row["domain"])
+        sources = list(sources)
+        data[id]["Sources Relation"] = json.dumps(getSources(sources,googleResults))
     return data
 
 def generateGraph(df_gg):
@@ -107,6 +107,21 @@ def dictLink(source,target):
         "target" : target,
         "value" : 50
     }
+
+def getSources(sources,df):
+    nodes = []
+    claims = set()
+    for source in sources:
+        items = []
+        items.append(random.randint(100,200))
+        items.append(source)
+        df_claim = df.loc[df["domain"] == source]
+        links = []
+        for id,row in df_claim.iterrows():
+            links.append(row["Claim_ID"])
+        items.append(links)
+        nodes.append(items)
+    return nodes
 
 def getSourceRelation(sources,df):
     episodes = []

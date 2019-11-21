@@ -16,7 +16,6 @@ function readMore() {
 }
 
 function selectClaim(index,claim){
-  console.log(index);
   var itemClicked = document.getElementsByClassName("row-clicked");
   if (itemClicked.length != 0){
     itemClicked.item(0).classList.remove("row-clicked");

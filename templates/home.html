@@ -18,7 +18,7 @@
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script> -->
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="//d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <!-- <script src="//d3js.org/d3-scale-chromatic.v1.min.js"></script> -->
 
     <!-- conversation -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -28,6 +28,43 @@
     <link rel='stylesheet' id='style-css' href="{{ url_for('static', filename='styles/style_conservation.css') }}"
         type='text/css' media='all' />
 
+    <style>
+        svg {
+            font: 12px sans-serif;
+        }
+
+        text {
+            pointer-events: none;
+        }
+
+        .inner_node rect {
+            pointer-events: all;
+        }
+
+        .inner_node rect.highlight {
+            stroke: #315B7E;
+            stroke-width: 2px;
+        }
+
+        .outer_node circle {
+            /* fill: #fff; */
+            /* fill: #0da4d3; */
+            fill: #666;
+            /* stroke: steelblue; */
+            stroke: black;
+            stroke-width: 1.5px;
+            pointer-events: all;
+        }
+
+        .outer_node circle.highlight {
+            stroke: #315B7E;
+            stroke-width: 2px;
+        }
+
+        .link {
+            fill: none;
+        }
+    </style>
 
 </head>
 
@@ -74,692 +111,408 @@
                 </div>
             </div>
         </div>
-        <div class="claim" id="block-claim">
-            <table class="claim-table content">
-                <tr>
-                    <th style="width: 40px">Rank</th>
-                    <th style="width: 65%" class="topnav">
-                        <span> Claim </span>
-                        <input type="text" id="input-for-claim" onkeyup="searchClaim()" style="display:none"
-                            placeholder="Search for claims.." title="Type in a name">
-                        <i class="fa fa-search" onclick="toggleSearch()" />
-                    </th>
-                    <th style="width: 50px">Prob</th>
-                    <th style="width: 70px">Credibility</th>
-                </tr>
-            </table>
-            <div id="block-claim2">
-                <table class="claim-table content" id="list-claim">
-                    {% for claim in data%}
-                    <tr onclick="selectClaim({{ loop.index }},{{ claim }})" id="{{ claim['Claim_ID'] }}"
-                        class="item-claim">
-                        <td style="width:40px">{{ loop.index }}</td>
-                        <td style="text-align: left;width: 65%; font-size:15px;padding-top: 10px;padding-bottom: 10px;">
-                            {{ claim["Claim"] }}</td>
-                        <td style="width:50px">{{ claim["Prob"] }}</td>
-                        <td style="width: 70px">{{ claim["Credibility"] }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        </div>
-        <div class="detail content">
-            <div id="header-claim">
-                <span id="no-claim">1.</span>
-                <span id="title-claim">{{ data[0]["Claim"] }}</span>
-            </div>
-            <div style="max-height: 400px;">
-                <div class="tab">
-                    <button class="tablinks" onclick="openCity(event,'info-claim')" id="defaultOpen">Detail</button>
-                    <button class="tablinks" onclick="openCity(event, 'relations')">Relations</button>
+        <div id="block-content">
+            <div>
+                <div id="title-list-claim">Claims</div>
+                <div id="block-list-claim">
+                    <ul>
+                        {% for claim in data %}
+                        <li onclick="selectClaim({{ loop.index }},{{ claim }})" id="{{ claim['Claim_ID'] }}">
+                            <div class="icon-credibility">
+                                <i class="fa fa-check-circle" aria-hidden="true" style="font-size: 24px;"></i>
+                            </div>
+                            <div>
+                                {{ claim["Claim"] }}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
                 </div>
-                <div id="info-claim" class="tabcontent item-tab">
-                    <!-- <span onclick="this.parentElement.style.display='none'" class="topright">&times</span> -->
-                    <!-- <h3>London</h3> -->
-                    <!-- <div id="info-claim"> -->
+            </div>
+
+            <div class="detail content">
+                <div id="header-claim">
+                    <span id="no-claim">1.</span>
+                    <span id="title-claim">{{ data[0]["Claim"] }}</span>
+                </div>
+                <div style="height: 470px;">
+                    <div class="tab">
+                        <button class="tablinks" onclick="openCity(event,'info-claim')" id="defaultOpen">Detail</button>
+                        <button class="tablinks" onclick="openCity(event, 'relations')">Relations</button>
+                        <button class="tablinks" onclick="openCity(event, 'sources')">Sources</button>
+                    </div>
+                    <div id="info-claim" class="tabcontent item-tab">
+                        <!-- <span onclick="this.parentElement.style.display='none'" class="topright">&times</span> -->
+                        <!-- <h3>London</h3> -->
+                        <!-- <div id="info-claim"> -->
+                        <div>
+                            <div>
+                                <h4>
+                                    Origins
+                                </h4>
+                                <p id="origins-claim">
+                                    {{ data[0]["Origins"] }}
+                                </p>
+                            </div>
+                            <div>
+                                <h4>
+                                    Description
+                                </h4>
+                                <span>
+                                    <span id="description-short">
+                                        {{ data[0]["Description"][:100] }}
+                                    </span>
+                                    <span id="dots">...</span>
+                                    <span id="more">
+                                        {{ data[0]["Description"][100:]}}
+                                    </span>
+
+                                    <button onclick="readMore()" id="btn-readmore" class="button">Read more</button>
+                            </div>
+                            <div>
+                                <h4>
+                                    Example
+                                </h4>
+                                <p id="example-claim">
+                                    {{ data[0]["Example"] }}
+                                </p>
+                            </div>
+                            <div>
+                                <h4>
+                                    Originally Published
+                                </h4>
+                                <p id="originally-published-claim">
+                                    {{ data[0]["Originally Published"] }}
+                                    <!-- 22 July 2015 -->
+                                </p>
+                            </div>
+                            <div>
+                                <h4>
+                                    Last Updated
+                                </h4>
+                                <p id="last-updated-claim">
+                                    {{ data[0]["Last Updated"] }}
+                                    <!-- 4 December 2015 -->
+                                </p>
+                            </div>
+                            <div id="tag-claim">
+                                {% for tag in data[0]["Tags"]%}
+                                <span class="tag-claim-item"> #{{ tag }} </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="relations" class="tabcontent item-tab">
+                        <!-- <span onclick="this.parentElement.style.display='none'" class="topright">&times</span> -->
+                        <div id="relation-claim" style="overflow: auto; width: 900px; height: 370px;">
+                        </div>
+                    </div>
+
+                    <div id="sources" class="tabcontent item-tab">
+                        <div class="chart" style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;"></div>
+                    </div>
+
                     <div>
-                        <div>
-                            <h4>
-                                Origins
-                            </h4>
-                            <p id="origins-claim">
-                                {{ data[0]["Origins"] }}
-                            </p>
-                        </div>
-                        <div>
-                            <h4>
-                                Description
-                            </h4>
-                            <span>
-                                <span id="description-short">
-                                    {{ data[0]["Description"][:100] }}
-                                </span>
-                                <span id="dots">...</span>
-                                <span id="more">
-                                    {{ data[0]["Description"][100:]}}
-                                </span>
-
-                                <button onclick="readMore()" id="btn-readmore" class="button">Read more</button>
-                        </div>
-                        <div>
-                            <h4>
-                                Example
-                            </h4>
-                            <p id="example-claim">
-                                {{ data[0]["Example"] }}
-                            </p>
-                        </div>
-                        <div>
-                            <h4>
-                                Originally Published
-                            </h4>
-                            <p id="originally-published-claim">
-                                {{ data[0]["Originally Published"] }}
-                                <!-- 22 July 2015 -->
-                            </p>
-                        </div>
-                        <div>
-                            <h4>
-                                Last Updated
-                            </h4>
-                            <p id="last-updated-claim">
-                                {{ data[0]["Last Updated"] }}
-                                <!-- 4 December 2015 -->
-                            </p>
-                        </div>
-                        <div id="tag-claim">
-                            {% for tag in data[0]["Tags"]%}
-                            <span class="tag-claim-item"> #{{ tag }} </span>
-                            {% endfor %}
-                        </div>
+                        <form method=post action="/process">
+                            <input type="hidden" name="claimId" value="{{ data[0].Claim_ID }}">
+                            <!-- <div id="radio-credibility" class="validation-claim"> -->
+                            <!-- <input type="radio" name="cred" value="1"> Credibility -->
+                            <!-- <input type="radio" name="cred" value="0"> Non-Credibility -->
+                            <!-- </div> -->
+                            <div class="validation-claim">
+                                <input type=submit class="button btn-validation" name="Credibility" value="Credibility">
+                                <input type=submit class="button btn-validation" name="Credibility"
+                                    value="Non-Credibility">
+                                <!-- <button type="button" class="button btn-validation">Next</button> -->
+                                <!-- <button type="button" class="button btn-validation">Log</button> -->
+                            </div>
+                        </form>
                     </div>
-                </div>
-
-
-                <div id="relations" class="tabcontent item-tab">
-                    <!-- <span onclick="this.parentElement.style.display='none'" class="topright">&times</span> -->
-                    <div id="relation-claim" style="overflow: auto; width: 900px; height: 370px;">
-                    </div>
-                </div>
-
-                <div>
-                    <form method=post action="/process">
-                        <input type="hidden" name="claimId" value="{{ data[0].Claim_ID }}">
-                        <!-- <div id="radio-credibility" class="validation-claim"> -->
-                        <!-- <input type="radio" name="cred" value="1"> Credibility -->
-                        <!-- <input type="radio" name="cred" value="0"> Non-Credibility -->
-                        <!-- </div> -->
-                        <div class="validation-claim">
-                            <input type=submit class="button btn-validation" name="Credibility" value="Credibility">
-                            <input type=submit class="button btn-validation" name="Credibility" value="Non-Credibility">
-                            <!-- <button type="button" class="button btn-validation">Next</button> -->
-                            <!-- <button type="button" class="button btn-validation">Log</button> -->
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
-
-
     </div>
-    <div id="main" style="grid-column-start:1;grid-column-end: 3;">
+
+    <!-- <div id="main" style="grid-column-start:1;grid-column-end: 3;">
         <h3 style="padding-left:30px">Sources of Claim</h3>
         <div id="graph" style="text-align:center"></div>
         <div id="graph-info"></div>
-    </div>
+    </div> -->
     <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.min.js') }}"></script>
     <!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/conversation.min.js') }}"></script> -->
+
     <script>
-        (function () {
-            var a = 1200
-                , c = 800
-                , h = c
-                , U = 200
-                , K = 16
-                , S = 20
-                , s = 8
-                , R = 110
-                , J = 30
-                , o = 15
-                , t = 10
-                , w = 1000
-                , F = "elastic"
-                , N = "#0da4d3";
-            var T, q, x, j, H, A, P;
-            var L = {}
-                , k = {};
-            var i, y;
-            var r = d3.layout.tree().size([360, h / 2 - R]).separation(function (Y, X) {
-                return (Y.parent == X.parent ? 1 : 2) / Y.depth
-            });
-            var W = d3.svg.diagonal.radial().projection(function (X) {
-                return [X.y, X.x / 180 * Math.PI]
-            });
-            var v = d3.svg.line().x(function (X) {
-                return X[0]
-            }).y(function (X) {
-                return X[1]
-            }).interpolate("bundle").tension(0.5);
-            var d = d3.select("#graph").append("svg").attr("width", a).attr("height", c).append("g").attr("transform", "translate(" + a / 2 + "," + c / 2 + ")");
-            var I = d.append("rect").attr("class", "bg").attr({
-                x: a / -2,
-                y: c / -2,
-                width: a,
-                height: c,
-                fill: "transparent"
-            }).on("click", O);
-            var B = d.append("g").attr("class", "links")
-                , f = d.append("g").attr("class", "episodes")
-                , E = d.append("g").attr("class", "nodes");
-            var Q = d3.select("#graph-info");
-            // d3.json("./static/js/metadata.json", function (X, Y) {
 
-                // var X = JSON.parse('{{  data[0]["Sources Relation"] | safe}}');
-                var Y = JSON.parse('{{  data[0]["Sources Relation"] | safe}}');
-                // console.log("X day: ");
-                // console.log(X);
-                console.log("Y day: ");
-                console.log(Y);
-                T = d3.map(Y);
-                q = d3.merge(T.values());
-                x = {};
-                A = d3.map();
-                q.forEach(function (aa) {
-                    aa.key = p(aa.name);
-                    aa.canonicalKey = aa.key;
-                    x[aa.key] = aa;
-                    if (aa.group) {
-                        if (!A.has(aa.group)) {
-                            A.set(aa.group, [])
-                        }
-                        A.get(aa.group).push(aa)
+
+        function drawRelation(claim) {
+            d3.select("svg").remove();
+
+            // var data = JSON.parse('{{  data[0]["Sources Relation"] | safe}}');
+            var sources = claim["Sources Relation"];
+            sources = sources.replace(/\\n/g, "\\n");
+            // var data = JSON.parse(claim["Sources Relation"]);
+            var data = JSON.parse(sources);
+
+
+            // transform the data into a useful representation
+            // 1 is inner, 2, is outer
+
+            // need: inner, outer, links
+            //
+            // inner: 
+            // links: { inner: outer: }
+
+
+            var outer = d3.map();
+            var inner = [];
+            var links = [];
+            var outerId = [0];
+
+            data.forEach(function (d) {
+
+                if (d == null)
+                    return;
+
+                i = { id: 'i' + inner.length, name: d[0], content: d[1], related_links: [] };
+                i.related_nodes = [i.id];
+                inner.push(i);
+
+                if (!Array.isArray(d[2]))
+                    d[2] = [d[2]];
+
+                d[2].forEach(function (d1) {
+
+                    o = outer.get(d1);
+
+                    if (o == null) {
+                        o = { name: d1, id: 'o' + outerId[0], related_links: [] };
+                        o.related_nodes = [o.id];
+                        outerId[0] = outerId[0] + 1;
+
+                        outer.set(d1, o);
                     }
+
+                    // create the links
+                    l = { id: 'l-' + i.id + '-' + o.id, inner: i, outer: o }
+                    links.push(l);
+
+                    // and the relationships
+                    i.related_nodes.push(o.id);
+                    i.related_links.push(l.id);
+                    o.related_nodes.push(i.id);
+                    o.related_links.push(l.id);
                 });
-                j = d3.map();
-                T.get("episodes").forEach(function (aa) {
-                    aa.links = aa.links.filter(function (ab) {
-                        return typeof x[p(ab)] !== "undefined" && ab.indexOf("r-") !== 0
-                    });
-                    j.set(aa.key, aa.links.map(function (ab) {
-                        var ac = p(ab);
-                        if (typeof j.get(ac) === "undefined") {
-                            j.set(ac, [])
-                        }
-                        j.get(ac).push(aa);
-                        return x[ac]
-                    }))
-                });
-                var Z = window.location.hash.substring(1);
-                if (Z && x[Z]) {
-                    G(x[Z])
-                } else {
-                    O();
-                    M()
-                }
-                window.onhashchange = function () {
-                    var aa = window.location.hash.substring(1);
-                    if (aa && x[aa]) {
-                        G(x[aa], true)
-                    }
-                }
-            // });
-            function O() {
-                if (L.node === null) {
-                    return
-                }
-                L = {
-                    node: null,
-                    map: {}
-                };
-                i = Math.floor(c / T.get("episodes").length);
-                y = Math.floor(T.get("episodes").length * i / 2);
-                T.get("episodes").forEach(function (af, ae) {
-                    af.x = U / -2;
-                    af.y = ae * i - y
-                });
-                var ad = 180 + J
-                    , Z = 360 - J
-                    , ac = (Z - ad) / (T.get("themes").length - 1);
-                T.get("themes").forEach(function (af, ae) {
-                    af.x = Z - ae * ac;
-                    af.y = h / 2 - R;
-                    af.xOffset = -S;
-                    af.depth = 1
-                });
-                ad = J;
-                Z = 180 - J;
-                ac = (Z - ad) / (T.get("perspectives").length - 1);
-                T.get("perspectives").forEach(function (af, ae) {
-                    af.x = ae * ac + ad;
-                    af.y = h / 2 - R;
-                    af.xOffset = S;
-                    af.depth = 1
-                });
-                H = [];
-                var ab, Y, aa, X = h / 2 - R;
-                T.get("episodes").forEach(function (ae) {
-                    ae.links.forEach(function (af) {
-                        ab = x[p(af)];
-                        if (!ab || ab.type === "reference") {
-                            return
-                        }
-                        Y = (ab.x - 90) * Math.PI / 180;
-                        aa = ae.key + "-to-" + ab.key;
-                        H.push({
-                            source: ae,
-                            target: ab,
-                            key: aa,
-                            canonicalKey: aa,
-                            x1: ae.x + (ab.type === "theme" ? 0 : U),
-                            y1: ae.y + K / 2,
-                            x2: Math.cos(Y) * X + ab.xOffset,
-                            y2: Math.sin(Y) * X
-                        })
-                    })
-                });
-                P = [];
-                A.forEach(function (af, ag) {
-                    var ae = (ag[0].x - 90) * Math.PI / 180;
-                    a2 = (ag[1].x - 90) * Math.PI / 180,
-                        bulge = 20;
-                    P.push({
-                        x1: Math.cos(ae) * X + ag[0].xOffset,
-                        y1: Math.sin(ae) * X,
-                        xx: Math.cos((ae + a2) / 2) * (X + bulge) + ag[0].xOffset,
-                        yy: Math.sin((ae + a2) / 2) * (X + bulge),
-                        x2: Math.cos(a2) * X + ag[1].xOffset,
-                        y2: Math.sin(a2) * X
-                    })
-                });
-                window.location.hash = "";
-                M()
+            });
+
+            data = {
+                inner: inner,
+                outer: outer.values(),
+                links: links
             }
-            function G(Y, X) {
-                if (L.node === Y && X !== true) {
-                    if (Y.type === "episode") {
-                        window.location.href = "/" + Y.slug;
-                        return
-                    }
-                    L.node.children.forEach(function (aa) {
-                        aa.children = aa._group
-                    });
-                    e();
-                    return
-                }
-                if (Y.isGroup) {
-                    L.node.children.forEach(function (aa) {
-                        aa.children = aa._group
-                    });
-                    Y.parent.children = Y.parent._children;
-                    e();
-                    return
-                }
-                Y = x[Y.canonicalKey];
-                q.forEach(function (aa) {
-                    aa.parent = null;
-                    aa.children = [];
-                    aa._children = [];
-                    aa._group = [];
-                    aa.canonicalKey = aa.key;
-                    aa.xOffset = 0
-                });
-                L.node = Y;
-                L.node.children = j.get(Y.canonicalKey);
-                L.map = {};
-                var Z = 0;
-                L.node.children.forEach(function (ac) {
-                    L.map[ac.key] = true;
-                    ac._children = j.get(ac.key).filter(function (ad) {
-                        return ad.canonicalKey !== Y.canonicalKey
-                    });
-                    ac._children = JSON.parse(JSON.stringify(ac._children));
-                    ac._children.forEach(function (ad) {
-                        ad.canonicalKey = ad.key;
-                        ad.key = ac.key + "-" + ad.key;
-                        L.map[ad.key] = true
-                    });
-                    var aa = ac.key + "-group"
-                        , ab = ac._children.length;
-                    ac._group = [{
-                        isGroup: true,
-                        key: aa + "-group-key",
-                        canonicalKey: aa,
-                        name: ab,
-                        count: ab,
-                        xOffset: 0
-                    }];
-                    L.map[aa] = true;
-                    Z += ab
-                });
-                L.node.children.forEach(function (aa) {
-                    aa.children = Z > 50 ? aa._group : aa._children
-                });
-                window.location.hash = L.node.key;
-                e()
+
+            // sort the data -- TODO: have multiple sort options
+            outer = data.outer;
+            data.outer = Array(outer.length);
+
+
+            var i1 = 0;
+            var i2 = outer.length - 1;
+
+            for (var i = 0; i < data.outer.length; ++i) {
+                if (i % 2 == 1)
+                    data.outer[i2--] = outer[i];
+                else
+                    data.outer[i1++] = outer[i];
             }
-            function n() {
-                k = {
-                    node: null,
-                    map: {}
-                };
-                z()
+
+            console.log(data.outer.reduce(function (a, b) { return a + b.related_links.length; }, 0) / data.outer.length);
+
+
+            // from d3 colorbrewer: 
+            // This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
+            var colors = ["#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf", "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695"]
+            // var colors = ["#001f3f","#0074D9","#7FDBFF","#39CCCC","#3D9970","#2ECC40","#01FF70","#FFDC00","#FF851B","#FF4136","#F012BE"]
+            // var colors = d3.scaleQuantize()
+            //     .domain([100, 200])
+            //     .range(["#5E4FA2", "#3288BD", "#66C2A5", "#ABDDA4", "#E6F598",
+            //         "#FFFFBF", "#FEE08B", "#FDAE61", "#F46D43", "#D53E4F", "#9E0142"]);
+            var color = d3.scale.linear()
+                .domain([10, 220])
+                .range([colors.length - 1, 0])
+                .clamp(true);
+
+            var diameter = 960;
+            var rect_width = 200;
+            var rect_height = 20;
+
+            var link_width = "1px";
+
+            var il = data.inner.length;
+            var ol = data.outer.length;
+
+            var inner_y = d3.scale.linear()
+                .domain([0, il])
+                .range([-(il * rect_height) / 2, (il * rect_height) / 2]);
+
+            mid = (data.outer.length / 2.0)
+            var outer_x = d3.scale.linear()
+                .domain([0, mid, mid, data.outer.length])
+                .range([15, 170, 190, 355]);
+
+            var outer_y = d3.scale.linear()
+                .domain([0, data.outer.length])
+                .range([0, diameter / 2 - 120]);
+
+
+            // setup positioning
+            data.outer = data.outer.map(function (d, i) {
+                d.x = outer_x(i);
+                d.y = diameter / 3;
+                return d;
+            });
+
+            data.inner = data.inner.map(function (d, i) {
+                d.x = -(rect_width / 2);
+                d.y = inner_y(i);
+                return d;
+            });
+
+
+            function get_color(name) {
+                var c = Math.round(color(name));
+                if (isNaN(c))
+                    return '#dddddd';	// fallback color
+
+                return colors[c];
             }
-            function g(X) {
-                if (k.node === X) {
-                    return
-                }
-                k.node = X;
-                k.map = {};
-                k.map[X.key] = true;
-                if (X.key !== X.canonicalKey) {
-                    k.map[X.parent.canonicalKey] = true;
-                    k.map[X.parent.canonicalKey + "-to-" + X.canonicalKey] = true;
-                    k.map[X.canonicalKey + "-to-" + X.parent.canonicalKey] = true
-                } else {
-                    j.get(X.canonicalKey).forEach(function (Y) {
-                        k.map[Y.canonicalKey] = true;
-                        k.map[X.canonicalKey + "-" + Y.canonicalKey] = true
-                    });
-                    H.forEach(function (Y) {
-                        if (k.map[Y.source.canonicalKey] && k.map[Y.target.canonicalKey]) {
-                            k.map[Y.canonicalKey] = true
-                        }
-                    })
-                }
-                z()
+
+            // Can't just use d3.svg.diagonal because one edge is in normal space, the
+            // other edge is in radial space. Since we can't just ask d3 to do projection
+            // of a single point, do it ourselves the same way d3 would do it.  
+
+
+            function projectX(x) {
+                return ((x - 90) / 180 * Math.PI) - (Math.PI / 2);
             }
-            function M() {
-                V();
-                B.selectAll("path").attr("d", function (X) {
-                    return v([[X.x1, X.y1], [X.x1, X.y1], [X.x1, X.y1]])
-                }).transition().duration(w).ease(F).attr("d", function (X) {
-                    return v([[X.x1, X.y1], [X.target.xOffset * s, 0], [X.x2, X.y2]])
-                });
-                D(T.get("episodes"));
-                b(d3.merge([T.get("themes"), T.get("perspectives")]));
-                C([]);
-                m(P);
-                // Q.html('<a href="/the-concept-map/">What\'s this?</a>');
-                n();
-                z()
-            }
-            function e() {
-                var X = r.nodes(L.node);
-                X.forEach(function (Z) {
-                    if (Z.depth === 1) {
-                        Z.y -= 20
-                    }
-                });
-                H = r.links(X);
-                H.forEach(function (Z) {
-                    if (Z.source.type === "episode") {
-                        Z.key = Z.source.canonicalKey + "-to-" + Z.target.canonicalKey
-                    } else {
-                        Z.key = Z.target.canonicalKey + "-to-" + Z.source.canonicalKey
-                    }
-                    Z.canonicalKey = Z.key
-                });
-                V();
-                B.selectAll("path").transition().duration(w).ease(F).attr("d", W);
-                D([]);
-                b(X);
-                C([L.node]);
-                m([]);
-                var Y = "";
-                if (L.node.description) {
-                    Y = L.node.description
-                }
-                Q.html(Y);
-                n();
-                z()
-            }
-            function b(X) {
-                var X = E.selectAll(".node").data(X, u);
-                var Y = X.enter().append("g").attr("transform", function (aa) {
-                    var Z = aa.parent ? aa.parent : {
-                        xOffset: 0,
-                        x: 0,
-                        y: 0
+
+            var diagonal = d3.svg.diagonal()
+                .source(function (d) {
+                    return {
+                        "x": d.outer.y * Math.cos(projectX(d.outer.x)),
+                        "y": -d.outer.y * Math.sin(projectX(d.outer.x))
                     };
-                    return "translate(" + Z.xOffset + ",0)rotate(" + (Z.x - 90) + ")translate(" + Z.y + ")"
-                }).attr("class", "node").on("mouseover", g).on("mouseout", n).on("click", G);
-                Y.append("circle").attr("r", 0);
-                Y.append("text").attr("stroke", "#fff").attr("stroke-width", 4).attr("class", "label-stroke");
-                Y.append("text").attr("font-size", 0).attr("class", "label");
-                X.transition().duration(w).ease(F).attr("transform", function (Z) {
-                    if (Z === L.node) {
-                        return null
-                    }
-                    var aa = Z.isGroup ? Z.y + (7 + Z.count) : Z.y;
-                    return "translate(" + Z.xOffset + ",0)rotate(" + (Z.x - 90) + ")translate(" + aa + ")"
-                });
-                X.selectAll("circle").transition().duration(w).ease(F).attr("r", function (Z) {
-                    if (Z == L.node) {
-                        return 100
-                    } else {
-                        if (Z.isGroup) {
-                            return 7 + Z.count
-                        } else {
-                            return 4.5
-                        }
-                    }
-                });
-                X.selectAll("text").transition().duration(w).ease(F).attr("dy", ".3em").attr("font-size", function (Z) {
-                    if (Z.depth === 0) {
-                        return 20
-                    } else {
-                        return 15
-                    }
-                }).text(function (Z) {
-                    return Z.name
-                }).attr("text-anchor", function (Z) {
-                    if (Z === L.node || Z.isGroup) {
-                        return "middle"
-                    }
-                    return Z.x < 180 ? "start" : "end"
-                }).attr("transform", function (Z) {
-                    if (Z === L.node) {
-                        return null
-                    } else {
-                        if (Z.isGroup) {
-                            return Z.x > 180 ? "rotate(180)" : null
-                        }
-                    }
-                    return Z.x < 180 ? "translate(" + t + ")" : "rotate(180)translate(-" + t + ")"
-                });
-                X.selectAll("text.label-stroke").attr("display", function (Z) {
-                    return Z.depth === 1 ? "block" : "none"
-                });
-                X.exit().remove()
-            }
-            function V() {
-                var X = B.selectAll("path").data(H, u);
-                X.enter().append("path").attr("d", function (Z) {
-                    var Y = Z.source ? {
-                        x: Z.source.x,
-                        y: Z.source.y
-                    } : {
-                            x: 0,
-                            y: 0
-                        };
-                    return W({
-                        source: Y,
-                        target: Y
-                    })
-                }).attr("class", "link");
-                X.exit().remove()
-            }
-            function C(Z) {
-                var ac = d.selectAll(".detail").data(Z, u);
-                var Y = ac.enter().append("g").attr("class", "detail");
-                var ab = Z[0];
-                if (ab && ab.type === "episode") {
-                    var aa = Y.append("a").attr("xlink:href", function (ae) {
-                        return "/" + ae.slug
-                    });
-                    aa.append("text").attr("fill", N).attr("text-anchor", "middle").attr("y", (o + t) * -1).text(function (ae) {
-                        return "EPISODE " + ae.episode
-                    })
-                } else {
-                    if (ab && ab.type === "theme") {
-                        Y.append("text").attr("fill", "#aaa").attr("text-anchor", "middle").attr("y", (o + t) * -1).text("THEME")
-                    } else {
-                        if (ab && ab.type === "perspective") {
-                            var ad = ac.selectAll(".pair").data(A.get(ab.group).filter(function (ae) {
-                                return ae !== ab
-                            }), u);
-                            ad.enter().append("text").attr("fill", "#aaa").attr("text-anchor", "middle").attr("y", function (af, ae) {
-                                return (o + t) * 2 + (ae * (o + t))
-                            }).text(function (ae) {
-                                return "(vs. " + ae.name + ")"
-                            }).attr("class", "pair").on("click", G);
-                            Y.append("text").attr("fill", "#aaa").attr("text-anchor", "middle").attr("y", (o + t) * -1).text("PERSPECTIVE");
-                            ad.exit().remove()
-                        }
-                    }
-                }
-                ac.exit().remove();
-                var X = d.selectAll(".all-episodes").data(Z);
-                X.enter().append("text").attr("text-anchor", "start").attr("x", a / -2 + t).attr("y", c / 2 - t).text("all episodes").attr("class", "all-episodes").on("click", O);
-                X.exit().remove()
-            };
-            // Color scale
-            // function colorScale(){
-            //     var rangeColor;
-            //     rangeColor = ["gray","blue"];
-            //     var colorScale = d3.scale.linear()
-            //         .domain([0, 100])
-            //         .range(rangeColor);
-            //     return colorScale;
-            // };
-            var color = d3.scale.category20();
-
-            function D(Y) {
-                var Y = f.selectAll(".episode").data(Y, u);
-                var X = Y.enter().append("g").attr("class", "episode").on("mouseover", g).on("mouseout", n).on("click", G);
-                X.append("rect").attr("x", U / -2).attr("y", K / -2).attr("width", U).attr("height", K).transition().duration(w).ease(F).attr("x", function (Z) {
-                    return Z.x
-                }).attr("y", function (Z) {
-                    return Z.y
                 })
-                    .attr("fill", function (Z) {
-                        var i = Math.floor(Math.random() * 100);
-                        // return color(i);
-                        return "#000";
-                    });
-                X.append("text").attr("x", function (Z) {
-                    return U / -2 + t
-                }).attr("y", function (Z) {
-                    return K / -2 + o
-                }).attr("fill", "#fff").text(function (Z) {
-                    return Z.name
-                }).transition().duration(w).ease(F).attr("x", function (Z) {
-                    return Z.x + t
-                }).attr("y", function (Z) {
-                    return Z.y + 10
-                });
-                Y.exit().selectAll("rect").transition().duration(w).ease(F).attr("x", function (Z) {
-                    return U / -2
-                }).attr("y", function (Z) {
-                    return K / -2
-                });
-                Y.exit().selectAll("text").transition().duration(w).ease(F).attr("x", function (Z) {
-                    return U / -2 + t
-                }).attr("y", function (Z) {
-                    return K / -2 + o
-                });
-                Y.exit().transition().duration(w).remove()
-            }
-            function m(Y) {
-                var X = f.selectAll("path").data(Y);
-                X.enter().append("path").attr("d", function (Z) {
-                    return v([[Z.x1, Z.y1], [Z.x1, Z.y1], [Z.x1, Z.y1]])
-                }).attr("stroke", "#000").attr("stroke-width", 1.5).transition().duration(w).ease(F).attr("d", function (Z) {
-                    return v([[Z.x1, Z.y1], [Z.xx, Z.yy], [Z.x2, Z.y2]])
-                });
-                X.exit().remove()
-            }
-
-
-            // var color = d3.scale.category20();
-
-            function z() {
-                f.selectAll("rect").attr("fill", function(X) {
-                    // var color = d3.scale.category20();
-                    var i = Math.floor(Math.random() * 10);
-                    return l(X, "#000", N, "#000");
-                    // return l(X, color(i*10), N, "#000");
-                });
-                B.selectAll("path").attr("stroke", function (X) {
-                    return l(X, "#aaa", N, "#aaa")
-                }).attr("stroke-width", function (X) {
-                    return l(X, "1.5px", "2.5px", "1px")
-                }).attr("opacity", function (X) {
-                    return l(X, 0.4, 0.75, 0.3)
-                }).sort(function (Y, X) {
-                    if (!k.node) {
-                        return 0
-                    }
-                    var aa = k.map[Y.canonicalKey] ? 1 : 0
-                        , Z = k.map[X.canonicalKey] ? 1 : 0;
-                    return aa - Z
-                });
-                E.selectAll("circle").attr("fill", function (X) {
-                    if (X === L.node) {
-                        return "#000"
-                    } else {
-                        if (X.type === "theme") {
-                            return l(X, "#666", N, "#000")
-                        } else {
-                            if (X.type === "perspective") {
-                                return "#fff"
-                            }
-                        }
-                    }
-                    return l(X, "#000", N, "#999")
-                }).attr("stroke", function (X) {
-                    if (X === L.node) {
-                        return l(X, null, N, null)
-                    } else {
-                        if (X.type === "theme") {
-                            return "#000"
-                        } else {
-                            if (X.type === "perspective") {
-                                return l(X, "#000", N, "#000")
-                            }
-                        }
-                    }
-                    return null
-                }).attr("stroke-width", function (X) {
-                    if (X === L.node) {
-                        return l(X, null, 2.5, null)
-                    } else {
-                        if (X.type === "theme" || X.type === "perspective") {
-                            return 1.5
-                        }
-                    }
-                    return null
-                });
-                E.selectAll("text.label").attr("fill", function (X) {
-                    return (X === L.node || X.isGroup) ? "#fff" : l(X, "#000", N, "#999")
+                .target(function (d) {
+                    return {
+                        "x": d.inner.y + rect_height / 2,
+                        "y": d.outer.x > 180 ? d.inner.x : d.inner.x + rect_width
+                    };
                 })
-            }
-            function p(X) {
-                return X.toLowerCase().replace(/[ .,()]/g, "-")
-            }
-            function u(X) {
-                return X.key
-            }
-            function l(X, aa, Z, Y) {
-                if (k.node === null) {
-                    return aa
+                .projection(function (d) { return [d.y, d.x]; });
+
+
+            var svg = d3.select(".chart").append("svg")
+                .attr("width", diameter)
+                .attr("height", diameter)
+                .append("g")
+                .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+
+
+            // links
+            var link = svg.append('g').attr('class', 'links').selectAll(".link")
+                .data(data.links)
+                .enter().append('path')
+                .attr('class', 'link')
+                .attr('id', function (d) { return d.id })
+                .attr("d", diagonal)
+                .attr('stroke', function (d) { return "gray"/*get_color(d.inner.name);*/ })
+                .attr('stroke-width', link_width);
+
+            // outer nodes
+
+            var onode = svg.append('g').selectAll(".outer_node")
+                .data(data.outer)
+                .enter().append("g")
+                .attr("class", "outer_node")
+                .attr("transform", function (d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+                .on("mouseover", mouseover)
+                .on("mouseout", mouseout);
+
+            onode.append("circle")
+                .attr('id', function (d) { return d.id })
+                .attr("r", 6.5);
+
+            onode.append("circle")
+                .attr('r', 20)
+                .attr('visibility', 'hidden');
+
+            onode.append("text")
+                .attr('id', function (d) { return d.id + '-txt'; })
+                .attr("dy", ".31em")
+                .attr("text-anchor", function (d) { return d.x < 180 ? "start" : "end"; })
+                .attr("transform", function (d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
+                .text(function (d) { return d.name; });
+
+            // inner nodes
+
+            var inode = svg.append('g').selectAll(".inner_node")
+                .data(data.inner)
+                .enter().append("g")
+                .attr("class", "inner_node")
+                .attr("transform", function (d, i) { return "translate(" + d.x + "," + d.y + ")" })
+                .on("mouseover", mouseover)
+                .on("mouseout", mouseout)
+                .append("a")
+                .attr("target", "_blank")
+                .attr("href", function (d) { return "https://" + d.content; });
+
+            inode.append('rect')
+                .attr('width', rect_width)
+                .attr('height', rect_height)
+                .attr('id', function (d) { return d.id; })
+                .attr('fill', function (d) { return get_color(d.name); });
+
+            inode.append("text")
+                .attr('id', function (d) { return d.id + '-txt'; })
+                .attr('text-anchor', 'middle')
+                .attr("transform", "translate(" + rect_width / 2 + ", " + rect_height * .75 + ")")
+                .text(function (d) { return d.content; });
+
+            // need to specify x/y/etc
+
+            d3.select(self.frameElement).style("height", diameter - 150 + "px");
+
+            function mouseover(d) {
+                // bring to front
+                d3.selectAll('.links .link').sort(function (a, b) { return d.related_links.indexOf(a.id); });
+
+                for (var i = 0; i < d.related_nodes.length; i++) {
+                    d3.select('#' + d.related_nodes[i]).classed('highlight', true);
+                    d3.select('#' + d.related_nodes[i] + '-txt').attr("font-weight", 'bold');
                 }
-                return k.map[X.key] ? Z : aa
+
+                for (var i = 0; i < d.related_links.length; i++)
+                    d3.select('#' + d.related_links[i]).attr('stroke-width', '4px').attr('stroke', "#0da4d3");
             }
-        }
-        )();
+
+            function mouseout(d) {
+                for (var i = 0; i < d.related_nodes.length; i++) {
+                    d3.select('#' + d.related_nodes[i]).classed('highlight', false);
+                    d3.select('#' + d.related_nodes[i] + '-txt').attr("font-weight", 'normal');
+                }
+
+                for (var i = 0; i < d.related_links.length; i++)
+                    d3.select('#' + d.related_links[i]).attr('stroke-width', link_width).attr('stroke', 'gray');
+            }
+        };
+
+        $(document).ready(function () {
+            document.getElementById('{{ data[0]["Claim_ID"] }}').click();
+        });
     </script>
 </body>
 <script type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script>
@@ -809,7 +562,11 @@
     // var nodes = '{{  data[0]["Google Results"]["nodes"] }}';
     // var linkNodes = '{{ data[0]["Google Results"]["links"] }}';
     // var results = '{{  data[0]["Google Results"] }}';
+    // var data = '{{  data[0]["Google Results"] | safe}}';
+    // data = data.replace(/\\n/g, "\\n");
     var results = JSON.parse('{{  data[0]["Google Results"] | safe}}');
+    // var results = JSON.parse(data);
+
     var nodes = results.nodes;
     var linkNodes = results.links;
 
@@ -879,6 +636,5 @@
         .text(function (d) { return d.label; });
     // });
 </script>
-
 
 </html>
