@@ -113,16 +113,27 @@
         </div>
         <div id="block-content">
             <div>
-                <div id="title-list-claim">Claims</div>
+                <div id="title-list-claim">
+                    <span>Claims</span>
+                    <input type="text" id="input-for-claim" onkeyup="searchClaim()" placeholder="Search for claims.."
+                        title="Type in a name">
+                </div>
                 <div id="block-list-claim">
-                    <ul>
+                    <ul id="list-claim">
                         {% for claim in data %}
-                        <li onclick="selectClaim({{ loop.index }},{{ claim }})" id="{{ claim['Claim_ID'] }}">
-                            <div class="icon-credibility">
+                        <li onclick="selectClaim({{ loop.index }},{{ claim }});drawRelation({{ claim }})"
+                            id="{{ claim['Claim_ID'] }}">
+                            <!-- <div class="icon-credibility">
                                 <i class="fa fa-check-circle" aria-hidden="true" style="font-size: 24px;"></i>
-                            </div>
+                            </div> -->
                             <div>
-                                {{ claim["Claim"] }}
+                                <span class="no-claim">{{ loop.index }}. </span> {{ claim["Claim"] }}
+                            </div>
+                            <div class="container">
+                                <div class="progress2 progress-moved">
+                                    <div class="progress-bar2">
+                                    </div>
+                                </div>
                             </div>
                         </li>
                         {% endfor %}
@@ -131,15 +142,25 @@
             </div>
 
             <div class="detail content">
-                <div id="header-claim">
+                <!-- <div id="header-claim">
                     <span id="no-claim">1.</span>
                     <span id="title-claim">{{ data[0]["Claim"] }}</span>
-                </div>
-                <div style="height: 470px;">
+                </div> -->
+                <div style="height: 530px;">
                     <div class="tab">
                         <button class="tablinks" onclick="openCity(event,'info-claim')" id="defaultOpen">Detail</button>
                         <button class="tablinks" onclick="openCity(event, 'relations')">Relations</button>
                         <button class="tablinks" onclick="openCity(event, 'sources')">Sources</button>
+                        <div>
+                            <form method=post action="/process">
+                                <input type="hidden" name="claimId" value="{{ data[0].Claim_ID }}">
+                                <!-- <div class="validation-claim"> -->
+                                <input type=submit style="margin-right: 30px;" class="btn-validation" name="Credibility"
+                                    value="Non-Credibility">
+                                <input type=submit class="btn-validation" name="Credibility" value="Credibility">
+                                <!-- </div> -->
+                            </form>
+                        </div>
                     </div>
                     <div id="info-claim" class="tabcontent item-tab">
                         <!-- <span onclick="this.parentElement.style.display='none'" class="topright">&times</span> -->
@@ -211,25 +232,21 @@
                     </div>
 
                     <div id="sources" class="tabcontent item-tab">
-                        <div class="chart" style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;"></div>
+                        <div class="chart"
+                            style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
+                        </div>
                     </div>
 
-                    <div>
+                    <!-- <div>
                         <form method=post action="/process">
                             <input type="hidden" name="claimId" value="{{ data[0].Claim_ID }}">
-                            <!-- <div id="radio-credibility" class="validation-claim"> -->
-                            <!-- <input type="radio" name="cred" value="1"> Credibility -->
-                            <!-- <input type="radio" name="cred" value="0"> Non-Credibility -->
-                            <!-- </div> -->
                             <div class="validation-claim">
                                 <input type=submit class="button btn-validation" name="Credibility" value="Credibility">
                                 <input type=submit class="button btn-validation" name="Credibility"
                                     value="Non-Credibility">
-                                <!-- <button type="button" class="button btn-validation">Next</button> -->
-                                <!-- <button type="button" class="button btn-validation">Log</button> -->
                             </div>
                         </form>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -247,13 +264,12 @@
 
     <script>
 
-
         function drawRelation(claim) {
             d3.select("svg").remove();
 
             // var data = JSON.parse('{{  data[0]["Sources Relation"] | safe}}');
             var sources = claim["Sources Relation"];
-            sources = sources.replace(/\\n/g, "\\n");
+            // sources = sources.replace(/\\n/g, "\\n");
             // var data = JSON.parse(claim["Sources Relation"]);
             var data = JSON.parse(sources);
 
@@ -345,7 +361,9 @@
                 .range([colors.length - 1, 0])
                 .clamp(true);
 
-            var diameter = 960;
+            // var diameter = 960;
+            var diameter = 800;
+
             var rect_width = 200;
             var rect_height = 20;
 
