@@ -172,3 +172,21 @@ def getSourceRelation(sources,df):
 
 def inferrence(claimId,cred):
     print(claimId,cred)
+
+# def getDataFrame(filename):
+#     df_filename = os.path.join(current_app._static_folder,'data',filename[:-4] + 'csv')
+#     df_gg_filename = os.path.join(current_app._static_folder,'data',filename[:-5] + '_google_results.csv')   
+#     try:
+#         df = pd.read_csv(df_filename,encoding='utf-8')
+#         df_gg = pd.read_csv(df_gg_filename,encoding='utf-8')
+#         df = df.fillna('')
+#         df_gg = df_gg.fillna('')
+#     except:
+#         df,df_gg = generateDataframe(filename)
+#     return df,df_gg
+
+
+# def getAllSources(filename):
+#     df_claim,df_gg = getDataFrame(filename)
+#     sources = df["domain"].unique()
+#     print(sources.shape)

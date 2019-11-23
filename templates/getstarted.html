@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script type="text/javascript" src="/js/fact.js"></script>
+</head>
+<body>
+    <div class="grid-container">
+        <div class="header">
+            <div class="grid-header">
+                <div id="logo-griffith">
+                    <a href="/">
+                        <div>Fact Checking</div>
+                    </a>
+                </div>
+                <div id="select-file" class="header-content">
+                    <form method=post action="/upload" enctype=multipart/form-data> <input type="file" name="file"
+                        id="file" class="inputfile" data-multiple-caption="{count} files selected" multiple />
+                    <input type=submit value=Upload id="upload-btn">
+                    </form>
+                </div>
+                <div class="header-content" style="text-align: right;">
+                    <button class="button">
+                        <a href="/download" style="color: white">Take Snapshot</a>
+                    </button>
+                    <!-- <a class="button" href="/download">Take Snapshot</a> -->
+                    <button class="button" id="myBtn">Optimize Budget Allocation</button>
+                    <button class="button">Stop Feedback</button>
+                </div>
+            </div>
+        </div>
+</body>
+</html>

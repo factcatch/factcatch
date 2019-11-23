@@ -19,7 +19,7 @@ h2 {
 }
 
 #logo-griffith > a > div {
-  font-size: 35px;
+  font-size: 25px;
   /* padding: 5px; */
   padding-left: 0px;
   font-weight: bold;
@@ -91,11 +91,12 @@ a {
 }
 
 #select-file{
-  padding: 18px;
+  padding: 10px;
+  /* margin-top: 4px; */
 }
 
 .header-content {
-  padding: 18px;
+  padding: 8px;
 }
 
 .header-content > button {
@@ -103,7 +104,7 @@ a {
 }
 
 #logo-griffith {
-  padding: 10px;
+  padding: 8px;
   padding-left: 0px;
   margin-left: 0px;
 }
@@ -183,7 +184,7 @@ a {
 }
 
 #block-claim {
-  height: 560px;
+  height: 580px;
   /* overflow: auto; */
 }
 #block-claim2 {
@@ -381,7 +382,7 @@ th i {
 .topright:hover {color: red;}
 
 .item-tab {
-  height: 520px;
+  height: 540px;
 }
 
 ul {
@@ -483,27 +484,76 @@ li > div {
   }
 }
 
-
-/* .inputfile {
-	width: 0.1px;
-	height: 0.1px;
-	opacity: 0;
-	overflow: hidden;
-	position: absolute;
-	z-index: -1;
+svg {
+  font: 12px sans-serif;
 }
 
-.inputfile + label {
-  font-size: 18px;
-  font-weight: 300;
+text {
+  pointer-events: none;
+}
+
+.inner_node rect {
+  pointer-events: all;
+}
+
+.inner_node rect.highlight {
+  stroke: #315B7E;
+  stroke-width: 2px;
+}
+
+.outer_node circle {
+  /* fill: #fff; */
+  /* fill: #0da4d3; */
+  fill: #666;
+  /* stroke: steelblue; */
+  stroke: black;
+  stroke-width: 1.5px;
+  pointer-events: all;
+}
+
+.outer_node circle.highlight {
+  stroke: #315B7E;
+  stroke-width: 2px;
+}
+
+.link {
+  fill: none;
+}
+
+
+.collapsible {
+  background-color: #777;
   color: white;
-  /* background-color: black; */
-  display: inline-block;
   cursor: pointer;
-  padding: 10px;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
 }
 
-.inputfile:focus + label,
-.inputfile + label:hover {
-  background-color: brown;
+.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.content-collapsible {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+
+
+/* Remove IE arrow */
+/* select::-ms-expand {
+  display: none;
+} */
+/* Custom Select */
+/* select {
+  width: 20px;
+  height: 20px;
+  background: #a9a9a9;
+  overflow: hidden;
 } */
