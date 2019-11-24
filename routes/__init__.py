@@ -1,6 +1,7 @@
-from . import claim,upload
+from . import claim,upload,source
 
 __all__ = [
     "claim",
-    "upload"
+    "upload",
+    "source"
 ]

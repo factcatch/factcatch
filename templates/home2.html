@@ -73,14 +73,14 @@
             <div>
                 <div id="title-list-claim">
                     <!-- <span>Claims</span> -->
-                    <select name="mode">
-                        <option value="claims">Claims</option>
-                        <option value="sources">Sources</option>
+                    <select name="mode" onchange="selectMode(this)">
+                        <option value="block-list-claim" selected>Claims</option>
+                        <option value="block-list-source">Sources</option>
                     </select>
                     <input type="text" id="input-for-claim" onkeyup="searchClaim()" placeholder="Search for claims.."
                         title="Type in a name">
                 </div>
-                <div id="block-list-claim">
+                <div id="block-list-claim" class="listcontent item-select">
                     <ul id="list-claim">
                         {% for claim in data %}
                         <li onclick="selectClaim({{ loop.index }},{{ claim }});drawRelation({{ claim }})"
@@ -97,6 +97,30 @@
                         </li>
                         {% endfor %}
                     </ul>
+                </div>
+                <div id="block-list-source" class="listcontent item-select">
+                    {%for source in sources%}
+                    <div class="source-item">{{ source[0] }}</div>
+                    <div class="content-source-item">
+                        <ul id="list-claim">
+                            {% for claim in source[1] %}
+                            <li onclick="selectClaim({{ loop.index }},{{ claim }});drawRelation({{ claim }})"
+                                id="{{ claim.id }}">
+                                <div style="font-size: 12px;">
+                                    <span class="no-claim" style="font-size: 12px;">{{ loop.index }}. </span>
+                                    {{ claim.claim }}
+                                </div>
+                                <div class="container">
+                                    <div class="progress2 progress-moved">
+                                        <div class="progress-bar2" style="height: 2px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -178,44 +202,74 @@
                         </div>
                     </div>
                 </div>
+                <div id="my_dataviz"></div>
             </div>
         </div>
     </div>
-    <h2>Animated Collapsibles</h2>
-
-    <p>A Collapsible:</p>
-    <button class="collapsible">Open Collapsible</button>
-    <div class="content-collapsible">
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-            ea commodo consequat.</p>
-    </div>
-
-    <p>Collapsible Set:</p>
-    <button class="collapsible">Open Section 1</button>
-    <div class="content-collapsible">
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-            ea commodo consequat.</p>
-    </div>
-    <button class="collapsible">Open Section 2</button>
-    <div class="content-collapsible">
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-            ea commodo consequat.</p>
-    </div>
-    <button class="collapsible">Open Section 3</button>
-    <div class="content-collapsible">
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-            ea commodo consequat.</p>
-    </div>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.min.js') }}"></script>
-    <!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
+    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.min.js') }}"></script> -->
+    <script src="https://d3js.org/d3.v3.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/conversation.min.js') }}"></script> -->
     <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script>
 
+        // set the dimensions and margins of the graph
+        var margin = { top: 30, right: 30, bottom: 30, left: 30 },
+            width = 450 - margin.left - margin.right,
+            height = 450 - margin.top - margin.bottom;
+
+        // append the svg object to the body of the page
+        var svg = d3.select("#my_dataviz")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        // Labels of row and columns
+        var myGroups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+        var myVars = ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10"]
+
+        // Build X scales and axis:
+        var x = d3.scaleBand()
+            .range([0, width])
+            .domain(myGroups)
+            .padding(0.01);
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+
+        // Build X scales and axis:
+        var y = d3.scaleBand()
+            .range([height, 0])
+            .domain(myVars)
+            .padding(0.01);
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        // Build color scale
+        var myColor = d3.scaleLinear()
+            .range(["white", "#69b3a2"])
+            .domain([1, 100])
+
+        //Read the data
+        d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv", function (data) {
+
+            svg.selectAll()
+                .data(data, function (d) { return d.group + ':' + d.variable; })
+                .enter()
+                .append("rect")
+                .attr("x", function (d) { return x(d.group) })
+                .attr("y", function (d) { return y(d.variable) })
+                .attr("width", x.bandwidth())
+                .attr("height", y.bandwidth())
+                .style("fill", function (d) { return myColor(d.value) })
+
+        })
+
+    </script>
     <script>
         $(document).ready(function () {
             document.getElementById('{{ data[0].id }}').click();

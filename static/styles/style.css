@@ -70,6 +70,12 @@ a {
   overflow: auto;
 }
 
+#block-list-source{
+  padding: 0px;
+  height: 550px;
+  overflow: auto;
+}
+
 #block-content {
   display: grid;
   grid-template-columns: 350px auto;
@@ -371,6 +377,18 @@ th i {
   border-top: none;
 }
 
+/* Style the list content */
+.listcontent {
+  display: none;
+  /* padding: 6px 12px; */
+  /* border: 1px solid #ccc; */
+  border-top: none;
+}
+
+.item-select {
+
+}
+
 
 /* Style the close button */
 .topright {
@@ -408,6 +426,8 @@ li > div {
   /* min-height: 50px; */
   font-size: 14px;
 }
+
+
 
 #title-list-claim {
   background-color: brown;
@@ -521,39 +541,41 @@ text {
 }
 
 
-.collapsible {
-  background-color: #777;
-  color: white;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  border: none;
-  text-align: left;
-  outline: none;
-  font-size: 15px;
+.source-list {
+  min-height: 20px;
+  padding: 0px;
 }
 
-.active, .collapsible:hover {
+.text-source {
+  font-size: 14px;
+  /* padding: 4px; */
+  padding-left: 20px;
+  /* background-color: #315B7E; */
+}
+
+.source-item {
+  background-color: #f46d43;
+  color: white;
+  cursor: pointer;
+  padding: 5px 0px 5px 20px;
+  /* width: 100%; */
+  border: none;
+  text-align: left;
+  /* outline: none; */
+  font-size: 14px;
+  border-bottom: 1px solid white;
+}
+
+.active, .source-item:hover {
   background-color: #555;
 }
 
-.content-collapsible {
-  padding: 0 18px;
+.content-source-item {
+  /* padding: 0 18px; */
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.2s ease-out;
   background-color: #f1f1f1;
+  font-size: 12px;
 }
 
-
-/* Remove IE arrow */
-/* select::-ms-expand {
-  display: none;
-} */
-/* Custom Select */
-/* select {
-  width: 20px;
-  height: 20px;
-  background: #a9a9a9;
-  overflow: hidden;
-} */
