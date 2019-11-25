@@ -70,7 +70,7 @@ a {
   overflow: auto;
 }
 
-#block-list-source{
+.content-source-item{
   padding: 0px;
   height: 550px;
   overflow: auto;
@@ -403,7 +403,7 @@ th i {
   height: 540px;
 }
 
-ul {
+#block-list-claim > ul {
   list-style: none;
   /* border: 1px solid #d0d0d0; */
   width: 350px;
@@ -412,7 +412,7 @@ ul {
   margin-top: 0px;
 }
 
-li {
+#block-list-claim > ul > li {
   padding : 10px 10px;
   min-height: 60px;
   border-bottom: 1px solid #ccc;
@@ -420,7 +420,7 @@ li {
   /* grid-template-columns: 30px auto; */
 }
 
-li > div {
+#block-list-claim > ul > li > div {
   width: 100%;
   padding: 5px 0px 10px 0px;
   /* min-height: 50px; */
@@ -554,20 +554,22 @@ text {
 }
 
 .source-item {
-  background-color: #f46d43;
-  color: white;
+  background-color: white;
+  color: black;
   cursor: pointer;
-  padding: 5px 0px 5px 20px;
+  /* padding: 15px 20px 15px 20px; */
+  padding: 10px 15px;
   /* width: 100%; */
   border: none;
   text-align: left;
   /* outline: none; */
   font-size: 14px;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid #ccc;
 }
 
+
 .active, .source-item:hover {
-  background-color: #555;
+  background-color: #ccc;
 }
 
 .content-source-item {
@@ -579,3 +581,49 @@ text {
   font-size: 12px;
 }
 
+.rect-claim {
+  /* padding: 5px; */
+  background-color: yellow;
+  min-width: 10px;
+  height: 10px;
+  float: left;
+  margin-right: 10px;
+}
+
+#block-list-source >  ul {
+  list-style: none;
+  width: 350px;
+  padding: 0px;
+  height: 100%;
+  margin-top: 0px;
+}
+
+#block-list-source >  ul > li {
+  padding : 10px 10px;
+  min-height: 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+#block-list-source >  ul > li > div {
+  width: 100%;
+  /* padding: 5px 0px 10px 0px; */
+  font-size: 14px;
+}
+
+.title-source {
+  /* color: blue; */
+}
+
+.complete-source {
+  /* padding: 10px 5px; */
+}
+
+#heatmap-sources {
+  height: 450px;
+  overflow: auto;
+}
+
+#overview-sources {
+  padding: 0px 20px;
+  border-left: 2px solid brown;
+}
