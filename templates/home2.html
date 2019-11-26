@@ -213,11 +213,11 @@
                     </div>
                 </div>
             </div>
-                <div style="height: 580px;" id="overview-sources" style="display: none;">
-                    <h3>Heatmap Sources</h3>
-                    <div id="heatmap-sources">
-                    </div>
+            <div style="height: 580px;" id="overview-sources" style="display: none;">
+                <h3>Heatmap Sources</h3>
+                <div id="heatmap-sources">
                 </div>
+            </div>
 
             <!-- </div> -->
         </div>
@@ -237,7 +237,7 @@
             // width = 450 - margin.left - margin.right,
             // height = 450 - margin.top - margin.bottom;
             width = 1000 - margin.left - margin.right,
-            height = 600 - margin.top - margin.bottom;
+            height = 5000 - margin.top - margin.bottom;
 
         // width = 600;
         // height = 1000;
@@ -295,6 +295,9 @@
                 .range([totalHeightCell, 0])
                 .domain(sources)
                 .padding(0.05);
+
+            console.log(sources);
+            console.log("y",y.domain());
             svg.append("g")
                 .style("font-size", 13)
                 .call(d3.axisLeft(y).tickSize(0))
@@ -304,8 +307,10 @@
             // var myColor = d3.scaleSequential()
             //     .interpolator(d3.interpolateInferno)
             //     .domain([1, 100])
-            var myColor = d3.scaleOrdinal().domain(cells)
-                .range(["#c0392b", "#eea303", "#f1c40f", "#64bb5d", "#16a085", "#0e83cd", "#702fa8"])
+            // var myColor = d3.scaleOrdinal().domain(cells)
+            //     .range(["#c0392b", "#eea303", "#f1c40f", "#64bb5d", "#16a085", "#0e83cd", "#702fa8"])
+            var myColor = d3.scaleLinear().domain([1, 10])
+                .range(["#a9a9a9", "rgb(237,105,37)"])
             // create a tooltip
             // var tooltip = d3.select("#heatmap-sources")
             var tooltip = d3.select("#overview-sources")
@@ -317,7 +322,7 @@
                 .style("border-width", "2px")
                 .style("border-radius", "5px")
                 .style("padding", "5px")
-                .style("margin-top","20px")
+                .style("margin-top", "20px")
 
             // Three function that change the tooltip when user hover / move / leave a cell
             var mouseover = function (d) {
@@ -348,12 +353,12 @@
                 .append("rect")
                 .attr("x", function (d) { return x(d.index) })
                 .attr("y", function (d) { return y(d.source) })
-                .attr("rx", 4)
-                .attr("ry", 4)
+                // .attr("rx", 4)
+                // .attr("ry", 4)
                 .attr("width", x.bandwidth())
                 .attr("height", y.bandwidth())
                 .style("fill", function (d) { return myColor(d.credibility_claim) })
-                .style("stroke-width", 4)
+                .style("stroke-width", 1)
                 .style("stroke", "none")
                 .style("opacity", 0.8)
                 .on("mouseover", mouseover)

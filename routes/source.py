@@ -18,4 +18,9 @@ def getAllSources2():
 def getSourcesWithClaim():
     sources = SourceServices.getSourcesWithClaim()
     return jsonify(sources)
+
+@app.route("/source/sort",methods=['GET'])
+def getSourceDesc():
+    sources = SourceServices.getSourceDesc()
+    return jsonify(sources)
     # return jsonify({"success":True})
