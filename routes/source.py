@@ -24,3 +24,8 @@ def getSourceDesc():
     sources = SourceServices.getSourceDesc()
     return jsonify(sources)
     # return jsonify({"success":True})
+
+@app.route("/source/claim", methods=["GET"])
+def getSourceClaim():
+    sources = SourceServices.getSourceClaim()
+    return jsonify(sources)

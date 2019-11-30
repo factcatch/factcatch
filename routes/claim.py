@@ -16,4 +16,4 @@ def getAllClaim():
     sources = json.loads(sources)
     if len(claims) == 0:
         return render_template("getstarted.html")
-    return render_template("home2.html",data=claims,sources=sources)
+    return render_template("home3.html",data=claims,sources=sources)

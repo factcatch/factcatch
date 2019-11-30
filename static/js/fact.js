@@ -15,7 +15,11 @@ function readMore() {
   }
 }
 
-function selectClaim(index, claim) {
+function selectClaim(index) {
+  drawRelation(index);
+  // console.log("Select claim data",claims[index]);
+  // console.log("select map claim",index);
+  var claim = claims[index];
   var itemClicked = document.getElementsByClassName("row-clicked");
   if (itemClicked.length != 0) {
     itemClicked.item(0).classList.remove("row-clicked");
@@ -70,8 +74,23 @@ function openCity(evt, cityName) {
   evt.currentTarget.className += " active";
 }
 
-function drawRelation(claim) {
-  d3.select(".chart > svg").remove();
+function openTabClaim(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabclaims");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinkclaims");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+function drawRelation(index) {
+  var claim = claims[index];
+  d3.select(".chart-sources-claim > svg").remove();
 
   var sources = claim.documents;
   var data = sources; //JSON.parse(sources);
@@ -250,7 +269,7 @@ function drawRelation(claim) {
     });
 
   var svg = d3
-    .select(".chart")
+    .select(".chart-sources-claim")
     .append("svg")
     .attr("width", diameter)
     .attr("height", diameter)
@@ -427,53 +446,54 @@ function sourceClick() {
   }
 }
 
-function selectMode(mode){
-    var i, tabcontent, tablinks;
-    tabcontent = document.getElementsByClassName("listcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
-    }
-    // tablinks = document.getElementsByClassName("tablinks");
-    // for (i = 0; i < tablinks.length; i++) {
-    //   tablinks[i].className = tablinks[i].className.replace(" active", "");
-    // }
-    document.getElementById(mode.value).style.display = "block";
-    // evt.currentTarget.className += " active";
+function selectMode(mode) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("listcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  // tablinks = document.getElementsByClassName("tablinks");
+  // for (i = 0; i < tablinks.length; i++) {
+  //   tablinks[i].className = tablinks[i].className.replace(" active", "");
+  // }
+  document.getElementById(mode.value).style.display = "block";
+  // evt.currentTarget.className += " active";
 }
 
 function changeMode(mode) {
   selectMode(mode.value);
-//   var contentList = d3
-//     .select("#block-list-claim > ul")
-//     .selectAll("li")
-//     .remove();
-//   d3.select("#block-list-claim > ul")
-//     .selectAll("li")
-//     .data(["facebook.com", "google.com", "youtube.com", "twitter.com"])
-//     .enter()
-//     .append("li")
-//     .attr("class", "source-list")
-//     .append("div")
-//     .attr("class", "source-item")
-//     .style("background-color", function(d) {
-//       return randomColor();
-//     })
-//     .text(function(d) {
-//       return d;
-//     })
-//     .on("click", sourceClick);
-//   d3.selectAll("#block-list-claim > ul > li")
-//     .append("div")
-//     .attr("class", "content-source-item")
-//     .selectAll("div")
-//     .data(["huy","thuy","hoang","yen"])
-//     .enter()
-//     .append("div")
-//     .text(function(d){return d;});
+  //   var contentList = d3
+  //     .select("#block-list-claim > ul")
+  //     .selectAll("li")
+  //     .remove();
+  //   d3.select("#block-list-claim > ul")
+  //     .selectAll("li")
+  //     .data(["facebook.com", "google.com", "youtube.com", "twitter.com"])
+  //     .enter()
+  //     .append("li")
+  //     .attr("class", "source-list")
+  //     .append("div")
+  //     .attr("class", "source-item")
+  //     .style("background-color", function(d) {
+  //       return randomColor();
+  //     })
+  //     .text(function(d) {
+  //       return d;
+  //     })
+  //     .on("click", sourceClick);
+  //   d3.selectAll("#block-list-claim > ul > li")
+  //     .append("div")
+  //     .attr("class", "content-source-item")
+  //     .selectAll("div")
+  //     .data(["huy","thuy","hoang","yen"])
+  //     .enter()
+  //     .append("div")
+  //     .text(function(d){return d;});
 }
 
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
+document.getElementById("defaultDetails").click();
 
 var coll = document.getElementsByClassName("source-item");
 var i;
@@ -490,3 +510,55 @@ var i;
 //     }
 //   });
 // }
+
+var chartImg = false;
+$("#toggle-overview").click(function() {
+  $("#chart-overview").toggle();
+  chartImg = !chartImg;
+  if (chartImg) {
+    $("#overview").css({ height: "70px" });
+    $("#analysis").css({
+      "grid-column-start": "1",
+      "grid-column-end": "3",
+      "grid-template-columns": "auto auto auto auto",
+      padding: "0px",
+      "margin-top" : "0px",
+      height: ""
+    });
+    // $("#toggle-overview").css({"margin-top":"15px"});
+    document.getElementById("icon-toggle-overview").classList.remove("fa-chevron-up");
+    document.getElementById("icon-toggle-overview").classList.add("fa-chevron-down");
+  } else {
+    $("#overview").css({ height: "" });
+    $("#analysis").css({
+      "grid-column-start": "",
+      "grid-column-end": "",
+      "grid-template-columns": "auto auto",
+      height: "200px",
+      "margin-top" : "80px",
+    });
+    // $("#toggle-overview").css({"margin-top":"220px"});
+    document.getElementById("icon-toggle-overview").classList.remove("fa-chevron-down");
+    document.getElementById("icon-toggle-overview").classList.add("fa-chevron-up");
+  }
+});
+function filterSource() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("input-sourceFilter");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("heatmap-sources");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[0];
+      if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+          } else {
+              tr[i].style.display = "none";
+          }
+      }
+  }
+}
+
+// chart for overview checking
