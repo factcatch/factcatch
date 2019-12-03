@@ -196,7 +196,7 @@ function drawRelation(index) {
     .clamp(true);
 
   // var diameter = 960;
-  var diameter = 800;
+  var diameter = 1960;
 
   var rect_width = 200;
   var rect_height = 20;
@@ -516,7 +516,7 @@ $("#toggle-overview").click(function() {
   $("#chart-overview").toggle();
   chartImg = !chartImg;
   if (chartImg) {
-    $("#overview").css({ height: "70px" });
+    $("#overview").css({ height: "90px" });
     $("#analysis").css({
       "grid-column-start": "1",
       "grid-column-end": "3",
@@ -528,6 +528,7 @@ $("#toggle-overview").click(function() {
     // $("#toggle-overview").css({"margin-top":"15px"});
     document.getElementById("icon-toggle-overview").classList.remove("fa-chevron-up");
     document.getElementById("icon-toggle-overview").classList.add("fa-chevron-down");
+    $("#toggle-overview").css({ top: "20px" });
   } else {
     $("#overview").css({ height: "" });
     $("#analysis").css({
@@ -537,6 +538,7 @@ $("#toggle-overview").click(function() {
       height: "200px",
       "margin-top" : "80px",
     });
+    $("#toggle-overview").css({ top: "270px" });
     // $("#toggle-overview").css({"margin-top":"220px"});
     document.getElementById("icon-toggle-overview").classList.remove("fa-chevron-down");
     document.getElementById("icon-toggle-overview").classList.add("fa-chevron-up");

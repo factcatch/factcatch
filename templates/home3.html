@@ -284,53 +284,54 @@
                 <div id="analysis">
                     <div class="item-analysis">
                         <div style="text-align: right;" class="icon-item-analysis">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            <img src="{{ url_for('static', filename='img/listing.png') }}" style="opacity: 0.5;">
                         </div>
                         <div style="text-align: left;" class="detail-item-analysis">
                             <div class="title-detail-item-analysis">
-                                Total Claims
+                                #Claims
                             </div>
-                            <div class="value-detail-item-analysis">
+                            <div class="claims  total-claim-detail">
                                 4,746
                             </div>
                         </div>
                     </div>
                     <div class="item-analysis">
                         <div style="text-align: right;" class="icon-item-analysis">
-                            <i class="fa fa-tripadvisor" aria-hidden="true"></i>
+                            <img src="{{ url_for('static', filename='img/remain.png') }}" style="opacity: 0.5;">
                         </div>
                         <div style="text-align: left;" class="detail-item-analysis">
                             <div class="title-detail-item-analysis">
-                                Remains
+                                #Remains
                             </div>
-                            <div class="value-detail-item-analysis">
+                            <div class="claims remain-claim">
                                 1,023
                             </div>
                         </div>
                     </div>
                     <div class="item-analysis">
                         <div style="text-align: right;" class="icon-item-analysis">
-                            <i class="fa fa-stack-overflow" aria-hidden="true"></i>
+                            <img src="{{ url_for('static', filename='img/credit.png') }}" style="opacity: 0.5;">
                         </div>
                         <div style="text-align: left;" class="detail-item-analysis">
                             <div class="title-detail-item-analysis">
-                                Creidibility
+                                #Credibility
                             </div>
-                            <div class="value-detail-item-analysis" style="color:green;">
-                                300(75%)
+                            <div class="claims credit-claim">
+                                300 (75%)
                             </div>
                         </div>
                     </div>
                     <div class="item-analysis">
                         <div style="text-align: right;" class="icon-item-analysis">
-                            <i class="fa fa-diamond" aria-hidden="true"></i>
+                            <img src="{{ url_for('static', filename='img/danger.png') }}" width="64px"
+                                style="opacity: 0.5;">
                         </div>
                         <div style="text-align: left;" class="detail-item-analysis" style="background-color: red;">
                             <div class="title-detail-item-analysis">
-                                Non-Creidibility
+                                #Non-credibility
                             </div>
-                            <div class="value-detail-item-analysis" style="color: red;">
-                                50(20%)
+                            <div class="claims noncredit-claim">
+                                50 (20%)
                             </div>
                         </div>
                     </div>
@@ -353,98 +354,90 @@
                     </div>
 
                 </div>
-                <div>
-                    <button id="toggle-overview">
+                <div style="position:relative">
+                    <button id="toggle-overview" style="position: absolute; top: 270px">
                         <i id="icon-toggle-overview" class="fa fa-chevron-up" style="font-size: 30px; color: #999;"
                             aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
 
-            <div id="fact-checking">
-                <div style="height: 700px;">
-                    <div class="tab" id="header-checking">
-                        <button class="tablinks" onclick="openCity(event,'overview-sources')" id="defaultOpen">
-                            <i class="fa fa-instagram" aria-hidden="true"></i>
-                            Sources
-                        </button>
-                        <button class="tablinks" onclick="openCity(event, 'claims')">
-                            <i class="fa fa-wpforms" aria-hidden="true"></i>
-                            Claims
-                        </button>
-                        <!-- <button style="float: right;" id="toggle-overview">Toggle Overview</button> -->
-                        <!-- <div>
-                                <form method=post action="/process">
-                                    <input type="hidden" name="claimId" value="{{ data[0].claim_id }}">
-                                    <input type=submit style="margin-right: 30px;" class="btn-validation" name="Credibility"
-                                        value="Non-Credibility">
-                                    <input type=submit class="btn-validation" name="Credibility" value="Credibility">
-                                </form>
-                            </div> -->
+            <div class="kt-container" style="height: 40px !important;">
+                <div class="kt-header-menu-wrapper" id="kt_header_menu_wrapper">
+                    <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile ">
+                        <ul class="kt-menu__nav ">
+                            <li class="kt-menu__item kt-menu__item--active kt-menu__item--rel"
+                                data-ktmenu-submenu-toggle="hover" aria-haspopup="true">
+                                <a href="#" class="kt-menu__link" onclick="openCity(event,'overview-sources')"
+                                    id="defaultOpen">
+                                    <span class="kt-menu__link-text">Sources</span>
+                                </a>
+                            </li>
+                            <li class="kt-menu__item kt-menu__item--rel" data-ktmenu-submenu-toggle="hover"
+                                aria-haspopup="true">
+                                <a href="#" class="kt-menu__link" onclick="openCity(event,'claims')">
+                                    <span class="kt-menu__link-text">Claims</span>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
+                </div>
+            </div>
+            <div id="fact-checking">
+                <div class="fact-checking-body" style="min-height: 700px; height: 70vh;">
                     <div style="height: 580px;" id="overview-sources" class="tabcontent item-tab">
-                        <div style="display: grid; grid-template-columns: 70% 30%;">
+                        <div style="display: grid; grid-template-columns: 75% 25%;">
                             <div id="heatmap-sources">
-                                <input type="text" id="input-sourceFilter" onkeyup="filterSource()" placeholder="Search for names.."
-                                    title="Type in a name">
+                                <input type="text" id="input-sourceFilter" onkeyup="filterSource()"
+                                    placeholder="Search for names.." title="Type in a name">
 
                                 <table id="heatmap-sources">
                                 </table>
                             </div>
-
                             <div id="detail-source">
-                                <!-- <div id="title-source-item">Source</div> -->
-                                <!-- <div>
-                                    <span>Total : </span>
-                                    <span id="total-claim-source-item">2000</span>
-                                </div> -->
-
-                                <!-- <div>
-                                    <span>Validation : </span>
-                                    <span id="validation-source-item">1000</span>
-                                </div>
-                                <div>
-                                    <span>Unvalidation: </span>
-                                    <span id="unvalidation-source-item">20</span>
-                                </div> -->
-                                <div style="padding:30px 80px 10px 80px;" id="title-source-item">
+                                <div id="title-source-item">
                                     Source
                                 </div>
-                                <div class="item-analysis" style="padding: 10px;">
-                                    <div style="text-align: right;" class="icon-item-analysis">
-                                        <i class="fa fa-calendar" style="color: #64bb5d;" aria-hidden="true"></i>
+                                <div class="source-credit " style="margin-bottom: 20px;">
+                                    <span>Overall:</span> <span class="credit">80%</span>
+                                </div>
+                                <div class="item-analysis" >
+                                    <div style="text-align: left; width: 50px;" class="icon-item-analysis">
+                                        <img src="{{ url_for('static', filename='img/listing.png') }}" width="32px"
+                                            style="opacity: 0.5;">
                                     </div>
                                     <div style="text-align: left;" class="detail-item-analysis">
                                         <div class="title-detail-item-analysis">
-                                            Total
+                                            #Claims
                                         </div>
-                                        <div class="value-detail-item-analysis" id="total-claim-source-item">
-                                            2000
-                                        </div>
+                                        <div class="claims total-claim-detail" id="total-claim-source-item">2000</div>
+
                                     </div>
                                 </div>
-                                <div class="item-analysis" style="padding: 10px;">
-                                    <div style="text-align: right;" class="icon-item-analysis">
-                                        <i class="fa fa-calendar" style="color: #c0392b;" aria-hidden="true"></i>
+                                <div class="item-analysis">
+                                    <div style="text-align: left;width: 50px;" class="icon-item-analysis">
+                                        <img src="{{ url_for('static', filename='img/credit.png') }}" width="32px"
+                                            style="opacity: 0.5;">
                                     </div>
                                     <div style="text-align: left;" class="detail-item-analysis">
                                         <div class="title-detail-item-analysis">
-                                            Credibility
+                                            #Credibility
                                         </div>
-                                        <div class="value-detail-item-analysis" id="validation-source-item">
+                                        <div class="claims credit-claim" id="validation-source-item">
                                             1000
                                         </div>
                                     </div>
                                 </div>
-                                <div class="item-analysis" style="padding: 10px;">
-                                    <div style="text-align: right;" class="icon-item-analysis">
-                                        <i class="fa fa-calendar" style="color: #f39c12;" aria-hidden="true"></i>
+                                <div class="item-analysis">
+                                    <div style="text-align: left;width: 50px;" class="icon-item-analysis">
+                                        <img src="{{ url_for('static', filename='img/danger.png') }}" width="32px"
+                                            style="opacity: 0.5;">
                                     </div>
                                     <div style="text-align: left;" class="detail-item-analysis">
                                         <div class="title-detail-item-analysis">
-                                            Non-Credibility
+                                            #Non-Credibility
                                         </div>
-                                        <div class="value-detail-item-analysis" id="unvalidation-source-item">
+                                        <div class="claims noncredit-claim" id="unvalidation-source-item">
                                             20
                                         </div>
                                     </div>
@@ -695,10 +688,8 @@
 
     <script>
         var marginChartOverview = { top: 30, right: 30, bottom: 30, left: 50 },
-            widthChartOverview =
-                460 - marginChartOverview.left - marginChartOverview.right,
-            heightChartOverview =
-                250 - marginChartOverview.top - marginChartOverview.bottom;
+            widthChartOverview = $(window).width() * 0.75 - 30 - marginChartOverview.left - marginChartOverview.right,
+            heightChartOverview = 250 - marginChartOverview.top - marginChartOverview.bottom;
 
         // append the svg object to the body of the page
         var svgChart = d3
@@ -853,12 +844,12 @@
 
             table.append("td")
                 .attr("id", function (d) { return d.source.replace(/\./g, '') })
-                .style("text-align","left")
+                .style("text-align", "left")
 
             data.map((source) => {
                 console.log(source);
                 var widthCell = 20, heightCell = 20, p = 20;
-
+                p = Math.floor(($(window).width() * 0.7 - 100 - marginChartOverview.left - marginChartOverview.right) / 20);
                 var width = widthCell * source.claims.length, height = heightCell * Math.ceil(source.claims.length / p);
                 // var data = data[0];
 
@@ -883,7 +874,7 @@
                     .style("border-radius", "5px")
                     .style("padding", "5px")
                     .style("position", "fixed")
-                    .style("max-width", "250px")
+                    .style("max-width", "350px")
                 // .style("margin-top", "20px")
 
 
