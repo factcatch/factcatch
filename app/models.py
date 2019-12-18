@@ -16,6 +16,7 @@ class Claim(db.Model):
     url : str
     claim : str 
     tags : str
+    prob_model : float
     documents : list = field(default_factory=list)
 
     id = db.Column(db.String,primary_key=True)
@@ -30,6 +31,7 @@ class Claim(db.Model):
     url = db.Column(db.String)
     claim = db.Column(db.String)
     tags = db.Column(db.String)
+    prob_model = db.Column(db.Float)
     google_results = db.relationship('GoogleResult',backref='google_result.claim_id',lazy=True)
 
 
