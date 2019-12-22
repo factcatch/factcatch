@@ -1,6 +1,7 @@
 from flask import json,jsonify
 from app.models import Claim,GoogleResult
 from app import db
+from sqlalchemy.orm import load_only
 import random
 
 def getCredibility(credibility):
@@ -73,4 +74,32 @@ def getAllClaims():
         claims[id].tags = claim.tags.split(";")[:-1]
         claims[id].documents = getSourcesRelations(claim.id)
     return claims
+
+def analysis():
+    claims = Claim.query.count()
+    remains = 1023
+    cred = Claim.query.filter_by(credibility=1).count()
+    nonCred = Claim.query.filter_by(credibility=0).count()
+    perCred = (float(cred) / claims)*100
+    print(perCred)
+    return {
+        'claims' : claims,
+        'remains' : remains,
+        'credibility' : cred,
+        'perCred' : perCred,
+        'nonCredibility' : nonCred,
+        'perNonCred' : 100 - perCred
+    }
+
+def getUserCredAndModel():
+    userCred = db.session.query(Claim.credibility).all()
+    userCred = [cred for (cred,) in userCred]
+    modelProb = db.session.query(Claim.credibility,Claim.prob_model).all()
+    modelProb = [abs(cred - prob) for (cred,prob) in modelProb]
+    return {
+        "userCred" : userCred,
+        "modelProb" : modelProb,
+    }
+
+
 

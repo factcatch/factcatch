@@ -147,7 +147,6 @@ def getSourceClaim():
     results = []
     for domain in domains:
         if domain[0] == "":
-            print("lon")
             continue
         total = random.randint(100, 200)
         credibility = random.randint(0, 100)
