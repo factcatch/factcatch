@@ -57,7 +57,7 @@ def getGoogleResultsClaim(claim_id):
     return GoogleResult.query.filter_by(claim_id=claim_id).all()
 
 def getSourcesRelations(claim_id):
-    sources = GoogleResult.query.with_entities(GoogleResult.domain).filter_by(claim_id=claim_id).all()
+    sources = GoogleResult.query.with_entities(GoogleResult.domain).filter_by(claim_id=claim_id).distinct()#.all()
     nodes = []
     for source in sources:
         items = []
@@ -77,7 +77,7 @@ def getAllClaims():
 
 def analysis():
     claims = Claim.query.count()
-    remains = 1023
+    remains = 10
     cred = Claim.query.filter_by(credibility=1).count()
     nonCred = Claim.query.filter_by(credibility=0).count()
     perCred = (float(cred) / claims)*100

@@ -60,7 +60,7 @@ function get(route) {
   xhttp.send();
 }
 
-function openCity(evt, cityName) {
+function selectTab(evt, cityName) {
   var i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tabcontent");
   for (i = 0; i < tabcontent.length; i++) {

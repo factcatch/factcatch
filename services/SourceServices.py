@@ -148,9 +148,9 @@ def getSourceClaim():
     for domain in domains:
         if domain[0] == "":
             continue
-        total = random.randint(100, 200)
-        credibility = random.randint(0, 100)
-        uncredibility = random.randint(0, 100)
+        total =  GoogleResult.query.filter_by(domain=domain).count() #random.randint(100, 200)
+        credibility = GoogleResult.query.join(Claim).filter(GoogleResult.domain==domain,Claim.credibility==1).count() #Claim.query.filter_by(credibility=1).count() #random.randint(0, 100)
+        uncredibility = total - credibility #random.randint(0, 100)
         claimsId = (
             GoogleResult.query.with_entities(GoogleResult.claim_id)
             .filter_by(domain=domain[0])

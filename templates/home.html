@@ -369,14 +369,14 @@
                         <ul class="kt-menu__nav ">
                             <li class="kt-menu__item kt-menu__item--active kt-menu__item--rel"
                                 data-ktmenu-submenu-toggle="hover" aria-haspopup="true">
-                                <a href="#" class="kt-menu__link" onclick="openCity(event,'overview-sources')"
+                                <a href="#" class="kt-menu__link" onclick="selectTab(event,'overview-sources')"
                                     id="defaultOpen">
                                     <span class="kt-menu__link-text">Sources</span>
                                 </a>
                             </li>
                             <li class="kt-menu__item kt-menu__item--rel" data-ktmenu-submenu-toggle="hover"
                                 aria-haspopup="true">
-                                <a href="#" class="kt-menu__link" onclick="openCity(event,'claims')">
+                                <a href="#" class="kt-menu__link" onclick="selectTab(event,'claims')">
                                     <span class="kt-menu__link-text">Claims</span>
                                 </a>
                             </li>
@@ -391,7 +391,7 @@
                             <div id="heatmap-sources">
                                 <input type="text" id="input-sourceFilter" onkeyup="filterSource()"
                                     placeholder="Search for names.." title="Type in a name">
-
+                                <div class="loader" id="loader-source"></div>
                                 <table id="heatmap-sources">
                                 </table>
                             </div>
@@ -400,7 +400,7 @@
                                     Source
                                 </div>
                                 <div class="source-credit " style="margin-bottom: 20px;">
-                                    <span>Overall:</span> <span class="credit">80%</span>
+                                    <span>Overall:</span> <span class="credit" id="overall-source">80%</span>
                                 </div>
                                 <div class="item-analysis">
                                     <div style="text-align: left; width: 50px;" class="icon-item-analysis">
@@ -412,7 +412,6 @@
                                             #Claims
                                         </div>
                                         <div class="claims total-claim-detail" id="total-claim-source-item">2000</div>
-
                                     </div>
                                 </div>
                                 <div class="item-analysis">
@@ -484,7 +483,7 @@
                                         <button class="tablinkclaims" onclick="openTabClaim(event,'info-claim')"
                                             id="defaultDetails">Detail</button>
                                         <button class="tablinkclaims"
-                                            onclick="openTabClaim(event, 'sources-claim')">Sources</button>
+                                            onclick="openTabClaim(event, 'sources-claim')">Related Sources</button>
                                         <div>
                                             <form method=post action="/process">
                                                 <input type="hidden" name="claimId" value="{{ data[0].claim_id }}">
@@ -561,22 +560,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- <div id="sources">
-                                <div class="chart" style="text-align: center;background-color: #fff;">
-                                </div>
-                            </div> -->
                         </div>
                     </div>
 
-
-                    <!-- <div id="info-claim" class="tabcontent item-tab">
-
-                    </div> -->
-                    <!-- <div id="sources" class="tabcontent item-tab">
-                            <div class="chart"
-                                style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
-                            </div>
-                        </div> -->
                 </div>
             </div>
 
@@ -585,8 +571,9 @@
             <div class="detail content" style="display: none;">
                 <div style="height: 580px;">
                     <div class="tab">
-                        <button class="tablinks" onclick="openCity(event,'info-claim')" id="defaultOpen">Detail</button>
-                        <button class="tablinks" onclick="openCity(event, 'sources')">Sources</button>
+                        <button class="tablinks" onclick="selectTab(event,'info-claim')"
+                            id="defaultOpen">Detail</button>
+                        <button class="tablinks" onclick="selectTab(event, 'sources')">Sources</button>
                         <div>
                             <form method=post action="/process">
                                 <input type="hidden" name="claimId" value="{{ data[0].claim_id }}">
@@ -598,62 +585,7 @@
                             </form>
                         </div>
                     </div>
-                    <!-- <div id="info-claim" class="tabcontent item-tab">
-                        <div>
-                            <div>
-                                <h4>
-                                    Origins
-                                </h4>
-                                <p id="origins-claim">
-                                    {{ data[0].origins }}
-                                </p>
-                            </div>
-                            <div>
-                                <h4>
-                                    Description
-                                </h4>
-                                <span>
-                                    <span id="description-short">
-                                        {{ data[0].description }}
-                                    </span>
-                                    <span id="dots">...</span>
-                                    <span id="more">
-                                        {{ data[0].description }}
-                                    </span>
-
-                                    <button onclick="readMore()" id="btn-readmore" class="button">Read more</button>
-                            </div>
-                            <div>
-                                <h4>
-                                    Example
-                                </h4>
-                                <p id="example-claim">
-                                    {{ data[0].example }}
-                                </p>
-                            </div>
-                            <div>
-                                <h4>
-                                    Originally Published
-                                </h4>
-                                <p id="originally-published-claim">
-                                    {{ data[0].originally_published }}
-                                </p>
-                            </div>
-                            <div>
-                                <h4>
-                                    Last Updated
-                                </h4>
-                                <p id="last-updated-claim">
-                                    {{ data[0].last_updated }}
-                                </p>
-                            </div>
-                            <div id="tag-claim">
-                                {% for tag in data[0].tags%}
-                                <span class="tag-claim-item"> #{{ tag }} </span>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div> -->
+                   
                     <div id="sources" class="tabcontent item-tab">
                         <div class="chart"
                             style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
@@ -666,8 +598,6 @@
                 <div id="heatmap-sources">
                 </div>
             </div>
-
-            <!-- </div> -->
         </div>
     </div>
 
@@ -692,138 +622,140 @@
             widthChartOverview = $(window).width() * 0.75 - 30 - marginChartOverview.left - marginChartOverview.right,
             heightChartOverview = 250 - marginChartOverview.top - marginChartOverview.bottom;
 
+
+       
         // append the svg object to the body of the page
-        var svgChart = d3
-            .select("#my_dataviz")
-            .append("svg")
-            .attr(
-                "width",
-                widthChartOverview + marginChartOverview.left + marginChartOverview.right
-            )
-            .attr(
-                "height",
-                heightChartOverview + marginChartOverview.top + marginChartOverview.bottom
-            )
-            .append("g")
-            .attr(
-                "transform",
-                "translate(" +
-                marginChartOverview.left +
-                "," +
-                marginChartOverview.top +
-                ")"
-            );
+        // var svgChart = d3
+        //     .select("#my_dataviz")
+        //     .append("svg")
+        //     .attr(
+        //         "width",
+        //         widthChartOverview + marginChartOverview.left + marginChartOverview.right
+        //     )
+        //     .attr(
+        //         "height",
+        //         heightChartOverview + marginChartOverview.top + marginChartOverview.bottom
+        //     )
+        //     .append("g")
+        //     .attr(
+        //         "transform",
+        //         "translate(" +
+        //         marginChartOverview.left +
+        //         "," +
+        //         marginChartOverview.top +
+        //         ")"
+        //     );
 
-        // get the data
-        d3.csv(
-            "https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/1_OneNum.csv",
-            function (data) {
-                // add the x Axis
-                var x = d3
-                    .scaleLinear()
-                    .domain([0, 1000])
-                    .range([0, widthChartOverview]);
-                svgChart
-                    .append("g")
-                    .attr("transform", "translate(0," + heightChartOverview + ")")
-                    .call(d3.axisBottom(x));
+        // // get the data
+        // d3.csv(
+        //     "https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/1_OneNum.csv",
+        //     function (data) {
+        //         // add the x Axis
+        //         var x = d3
+        //             .scaleLinear()
+        //             .domain([0, 1000])
+        //             .range([0, widthChartOverview]);
+        //         svgChart
+        //             .append("g")
+        //             .attr("transform", "translate(0," + heightChartOverview + ")")
+        //             .call(d3.axisBottom(x));
 
-                // add the y Axis
-                var y = d3
-                    .scaleLinear()
-                    .range([heightChartOverview, 0])
-                    .domain([0, 0.01]);
-                svgChart.append("g").call(d3.axisLeft(y));
+        //         // add the y Axis
+        //         var y = d3
+        //             .scaleLinear()
+        //             .range([heightChartOverview, 0])
+        //             .domain([0, 0.01]);
+        //         svgChart.append("g").call(d3.axisLeft(y));
 
-                // Compute kernel density estimation
-                var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40));
-                var density = kde(
-                    data.map(function (d) {
-                        return d.price;
-                    })
-                );
+        //         // Compute kernel density estimation
+        //         var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40));
+        //         var density = kde(
+        //             data.map(function (d) {
+        //                 return d.price;
+        //             })
+        //         );
 
-                // Plot the area
-                var curve = svgChart
-                    .append("g")
-                    .append("path")
-                    .attr("class", "mypath")
-                    .datum(density)
-                    .attr("fill", "#69b3a2")
-                    .attr("opacity", ".8")
-                    .attr("stroke", "#000")
-                    .attr("stroke-width", 1)
-                    .attr("stroke-linejoin", "round")
-                    .attr(
-                        "d",
-                        d3
-                            .line()
-                            .curve(d3.curveBasis)
-                            .x(function (d) {
-                                return x(d[0]);
-                            })
-                            .y(function (d) {
-                                return y(d[1]);
-                            })
-                    );
+        //         // Plot the area
+        //         var curve = svgChart
+        //             .append("g")
+        //             .append("path")
+        //             .attr("class", "mypath")
+        //             .datum(density)
+        //             .attr("fill", "#69b3a2")
+        //             .attr("opacity", ".8")
+        //             .attr("stroke", "#000")
+        //             .attr("stroke-width", 1)
+        //             .attr("stroke-linejoin", "round")
+        //             .attr(
+        //                 "d",
+        //                 d3
+        //                     .line()
+        //                     .curve(d3.curveBasis)
+        //                     .x(function (d) {
+        //                         return x(d[0]);
+        //                     })
+        //                     .y(function (d) {
+        //                         return y(d[1]);
+        //                     })
+        //             );
 
-                // A function that update the chart when slider is moved?
-                function updateChart(binNumber) {
-                    // recompute density estimation
-                    kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(binNumber));
-                    density = kde(
-                        data.map(function (d) {
-                            return d.price;
-                        })
-                    );
-                    console.log(binNumber);
-                    console.log(density);
+        //         // A function that update the chart when slider is moved?
+        //         function updateChart(binNumber) {
+        //             // recompute density estimation
+        //             kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(binNumber));
+        //             density = kde(
+        //                 data.map(function (d) {
+        //                     return d.price;
+        //                 })
+        //             );
+        //             console.log(binNumber);
+        //             console.log(density);
 
-                    // update the chart
-                    curve
-                        .datum(density)
-                        .transition()
-                        .duration(1000)
-                        .attr(
-                            "d",
-                            d3
-                                .line()
-                                .curve(d3.curveBasis)
-                                .x(function (d) {
-                                    return x(d[0]);
-                                })
-                                .y(function (d) {
-                                    return y(d[1]);
-                                })
-                        );
-                }
+        //             // update the chart
+        //             curve
+        //                 .datum(density)
+        //                 .transition()
+        //                 .duration(1000)
+        //                 .attr(
+        //                     "d",
+        //                     d3
+        //                         .line()
+        //                         .curve(d3.curveBasis)
+        //                         .x(function (d) {
+        //                             return x(d[0]);
+        //                         })
+        //                         .y(function (d) {
+        //                             return y(d[1]);
+        //                         })
+        //                 );
+        //         }
 
-                // Listen to the slider?
-                d3.select("#mySlider").on("change", function (d) {
-                    selectedValue = this.value;
-                    updateChart(selectedValue);
-                });
-            }
-        );
+        //         // Listen to the slider?
+        //         d3.select("#mySlider").on("change", function (d) {
+        //             selectedValue = this.value;
+        //             updateChart(selectedValue);
+        //         });
+        //     }
+        // );
 
         // Function to compute density
-        function kernelDensityEstimator(kernel, X) {
-            return function (V) {
-                return X.map(function (x) {
-                    return [
-                        x,
-                        d3.mean(V, function (v) {
-                            return kernel(x - v);
-                        })
-                    ];
-                });
-            };
-        }
-        function kernelEpanechnikov(k) {
-            return function (v) {
-                return Math.abs((v /= k)) <= 1 ? (0.75 * (1 - v * v)) / k : 0;
-            };
-        }
+        // function kernelDensityEstimator(kernel, X) {
+        //     return function (V) {
+        //         return X.map(function (x) {
+        //             return [
+        //                 x,
+        //                 d3.mean(V, function (v) {
+        //                     return kernel(x - v);
+        //                 })
+        //             ];
+        //         });
+        //     };
+        // }
+        // function kernelEpanechnikov(k) {
+        //     return function (v) {
+        //         return Math.abs((v /= k)) <= 1 ? (0.75 * (1 - v * v)) / k : 0;
+        //     };
+        // }
 
     </script>
     <script>
@@ -832,8 +764,17 @@
         // var margin = {top: 80, right: 25, bottom: 30, left: 40},
         //   width = 450 - margin.left - margin.right,
         //   height = 450 - margin.top - margin.bottom;
+        function showInfoSource(source) {
+            document.getElementById("title-source-item").innerHTML = source.source;
+            document.getElementById("total-claim-source-item").innerHTML = source.total;
+            document.getElementById("validation-source-item").innerHTML = source.credibility;
+            document.getElementById("unvalidation-source-item").innerHTML = source.total - source.credibility;
+            document.getElementById("overall-source").innerHTML = ((source.credibility/source.total) * 100).toFixed(2) + '%'
+        };
+
         var table = d3.select("table");
         d3.json("http://localhost:5050/source/claim", function (data) {
+            d3.select("#loader-source").remove();
             var table = d3.select("table")
                 .selectAll("tr")
                 .data(data)
@@ -846,7 +787,7 @@
             table.append("td")
                 .attr("id", function (d) { return d.source.replace(/\./g, '') })
                 .style("text-align", "left")
-
+            showInfoSource(data[0]);
             data.map((source) => {
                 var widthCell = 20, heightCell = 20, p = 20;
                 p = Math.floor(($(window).width() * 0.7 - 100 - marginChartOverview.left - marginChartOverview.right) / 20);
@@ -885,11 +826,11 @@
                     d3.select(this)
                         .style("stroke", "black")
                         .style("opacity", 1)
-
-                    document.getElementById("title-source-item").innerHTML = source.source;
-                    document.getElementById("total-claim-source-item").innerHTML = source.total;
-                    document.getElementById("validation-source-item").innerHTML = source.credibility;
-                    document.getElementById("unvalidation-source-item").innerHTML = source.total - source.credibility;
+                    showInfoSource(source);
+                    // document.getElementById("title-source-item").innerHTML = source.source;
+                    // document.getElementById("total-claim-source-item").innerHTML = source.total;
+                    // document.getElementById("validation-source-item").innerHTML = source.credibility;
+                    // document.getElementById("unvalidation-source-item").innerHTML = source.total - source.credibility;
                 }
                 var mousemove = function (d) {
                     var mouseTop = d3.mouse(this)[1] < 300 ? d3.mouse(this)[1] + 300 : d3.mouse(this)[1];
@@ -909,7 +850,7 @@
                 }
 
                 var rectClick = function (d) {
-                    openCity(event, "claims");
+                    selectTab(event, "claims");
                     selectClaim(mapClaim.get(d.claim_id));
                     var claimLi = document.getElementById(d.claim_id);
                     claimLi.scrollIntoView(false);
@@ -1065,7 +1006,7 @@
             }
 
             var rectClick = function (d) {
-                openCity(event, "claims");
+                selectTab(event, "claims");
                 selectClaim(mapClaim.get(d.claim_id));
                 var claimLi = document.getElementById(d.claim_id);
                 claimLi.scrollIntoView(false);
@@ -1137,57 +1078,29 @@
                         // backgroundColor: window.chartColors.red,
                         borderColor: 'rgba(151,187,205,1)',
                         data: data.modelProb,
-                    }
-                        // data: [
-                        //     randomScalingFactor(),
-                        //     randomScalingFactor(),
-                        //     // randomScalingFactor(),
-                        //     // randomScalingFactor(),
-                        //     // randomScalingFactor(),
-                        //     // randomScalingFactor(),
-                        //     // randomScalingFactor()
-                        // ],
-                        // }, {
-                        //     label: 'User Input',
-                        //     backgroundColor: window.chartColors.blue,
-                        //     borderColor: window.chartColors.blue,
-                        //     fill: false,
-                        //     data: data.modelProb,
-                        //     // data: [
-                        //     //     randomScalingFactor(),
-                        //     //     randomScalingFactor(),
-                        //     //     randomScalingFactor(),
-                        //     //     randomScalingFactor(),
-                        //     //     randomScalingFactor(),
-                        //     //     randomScalingFactor(),
-                        //     //     randomScalingFactor()
-                        //     // ],
-                        // }]
-                    ],
-                    options: {
-                        responsive: true,
-                        title: {
-                            display: true,
-                            text: 'Comparison Model and User Input'
-                        },
-                        scales: {
-                            xAxes:
-                                [{
-                                    ticks: {
-                                        autoSkip: true,
-                                        maxTicksLimit: 10
-                                    },
-                                    // display: true,
-                                }],
-                            yAxes: [{
-                                display: true,
-                                stepSize: 5,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Comparison Model and User Input'
+                    },
+                    scales: {
+                        xAxes:
+                            [{
                                 ticks: {
-                                    stepSize: 0.1
+                                    autoSkip: true,
+                                    maxTicksLimit: 15,
+                                    // display: false
                                 }
-                                // type: 'logarithmic',
-                            }]
-                        }
+                            }],
+                        yAxes: [{
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 5,
+                            }
+                        }]
                     }
                 }
             };
