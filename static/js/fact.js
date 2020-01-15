@@ -55,26 +55,25 @@ function get(route) {
     }
   };
   url = "http://localhost:5050/" + route;
-  console.log(url);
   xhttp.open("GET", url, true);
   xhttp.send();
 }
 
-function selectTab(evt, cityName) {
+function selectTab(evt, tabName) {
   var i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tabcontent");
   for (i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = "none";
   }
-  tablinks = document.getElementsByClassName("tablinks");
+  tablinks = document.getElementsByClassName("tab-main-content");
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
-  document.getElementById(cityName).style.display = "block";
+  document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
 }
 
-function openTabClaim(evt, cityName) {
+function openTabClaim(evt, tabName) {
   var i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tabclaims");
   for (i = 0; i < tabcontent.length; i++) {
@@ -84,7 +83,7 @@ function openTabClaim(evt, cityName) {
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
-  document.getElementById(cityName).style.display = "block";
+  document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
 }
 
