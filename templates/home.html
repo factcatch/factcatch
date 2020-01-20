@@ -194,39 +194,101 @@
         </div>
     </div>
     <div class="grid-container">
-        <div class="header">
-            <div class="grid-header">
-                <div id="logo-griffith">
-                    <a href="/">
-                        <div>Fact Checking</div>
-                    </a>
+        <div id="overview-left">
+            <div id="logo-griffith">
+                <a href="/">
+                    <div>Fact Checking</div>
+                </a>
+            </div>
+            <div class="item-analysis">
+                <div class="icon-item-analysis">
+                    <img src="{{ url_for('static', filename='img/listing.png') }}" style="opacity: 0.5;">
                 </div>
-                <div style="display: grid; grid-template-columns: auto auto;">
-                    <div class="tab-main-content" onclick="selectTab(event,'overview-sources')" id="defaultOpen">Sources</div>
-                    <div class="tab-main-content" onclick="selectTab(event,'claims')">Claims</div>
+                <div class="detail-item-analysis">
+                    <div class="title-detail-item-analysis">
+                        #Claims
+                    </div>
+                    <div class="claims  total-claim-detail">
+                        {{ analysis.claims }}
+                    </div>
                 </div>
-                <div id="select-file" class="header-content">
-                    
-                    <form method=post action="/upload" enctype=multipart/form-data> <input type="file" name="file"
-                        id="file" class="inputfile" data-multiple-caption="{count} files selected" multiple />
-                    <input type=submit value=Upload id="upload-btn">
-                    </form>
+            </div>
+            <div class="item-analysis">
+                <div class="icon-item-analysis">
+                    <img src="{{ url_for('static', filename='img/remain.png') }}" style="opacity: 0.5;">
                 </div>
-                <div class="header-content" style="text-align: right;">
-                    <button class="button">
-                        <a href="/download" style="color: white">Take Snapshot</a>
-                    </button>
-                    <!-- <a class="button" href="/download">Take Snapshot</a> -->
-                    <button class="button" id="myBtn">Optimize Budget Allocation</button>
-                    <button class="button">Stop Feedback</button>
+                <div class="detail-item-analysis">
+                    <div class="title-detail-item-analysis">
+                        #Remains
+                    </div>
+                    <div class="claims remain-claim">
+                        {{ analysis.remains }}
+                    </div>
+                </div>
+            </div>
+            <div class="item-analysis">
+                <div class="icon-item-analysis">
+                    <img src="{{ url_for('static', filename='img/credit.png') }}" style="opacity: 0.5;">
+                </div>
+                <div class="detail-item-analysis">
+                    <div class="title-detail-item-analysis">
+                        #Credibility
+                    </div>
+                    <div class="claims credit-claim">
+                        {{ analysis.credibility }} ({{ analysis.perCred }}%)
+                    </div>
+                </div>
+            </div>
+            <div class="item-analysis">
+                <div class="icon-item-analysis">
+                    <img src="{{ url_for('static', filename='img/danger.png') }}" width="64px" style="opacity: 0.5;">
+                </div>
+                <div class="detail-item-analysis">
+                    <div class="title-detail-item-analysis">
+                        #Non-credibility
+                    </div>
+                    <div class="claims noncredit-claim">
+                        {{ analysis.nonCredibility }} ({{ analysis.perNonCred }}%)
+
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="block-content">
+        <div>
+            <div class="header">
+                <div class="grid-header">
+                    <!-- <div id="logo-griffith">
+                    <a href="/">
+                        <div>Fact Checking</div>
+                    </a>
+                </div> -->
+                    <div style="display: grid; padding: 10px 30px;grid-column-gap: 25px; grid-template-columns: auto auto;">
+                            <div class="tab-main-content" onclick="selectTab(event,'overview-sources')" id="defaultOpen">
+                                Sources</div>
+                            <div class="tab-main-content" onclick="selectTab(event,'claim-detail')">Claims</div>
+                    </div>
+                    <div id="select-file" class="header-content">
 
-            <!-- <div class="kt-container" style="height: 40px !important;"> -->
-            <!-- <div class="kt-header-menu-wrapper" id="kt_header_menu_wrapper"> -->
-            <!-- <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile ">
+                        <form method=post action="/upload" enctype=multipart/form-data> <input type="file" name="file"
+                            id="file" class="inputfile" data-multiple-caption="{count} files selected" multiple />
+                        <input type=submit value=Upload id="upload-btn" class="btn-form">
+                        </form>
+                    </div>
+                    <div class="header-content" style="text-align: right;">
+                        <button class="button">
+                            <a href="/download" style="color: white">Take Snapshot</a>
+                        </button>
+                        <!-- <a class="button" href="/download">Take Snapshot</a> -->
+                        <button class="button" id="myBtn">Optimize Budget Allocation</button>
+                        <button class="button">Stop Feedback</button>
+                    </div>
+                </div>
+            </div>
+            <div id="block-content">
+
+                <!-- <div class="kt-container" style="height: 40px !important;"> -->
+                <!-- <div class="kt-header-menu-wrapper" id="kt_header_menu_wrapper"> -->
+                <!-- <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile ">
                         <ul class="kt-menu__nav ">
                             <li class="kt-menu__item kt-menu__item--active kt-menu__item--rel"
                                 data-ktmenu-submenu-toggle="hover" aria-haspopup="true">
@@ -243,65 +305,67 @@
                             </li>
                         </ul>
                     </div> -->
-            <div id="tab-main" style="display: none;">
-                <div id="overview">
-                    <div id="analysis">
-                        <div class="item-analysis">
-                            <div style="text-align: right;" class="icon-item-analysis">
-                                <img src="{{ url_for('static', filename='img/listing.png') }}" style="opacity: 0.5;">
-                            </div>
-                            <div style="text-align: left;" class="detail-item-analysis">
-                                <div class="title-detail-item-analysis">
-                                    #Claims
+                <div id="tab-main" style="display: none;">
+                    <div id="overview">
+                        <div id="analysis">
+                            <div class="item-analysis">
+                                <div style="text-align: right;" class="icon-item-analysis">
+                                    <img src="{{ url_for('static', filename='img/listing.png') }}"
+                                        style="opacity: 0.5;">
                                 </div>
-                                <div class="claims  total-claim-detail">
-                                    {{ analysis.claims }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item-analysis">
-                            <div style="text-align: right;" class="icon-item-analysis">
-                                <img src="{{ url_for('static', filename='img/remain.png') }}" style="opacity: 0.5;">
-                            </div>
-                            <div style="text-align: left;" class="detail-item-analysis">
-                                <div class="title-detail-item-analysis">
-                                    #Remains
-                                </div>
-                                <div class="claims remain-claim">
-                                    {{ analysis.remains }}
+                                <div style="text-align: left;" class="detail-item-analysis">
+                                    <div class="title-detail-item-analysis">
+                                        #Claims
+                                    </div>
+                                    <div class="claims  total-claim-detail">
+                                        {{ analysis.claims }}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="item-analysis">
-                            <div style="text-align: right;" class="icon-item-analysis">
-                                <img src="{{ url_for('static', filename='img/credit.png') }}" style="opacity: 0.5;">
-                            </div>
-                            <div style="text-align: left;" class="detail-item-analysis">
-                                <div class="title-detail-item-analysis">
-                                    #Credibility
+                            <div class="item-analysis">
+                                <div style="text-align: right;" class="icon-item-analysis">
+                                    <img src="{{ url_for('static', filename='img/remain.png') }}" style="opacity: 0.5;">
                                 </div>
-                                <div class="claims credit-claim">
-                                    {{ analysis.credibility }} ({{ analysis.perCred }}%)
+                                <div style="text-align: left;" class="detail-item-analysis">
+                                    <div class="title-detail-item-analysis">
+                                        #Remains
+                                    </div>
+                                    <div class="claims remain-claim">
+                                        {{ analysis.remains }}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="item-analysis">
-                            <div style="text-align: right;" class="icon-item-analysis">
-                                <img src="{{ url_for('static', filename='img/danger.png') }}" width="64px"
-                                    style="opacity: 0.5;">
-                            </div>
-                            <div style="text-align: left;" class="detail-item-analysis" style="background-color: red;">
-                                <div class="title-detail-item-analysis">
-                                    #Non-credibility
+                            <div class="item-analysis">
+                                <div style="text-align: right;" class="icon-item-analysis">
+                                    <img src="{{ url_for('static', filename='img/credit.png') }}" style="opacity: 0.5;">
                                 </div>
-                                <div class="claims noncredit-claim">
-                                    {{ analysis.nonCredibility }} ({{ analysis.perNonCred }}%)
+                                <div style="text-align: left;" class="detail-item-analysis">
+                                    <div class="title-detail-item-analysis">
+                                        #Credibility
+                                    </div>
+                                    <div class="claims credit-claim">
+                                        {{ analysis.credibility }} ({{ analysis.perCred }}%)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-analysis">
+                                <div style="text-align: right;" class="icon-item-analysis">
+                                    <img src="{{ url_for('static', filename='img/danger.png') }}" width="64px"
+                                        style="opacity: 0.5;">
+                                </div>
+                                <div style="text-align: left;" class="detail-item-analysis"
+                                    style="background-color: red;">
+                                    <div class="title-detail-item-analysis">
+                                        #Non-credibility
+                                    </div>
+                                    <div class="claims noncredit-claim">
+                                        {{ analysis.nonCredibility }} ({{ analysis.perNonCred }}%)
 
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- <div style="padding: 20px 40px; text-align: center;" id="chart-overview">
+                        <!-- <div style="padding: 20px 40px; text-align: center;" id="chart-overview">
                                     <div style="width:600px;">
                                         <div class="chartjs-size-monitor">
                                             <div class="chartjs-size-monitor-expand">
@@ -316,148 +380,64 @@
                                     </div>
                     
                                 </div> -->
-                    <!-- <div style="position:relative">
+                        <!-- <div style="position:relative">
                                     <button id="toggle-overview" style="position: absolute; top: 270px">
                                         <i id="icon-toggle-overview" class="fa fa-chevron-up" style="font-size: 30px; color: #999;"
                                             aria-hidden="true"></i>
                                     </button>
                                 </div> -->
-                    <!-- </div> -->
-                    <!-- </div> -->
+                        <!-- </div> -->
+                        <!-- </div> -->
+                    </div>
                 </div>
-            </div>
-            <div id="fact-checking">
-                <div class="fact-checking-body" style="min-height: 700px;">
-                    <div style="height: 700px;" id="overview-sources" class="tabcontent item-tab">
-                        <div style="display: grid; grid-template-columns: 65% 35%;">
-                            <div id="heatmap-sources">
-                                <input type="text" id="input-sourceFilter" onkeyup="filterSource()"
-                                    placeholder="Search for names.." title="Type in a name">
-                                <div class="loader" id="loader-source"></div>
-                                <table id="heatmap-sources">
-                                </table>
-                            </div>
-                            <div style="border-left: 1px solid lightgray;">
-                            <div id="detail-source">
-                                <div id="title-source-item">
-                                    Source
+                <div id="fact-checking">
+                    <div id="fact-checking-body" style="min-height: 700px;">
+                        <!-- id="overview-sources" -->
+                        <div style="height: 700px;" id="all-sources" class="overview-sources tabcontent item-tab">
+                            <div>
+                                <div id="heatmap-sources" style="width: 900px; height:600px; overflow:auto">
+                                    <input type="text" id="input-sourceFilter" onkeyup="filterSource()"
+                                        placeholder="Search for names.." title="Type in a name">
+                                    <div class="loader" id="loader-source"></div>
+                                    <table id="heatmap-sources">
+                                    </table>
                                 </div>
-                                <div class="source-credit " style="margin-bottom: 20px;font-size:18px;">
-                                    <span>Overall:</span> <span class="credit" id="overall-source">80%</span>
-                                </div>
-                                <div class="row-analysis-source">
-                                    <div class="item-analysis">
-                                        <div style="text-align: left; width: 50px;" class="icon-item-analysis-source">
-                                            <img src="{{ url_for('static', filename='img/listing.png') }}" width="32px"
-                                                style="opacity: 0.5;">
-                                        </div>
-                                        <div style="text-align: left;" class="detail-item-analysis-source">
-                                            <div class="title-detail-item-analysis">
-                                                #Claims
-                                            </div>
-                                            <div class="claims total-claim-detail" id="total-claim-source-item">2000</div>
-                                        </div>
-                                    </div>
-                                    <div class="item-analysis">
-                                        <div style="text-align: left; width: 50px;" class="icon-item-analysis-source">
-                                            <img src="{{ url_for('static', filename='img/listing.png') }}" width="32px"
-                                                style="opacity: 0.5;">
-                                        </div>
-                                        <div style="text-align: left;" class="detail-item-analysis-source">
-                                            <div class="title-detail-item-analysis">
-                                                #Remain
-                                            </div>
-                                            <div class="claims total-claim-detail" id="total-claim-source-item-1">2000</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row-analysis-source">
-                                <div class="item-analysis">
-                                    <div style="text-align: left;width: 50px;" class="icon-item-analysis-source">
-                                        <img src="{{ url_for('static', filename='img/credit.png') }}" width="32px"
-                                            style="opacity: 0.5;">
-                                    </div>
-                                    <div style="text-align: left;" class="detail-item-analysis-source">
-                                        <div class="title-detail-item-analysis">
-                                            #Credibility
-                                        </div>
-                                        <div class="claims credit-claim" id="validation-source-item">
-                                            1000
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="item-analysis">
-                                    <div style="text-align: left;width: 50px;" class="icon-item-analysis-source">
-                                        <img src="{{ url_for('static', filename='img/danger.png') }}" width="32px"
-                                            style="opacity: 0.5;">
-                                    </div>
-                                    <div style="text-align: left;width:auto"  class="detail-item-analysis-source">
-                                        <div class="title-detail-item-analysis">
-                                            #Non-Credibility
-                                        </div>
-                                        <div class="claims noncredit-claim" id="unvalidation-source-item">
-                                            20
-                                        </div>
-                                    </div>
-                                </div>
-                                </div>
-                                </div>
-                                <div style="padding: 20px 40px; text-align: center;" id="chart-overview">
-                                    <div>
-                                        <div class="chartjs-size-monitor">
-                                            <div class="chartjs-size-monitor-expand">
-                                                <div class=""></div>
-                                            </div>
-                                            <div class="chartjs-size-monitor-shrink">
-                                                <div class=""></div>
-                                            </div>
-                                        </div>
-                                        <canvas id="canvas" style="display: block; width: 450px; height: 300px;" width="450"
-                                            height="300" class="chartjs-render-monitor"></canvas>
-                                    </div>
-                            </div>
-
                             </div>
                         </div>
-                    </div>
-
-                    <div style="height: 700px;" id="claims" class="tabcontent item-tab">
-                        <div id="block-content2">
-                            <div>
-                                <div id="title-list-claim">
-                                    <span>Claims</span>
-                                    <!-- <select name="mode" onchange="selectMode(this)">
-                                        <option value="block-list-claim" selected>Claims</option>
-                                        <option value="block-list-source">Sources</option>
-                                    </select> -->
-                                    <input type="text" id="input-for-claim" onkeyup="searchClaim()"
-                                        placeholder="Search for claims.." title="Type in a name">
-                                </div>
-                                <div id="block-list-claim">
-                                    <ul id="list-claim">
-                                        {% for claim in data %}
-                                        <li onclick="selectClaim({{ loop.index - 1 }})" id="{{ claim.id }}">
-                                            <div>
-                                                <span class="no-claim">{{ loop.index }}. </span> {{ claim.claim }}
-                                            </div>
-                                            <!-- <div class="container">
+                        <!-- id="claims" -->
+                        <div style="height: 700px;" class="claim-detail tabcontent item-tab">
+                            <div id="block-content2">
+                                <div>
+                                    <div id="title-list-claim">
+                                        <span>Claims</span>
+                                        <input type="text" id="input-for-claim" onkeyup="searchClaim()"
+                                            placeholder="Search for claims.." title="Type in a name">
+                                    </div>
+                                    <div id="block-list-claim">
+                                        <ul id="list-claim">
+                                            {% for claim in data %}
+                                            <li onclick="selectClaim({{ loop.index - 1 }})" id="{{ claim.id }}">
+                                                <div>
+                                                    <span class="no-claim">{{ loop.index }}. </span> {{ claim.claim }}
+                                                </div>
+                                                <!-- <div class="container">
                                                 <div class="progress2 progress-moved">
                                                     <div class="progress-bar2">
                                                     </div>
                                                 </div>
                                             </div> -->
-                                            <div class="progressbar" style="padding: 0;">
-                                                <div
-                                                    style="width:{{  claim.prob_model*100 }}%;  background-color:brown">
+                                                <div class="progressbar" style="padding: 0;">
+                                                    <div
+                                                        style="width:{{  claim.prob_model*100 }}%;  background-color:brown">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="detail content">
-                                    <div id="analysis">
+                                <div class="detail content">
+                                    <!-- <div id="analysis">
                                         <div class="item-analysis">
                                             <div style="text-align: right;" class="icon-item-analysis">
                                                 <img src="{{ url_for('static', filename='img/listing.png') }}" style="opacity: 0.5;">
@@ -512,142 +492,242 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                <div style="height: 580px;display: grid;grid-template-columns: auto 30px;">
-                                    <!-- <div class="tab">
-                                        <button class="tablinkclaims" onclick="openTabClaim(event,'info-claim')"
-                                            id="defaultDetails">Detail</button>
-                                        <button class="tablinkclaims"
-                                            onclick="openTabClaim(event, 'sources-claim')">Related Sources</button>
-                                        <div>
-                                            <form method=post action="/process">
-                                                <input type="hidden" name="claimId" value="{{ data[0].claim_id }}">
-                                                <input type=submit style="margin-right: 30px;" class="btn-validation"
-                                                    name="Credibility" value="Non-Credibility">
-                                                <input type=submit class="btn-validation" name="Credibility"
-                                                    value="Credibility">
-                                            </form>
-                                        </div>
                                     </div> -->
-                                    <div id="info-claim" class="tabclaims item-tab">
-                                        <div>
+                                    <div id="content-claim">
+                                        <div class="tab">
+                                            <button class="tablinkclaims" onclick="openTabClaim(event,'info-claim')"
+                                                id="defaultDetails">Detail</button>
+                                            <button class="tablinkclaims"
+                                                onclick="openTabClaim(event, 'sources-claim')">Related Sources</button>
+                                            <!-- <div>
+                                                <form method=post action="/process">
+                                                    <input type="hidden" name="claimId" value="{{ data[0].claim_id }}">
+                                                    <input type=submit style="margin-right: 30px;"
+                                                        class="btn-validation" name="Credibility"
+                                                        value="Non-Credibility">
+                                                    <input type=submit class="btn-validation" name="Credibility"
+                                                        value="Credibility">
+                                                </form>
+                                            </div> -->
+                                        </div>
+                                        <!-- id="info-claim" -->
+                                        <div id="info-claim" class="tabclaims item-tab">
                                             <div>
-                                                <h4>
-                                                    Origins
-                                                </h4>
-                                                <p id="origins-claim">
-                                                    {{ data[0].origins }}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <h4>
-                                                    Description
-                                                </h4>
-                                                <span>
-                                                    <span id="description-short">
-                                                        {{ data[0].description }}
-                                                    </span>
-                                                    <span id="dots">...</span>
-                                                    <span id="more">
-                                                        {{ data[0].description }}
-                                                    </span>
+                                                <div>
+                                                    <h4>
+                                                        Origins
+                                                    </h4>
+                                                    <p id="origins-claim">
+                                                        {{ data[0].origins }}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <h4>
+                                                        Description
+                                                    </h4>
+                                                    <span>
+                                                        <span id="description-short">
+                                                            {{ data[0].description }}
+                                                        </span>
+                                                        <span id="dots">...</span>
+                                                        <span id="more">
+                                                            {{ data[0].description }}
+                                                        </span>
 
-                                                    <button onclick="readMore()" id="btn-readmore" class="button">Read
-                                                        more</button>
+                                                        <button onclick="readMore()" id="btn-readmore"
+                                                            class="button">Read
+                                                            more</button>
+                                                </div>
+                                                <div>
+                                                    <h4>
+                                                        Example
+                                                    </h4>
+                                                    <p id="example-claim">
+                                                        {{ data[0].example }}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <h4>
+                                                        Originally Published
+                                                    </h4>
+                                                    <p id="originally-published-claim">
+                                                        {{ data[0].originally_published }}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <h4>
+                                                        Last Updated
+                                                    </h4>
+                                                    <p id="last-updated-claim">
+                                                        {{ data[0].last_updated }}
+                                                    </p>
+                                                </div>
+                                                <div id="tag-claim">
+                                                    {% for tag in data[0].tags%}
+                                                    <span class="tag-claim-item"> #{{ tag }} </span>
+                                                    {% endfor %}
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4>
-                                                    Example
-                                                </h4>
-                                                <p id="example-claim">
-                                                    {{ data[0].example }}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <h4>
-                                                    Originally Published
-                                                </h4>
-                                                <p id="originally-published-claim">
-                                                    {{ data[0].originally_published }}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <h4>
-                                                    Last Updated
-                                                </h4>
-                                                <p id="last-updated-claim">
-                                                    {{ data[0].last_updated }}
-                                                </p>
-                                            </div>
-                                            <div id="tag-claim">
-                                                {% for tag in data[0].tags%}
-                                                <span class="tag-claim-item"> #{{ tag }} </span>
-                                                {% endfor %}
+                                        </div>
+                                        <!-- id="sources-claim" -->
+                                        <div id="sources-claim" class="tabclaims item-tab" style="display: none;">
+                                            <div class="chart-sources-claim"
+                                                style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="sources-claim" class="tabclaims item-tab" style="display: none;">
-                                        <div class="chart-sources-claim"
-                                            style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- </div> -->
+
+
+                        <div style="border-left: 1px solid lightgray;">
+                            <div id="detail-source" class="tabcontent overview-sources sources-claim detail-action-tab" style="display: none;">
+                                <div id="title-source-item">
+                                    Source
+                                </div>
+                                <div class="source-credit " style="margin-bottom: 20px;font-size:18px;">
+                                    <span>Overall:</span> <span class="credit" id="overall-source">80%</span>
+                                </div>
+                                <div class="row-analysis-source">
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/listing.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Claims
+                                            </div>
+                                            <div class="claims total-claim-detail" id="total-claim-source-item">2000
+                                            </div>
                                         </div>
                                     </div>
-                                    <div id="tab-content-claim">              
-                                        <div class="" style="height:50%;background-color: crimson;">
-                                            <svg>
-                                                <text x="10" y="-10" fill="white" transform="rotate(90)" font-size="18px">Detail</text>
-                                            </svg>
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/remain.png') }}" width="32px"
+                                                style="opacity: 0.5;">
                                         </div>
-                                        <div class="" style="height:50%;background-color: crimson;">
-                                            <svg>
-                                                <text x="10" y="-10" fill="white" transform="rotate(90)" font-size="18px">Related Source</text>
-                                            </svg>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Remain
+                                            </div>
+                                            <div class="claims total-claim-detail" id="total-claim-source-item-1">2000
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-analysis-source">
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/credit.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Credibility
+                                            </div>
+                                            <div class="claims credit-claim" id="validation-source-item">
+                                                1000
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/danger.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Non-Credibility
+                                            </div>
+                                            <div class="claims noncredit-claim" id="unvalidation-source-item">
+                                                20
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
+                            <div class="claim-detail detail-action-tab tabcontent">
+                                <div id="title-claim-action-tab">
+                                    are you ok ?
+                                </div>
+                                <form id="form-validation">
+                                    <div style="padding:5px 30px;">
+                                    <div class="inputGroup">
+                                        <input id="radio1" name="radio" type="radio"/>
+                                        <label for="radio1">Credibility</label>
+                                      </div>
+                                      <div class="inputGroup">
+                                        <input id="radio2" name="radio" type="radio"/>
+                                        <label for="radio2">Non-Credibility</label>
+                                      </div>
+                                    </div>
+                                    <div id="submit-validation">
+                                        <div>
+                                            <input type=submit class="btn-form" style="padding: 8px 30px;" name="Credibility" value="Submit">
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn-form" style="padding: 8px 30px;" onclick="nextToClaim()">Next</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div style="padding: 20px; text-align: center;" id="chart-overview">
+                                <div>
+                                    <div class="chartjs-size-monitor">
+                                        <div class="chartjs-size-monitor-expand">
+                                            <div class=""></div>
+                                        </div>
+                                        <div class="chartjs-size-monitor-shrink">
+                                            <div class=""></div>
+                                        </div>
+                                    </div>
+                                    <canvas id="canvas" style="display: block; width: 100%; height: 400px;" width="800"
+                                        height="600" class="chartjs-render-monitor"></canvas>
+                                </div>
+                            </div>
                         </div>
-                        
                     </div>
-
                 </div>
-            </div>
 
 
 
-            <div class="detail content" style="display: none;">
-                
-                <div style="height: 580px;">
-                    <div class="tab">
-                        <button class="tablinks" onclick="selectTab(event,'info-claim')"
-                            id="defaultOpen1">Detail</button>
-                        <button class="tablinks" onclick="selectTab(event, 'sources')">Sources</button>
-                        <div>
-                            <form method=post action="/process">
-                                <input type="hidden" name="claimId" value="{{ data[0].claim_id }}">
-                                <!-- <div class="validation-claim"> -->
-                                <input type=submit style="margin-right: 30px;" class="btn-validation" name="Credibility"
-                                    value="Non-Credibility">
-                                <input type=submit class="btn-validation" name="Credibility" value="Credibility">
-                                <!-- </div> -->
-                            </form>
+                <div class="detail content" style="display: none;">
+
+                    <div style="height: 580px;">
+                        <div class="tab">
+                            <button class="tablinks" onclick="selectTab(event,'info-claim')"
+                                id="defaultOpen1">Detail</button>
+                            <button class="tablinks" onclick="selectTab(event, 'sources')">Sources</button>
+                            <div>
+                                <form method=post action="/process">
+                                    <input type="hidden" name="claimId" value="{{ data[0].claim_id }}">
+                                    <!-- <div class="validation-claim"> -->
+                                    <input type=submit style="margin-right: 30px;" class="btn-validation"
+                                        name="Credibility" value="Non-Credibility">
+                                    <input type=submit class="btn-validation" name="Credibility" value="Credibility">
+                                    <!-- </div> -->
+                                </form>
+                            </div>
                         </div>
-                    </div>
 
-                    <div id="sources" class="tabcontent item-tab">
-                        <div class="chart"
-                            style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
+                        <div id="sources" class="tabcontent item-tab">
+                            <div class="chart"
+                                style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div style="height: 580px;display: none;" id="overview-sources">
-                <h3>Heatmap Sources</h3>
-                <div id="heatmap-sources">
+                <div style="height: 580px;display: none;" id="overview-sources">
+                    <h3>Heatmap Sources</h3>
+                    <div id="heatmap-sources">
+                    </div>
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.min.js') }}"></script> -->
@@ -712,7 +792,7 @@
                 var colorClaim = d3.scaleLinear().domain([1, 10])
                     .range(["#a9a9a9", "rgb(237,105,37)"])
 
-                var tooltip = d3.select("#overview-sources")
+                var tooltip = d3.select("#all-sources")
                     .append("div")
                     .style("opacity", 0)
                     .attr("class", "tooltip")
@@ -757,7 +837,7 @@
                 }
 
                 var rectClick = function (d) {
-                    selectTab(event, "claims");
+                    selectTab(event, "claim-detail");
                     selectClaim(mapClaim.get(d.claim_id));
                     var claimLi = document.getElementById(d.claim_id);
                     claimLi.scrollIntoView(false);

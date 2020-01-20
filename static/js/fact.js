@@ -15,6 +15,8 @@ function readMore() {
   }
 }
 
+var i_nextClaim = 0;
+
 function selectClaim(index) {
   drawRelation(index);
   // console.log("Select claim data",claims[index]);
@@ -26,6 +28,7 @@ function selectClaim(index) {
   }
   document.getElementById(claim.id).classList.add("row-clicked");
   document.querySelector("input[type=hidden]").setAttribute("value", claim.id);
+  document.getElementById("title-claim-action-tab").innerHTML = claim.claim;
   // document.getElementById("no-claim").innerHTML = index + '.';
   // document.getElementById("title-claim").innerHTML = claim.Claim;
   document.getElementById("origins-claim").innerHTML = claim.origins;
@@ -43,9 +46,14 @@ function selectClaim(index) {
   for (i = 0; i < tags.length; i++) {
     tagHTML += '<span class="tag-claim-item">#' + tags[i] + "</span>";
   }
+  i_nextClaim = index + 1;
   // for tag in tags:
   //   console.log(tag);
   document.getElementById("tag-claim").innerHTML = tagHTML; //claim["Tags"];
+}
+
+function nextToClaim(){
+  selectClaim(i_nextClaim);
 }
 
 function get(route) {
@@ -61,6 +69,7 @@ function get(route) {
 
 function selectTab(evt, tabName) {
   var i, tabcontent, tablinks;
+  console.log("select tab",tabName);
   tabcontent = document.getElementsByClassName("tabcontent");
   for (i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = "none";
@@ -69,7 +78,11 @@ function selectTab(evt, tabName) {
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
-  document.getElementById(tabName).style.display = "block";
+  // document.getElementById(tabName).style.display = "block";
+  activedTabs = document.getElementsByClassName(tabName);
+  for (i = 0; i < activedTabs.length; i++) {
+    activedTabs[i].style.display = "block";
+  }
   evt.currentTarget.className += " active";
 }
 
@@ -84,6 +97,7 @@ function openTabClaim(evt, tabName) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
   document.getElementById(tabName).style.display = "block";
+  
   evt.currentTarget.className += " active";
 }
 
@@ -195,9 +209,10 @@ function drawRelation(index) {
     .clamp(true);
 
   // var diameter = 960;
-  var diameter = 1960;
-
-  var rect_width = 200;
+  // var diameter = 1960;
+  var diameter = 1000; //document.getElementById('content-claim').offsetWidth;
+  // console.log("char width",diameter);
+  var rect_width = 160;
   var rect_height = 20;
 
   var link_width = "1px";
@@ -270,13 +285,24 @@ function drawRelation(index) {
   var svg = d3
     .select(".chart-sources-claim")
     .append("svg")
-    .attr("width", diameter)
-    .attr("height", diameter)
-    .append("g")
+    .attr("viewBox", [0, 0, diameter, diameter]);
+    // .attr("width", diameter)
+    // .attr("height", diameter)
+
+  const g = svg .append("g")
     .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
 
+    svg.call(d3.zoom()
+    .extent([[0, 0], [diameter, diameter]])
+    .scaleExtent([1, 8])
+    .on("zoom", zoomed));
+
+    function zoomed() {
+      g.attr("transform", d3.event.transform);
+    }
+
   // links
-  var link = svg
+  var link = g
     .append("g")
     .attr("class", "links")
     .selectAll(".link")
@@ -295,7 +321,7 @@ function drawRelation(index) {
 
   // outer nodes
 
-  var onode = svg
+  var onode = g
     .append("g")
     .selectAll(".outer_node")
     .data(data.outer)
@@ -338,7 +364,7 @@ function drawRelation(index) {
 
   // inner nodes
 
-  var inode = svg
+  var inode = g
     .append("g")
     .selectAll(".inner_node")
     .data(data.inner)
