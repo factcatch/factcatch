@@ -69,7 +69,6 @@ function get(route) {
 
 function selectTab(evt, tabName) {
   var i, tabcontent, tablinks;
-  console.log("select tab",tabName);
   tabcontent = document.getElementsByClassName("tabcontent");
   for (i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = "none";
@@ -84,6 +83,7 @@ function selectTab(evt, tabName) {
     activedTabs[i].style.display = "block";
   }
   evt.currentTarget.className += " active";
+  console.log("evt",evt);
 }
 
 function openTabClaim(evt, tabName) {

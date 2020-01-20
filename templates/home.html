@@ -265,7 +265,7 @@
                     <div style="display: grid; padding: 10px 30px;grid-column-gap: 25px; grid-template-columns: auto auto;">
                             <div class="tab-main-content" onclick="selectTab(event,'overview-sources')" id="defaultOpen">
                                 Sources</div>
-                            <div class="tab-main-content" onclick="selectTab(event,'claim-detail')">Claims</div>
+                            <div id="tab-claims" class="tab-main-content" onclick="selectTab(event,'claim-detail')">Claims</div>
                     </div>
                     <div id="select-file" class="header-content">
 
@@ -837,7 +837,7 @@
                 }
 
                 var rectClick = function (d) {
-                    selectTab(event, "claim-detail");
+                    document.getElementById('tab-claims').click();
                     selectClaim(mapClaim.get(d.claim_id));
                     var claimLi = document.getElementById(d.claim_id);
                     claimLi.scrollIntoView(false);
