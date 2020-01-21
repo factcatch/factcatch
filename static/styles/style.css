@@ -1,7 +1,7 @@
 body {
   margin: 0;
   height: 100%;
-  background-color: #a9a9a9;
+  background-color: #282733;
   /* font-family:  "Open Sans Condensed", "Open Sans", helvetica, sans-serif; */
   font-family: "Open Sans", Helvetica, sans-serif;
   font-weight: 500;
@@ -32,11 +32,11 @@ a {
 }
 
 .grid-container {
-  display: grid;
-  grid-template-columns: 8% auto;
+  /* display: grid; */
+  /* grid-template-columns: 8% auto; */
   /* grid-gap: 10px; */
   /* background-color: #2196f3; */
-  /* padding: 10px; */
+  padding: 10px;
 }
 
 .grid-container > div {
@@ -48,6 +48,7 @@ a {
 
 
 .header {
+  margin: 0px 30px;
   grid-column-start: 1;
   grid-column-end: 3;
   color: white;
@@ -67,7 +68,8 @@ a {
 
 #block-list-claim {
   padding: 0px;
-  height: 530px;
+  /* margin: 0px 30px; */
+  height: 560px;
   overflow: auto;
 }
 
@@ -79,6 +81,7 @@ a {
 
 #block-content {
   display: grid;
+  margin: 0px 30px;
   /* grid-template-columns: 350px auto; */
 }
 
@@ -89,7 +92,7 @@ a {
 
 .grid-header {
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 260px 250px auto auto;
   /* height: 60px; */
   background-color: #282733;
   /* padding: 10px 0px; */
@@ -119,8 +122,8 @@ a {
 
 #logo-griffith {
   padding: 8px;
-  margin-left: 0px;
-  background-color: #201F2B;
+  /* margin-left: 0px; */
+  /* background-color: #201F2B; */
   color: #fff;
 }
 
@@ -136,7 +139,7 @@ a {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 14px;
+  font-size: 12px;
   border-radius: 5px;
   margin: 4px 0px;
   cursor: pointer;
@@ -211,12 +214,12 @@ a {
   /* width: ; */
   /* text-align: left; */
   padding: 0px 20px;
-  border-left: 2px brown solid;
+  border-left: 1px #ccd0d5 solid;
 }
 
 .content {
   padding: 10px 10px;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 #more {display: none;}
@@ -337,7 +340,7 @@ a {
   padding: 6px 0px 6px 5px;
   border: 1px solid #ddd;
   border-radius: 3px;
-  width: 160px;
+  width: 90%;
   margin:0px 5px;
 }
 
@@ -377,6 +380,9 @@ th i {
 /* Create an active/current tablink class */
 .tab button.active {
   background-color: #ccc;
+  color: #000;
+  font-weight: 300;
+
 }
 
 /* Style the tab content */
@@ -396,7 +402,10 @@ th i {
 .tab-main-content{
   padding: 5px;
   text-align: center;
-  border-radius: 4px;
+  border-radius: 4px 4px 0px 0px;
+  color:#F6F6F7;
+  font-weight: 400;
+  background-color: #1B1B28;
 }
 
 /* Style the list content */
@@ -430,7 +439,7 @@ th i {
 #block-list-claim > ul {
   list-style: none;
   /* border: 1px solid #d0d0d0; */
-  width: 350px;
+  /* width: 350px; */
   padding: 0px;
   height: 100%;
   margin-top: 0px;
@@ -454,10 +463,11 @@ th i {
 
 
 #title-list-claim {
-  background-color: brown;
-  color: white;
+  /* background-color: brown; */
+  /* color: white; */
   text-align: center;
   padding: 8px 10px;
+  border-bottom: 1px #ccd0d5 solid;
 }
 
 #sources {
@@ -593,7 +603,9 @@ text {
 
 
 .active, .source-item:hover {
-  background-color: #5867dd;
+  background-color: #F9F9FC;
+  color: #716ACA;
+  font-weight: 700;
 }
 
 .content-source-item {
@@ -649,6 +661,52 @@ text {
   grid-template-columns: 50% 50%;
   /* border-left: 2px solid brown; */
 }
+
+.overview-source {
+  padding: 0px 20px 0px 0px;
+  font-size: 14px;
+}
+
+.overview-source__ {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.overview-source__info {
+  /* padding: 10px 0px; */
+}
+
+.overview-source__action {
+  padding: 5px 0px 10px 0px;
+}
+
+.overview-source__title {
+  padding: 10px 0px;
+  font-weight: 600;
+}
+
+.overview-source__stats {
+  text-align: right;
+  padding: 20px 0px;
+  font-size: 24px;
+  font-weight: 900;
+  color: #22B9FF;
+}
+
+.overview-source__number {
+  text-align: right;
+  /* padding: 0px 10px; */
+  color: #98a2cc;
+}
+
+.overview-source__change {
+  color: #98a2cc;
+}
+
+.overview-source__desc {
+  color: #98a2cc;
+}
+
 
 #overview {
   /* display: grid; */
@@ -768,7 +826,7 @@ text {
 
 #heatmap-sources tr.header,
 #heatmap-sources tr:hover {
-  background-color: #f1f1f1;
+  background-color: #dddfe2;
 }
 
 .title-detail-item-analysis{
@@ -939,6 +997,7 @@ text {
 
 #fact-checking{
   background: #f9f9fc !important;
+  border-radius: 0px 4px 0px 0px;
 }
 
 #fact-checking-body {
@@ -950,7 +1009,7 @@ text {
   padding: 8px 10px;
   width: 300px;
   margin: 5px;
-  margin-left: 50px;
+  margin-left: 30px;
   font-size: 14px;
 }
 
@@ -1027,6 +1086,7 @@ text {
 
 .progressbar {
   background-color:#a9a9a9;
+  /* width: 68% !important; */
   padding: 0;
   border-radius: 4px;
   /* (height of inner div) / 2 + padding */
@@ -1093,3 +1153,4 @@ text {
   text-align: center;
   padding: 4px;
 }
+

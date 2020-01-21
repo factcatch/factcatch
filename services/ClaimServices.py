@@ -77,11 +77,11 @@ def getAllClaims():
 
 def analysis():
     claims = Claim.query.count()
-    remains = 10
+    remains = Claim.query.filter_by(credibility=-1).count()
     cred = Claim.query.filter_by(credibility=1).count()
     nonCred = Claim.query.filter_by(credibility=0).count()
-    perCred = (float(cred) / claims)*100
-    print(perCred)
+    # perCred = (float(cred) / claims)*100
+    perCred = float("{0:.2f}".format((float(cred) / (cred + nonCred))*100))
     return {
         'claims' : claims,
         'remains' : remains,

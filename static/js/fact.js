@@ -28,7 +28,7 @@ function selectClaim(index) {
   }
   document.getElementById(claim.id).classList.add("row-clicked");
   document.querySelector("input[type=hidden]").setAttribute("value", claim.id);
-  document.getElementById("title-claim-action-tab").innerHTML = claim.claim;
+  // document.getElementById("title-claim-action-tab").innerHTML = claim.claim;
   // document.getElementById("no-claim").innerHTML = index + '.';
   // document.getElementById("title-claim").innerHTML = claim.Claim;
   document.getElementById("origins-claim").innerHTML = claim.origins;

@@ -98,7 +98,7 @@ def getSourcesWithClaim():
         # credibilitySource = random.randint(10,50)
         for index, claim in enumerate(claimsId):
             claim = (
-                Claim.query.with_entities(Claim.id, Claim.claim)
+                Claim.query.with_entities(Claim.id, Claim.claim,Claim.credibility)
                 .filter_by(id=claim[0])
                 .first()
             )
@@ -127,7 +127,7 @@ def getSourcesWithClaim():
                     "claim_id": claim[0],
                     "claim": claim[1],
                     "index": index % max_cell,
-                    "credibility_claim": max_cell - index
+                    "credibility_claim": claim[2]
                     if max_cell - index >= 0
                     else 0,  # credibilitySource
                 }
@@ -161,14 +161,14 @@ def getSourceClaim():
         claims = []
         for index, claim in enumerate(claimsId):
             claim = (
-                Claim.query.with_entities(Claim.id, Claim.claim)
+                Claim.query#.with_entities(Claim.id, Claim.claim)
                 .filter_by(id=claim[0])
                 .first()
             )
             claims.append({
-                "claim_id" : claim[0],
-                "claim" : claim[1],
-                "credibility_claim" : 10 - index if 10 - index >= 0 else 0
+                "claim_id" : claim.id,
+                "claim" : claim.claim,
+                "credibility_claim" : claim.credibility #10 - index if 10 - index >= 0 else 0
             })
         results.append(
             {
