@@ -432,7 +432,7 @@ th i {
 .topright:hover {color: red;}
 
 .item-tab {
-  height: 540px;
+  height: 480px;
   /* height: 800px; */
 }
 
@@ -1137,16 +1137,26 @@ text {
   padding: 5px;
   text-align: center;
   border-radius: 4px;
-  background-color: #dddfe2;
+  width: 50px;
+  background-color: #365899;
   border: 1px solid #ccd0d5;
-  color: #4b4f56;
+  color: #ffffff;
   cursor: pointer;
 }
 
 #submit-validation{
-  /* margin-top: 20px; */
+  /* margin-top: 5px; */
+  padding-top: 4px;
+  /* border-top: 1px #ccd0d5 solid; */
   display: grid; 
   grid-template-columns: 50% 50%;
+}
+
+#question {
+  text-align: center;
+  margin-top: 10px;
+  padding: 5px;
+  border-top: 1px #ccd0d5 solid;
 }
 
 #submit-validation > div {
