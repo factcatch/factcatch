@@ -11,23 +11,28 @@ pip install -r requirements.txt
 ```
 ### Database
 This project use [PostgreSQL](https://www.postgresql.org/) which has version 12.0 for purpose of saving data.  
-The first, you must be install PostgreSQL 12.0 and create a database had some configuring settings:
+Firstly, you must install PostgreSQL 12.0 and create a database with the following configurations:
 ```
 dbuser='postgres'
 dbpass=27101997
 dbhost='localhost'
 dbname='fact_checking'
+``` 
+Command line for creating `fact_checking` database with password `27101997`:
+```
+psql -U postgres -c "create database fact_checking" 
 ```
 # Running
-To run app:<br>
+To run the app:<br>
 ```
 python run.py
 ```
-Your app will be running on url: <!-- markdownlint-capture --> [http://localhost:5050/](http://localhost:5050/)
+Your app will be run on the url: <!-- markdownlint-capture --> [http://localhost:5050/](http://localhost:5050/)
 ### Getting Started
-If you firstly run app, your database is empty, so you must import data having a lot of claims from folder *datasets*
+If you first run the app, your database will be empty. So you need to import data from the `datasets` folder which contain a lot of claims. <br>
+The app use the template of *Snopes* datasets, you can find *Snopes* datasets at [here](http://www.snopes.com/food/ingredient/turkey.asp).
 ### You can make dataset
-If you would like to test app on more datasets, you can generate dataset by the argument `--num_of_claims` with a certain number: 
+If you would like to test the app with more datasets, you can generate dataset by using the following command with the argument `--num_of_claims`: 
 ```
 python ./utils/make_data.py --num_of_claims=100
 ```
