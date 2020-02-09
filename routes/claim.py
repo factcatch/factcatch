@@ -16,10 +16,14 @@ def getAllClaim():
     sources = json.loads(sources)
     analysis = ClaimServices.analysis()
     if len(claims) == 0:
-        return render_template("getstarted.html")
+        return render_template("getting_started.html")
     return render_template("home.html",data=claims,sources=sources,analysis=analysis)
 
 @app.route('/claim/getUserCredAndModel')
 def getUserCredAndModel():
    result = ClaimServices.getUserCredAndModel()
    return jsonify(result)
+
+@app.route('/getting-started')
+def get_started():
+    return render_template("getting_started.html")

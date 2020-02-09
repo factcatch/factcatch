@@ -150,7 +150,7 @@ def getSourceClaim():
             continue
         total =  GoogleResult.query.filter_by(domain=domain).count() #random.randint(100, 200)
         credibility = GoogleResult.query.join(Claim).filter(GoogleResult.domain==domain,Claim.credibility==1).count() #Claim.query.filter_by(credibility=1).count() #random.randint(0, 100)
-        uncredibility = total - credibility #random.randint(0, 100)
+        uncredibility = GoogleResult.query.join(Claim).filter(GoogleResult.domain==domain,Claim.credibility==0).count() #random.randint(0, 100)
         claimsId = (
             GoogleResult.query.with_entities(GoogleResult.claim_id)
             .filter_by(domain=domain[0])

@@ -24,6 +24,7 @@ def getClaimFromData(data):
     claim.claim = data["Claim"]
     claim.tags = data["Tags"]
     claim.url = data["URL"]
+    claim.prob_model = float("{0:.2f}".format(random.uniform(0.0, 1.0)))
     return claim
 
 def getGoogleResultsFromData(claim_id,data):

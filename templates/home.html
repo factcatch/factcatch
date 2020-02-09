@@ -444,7 +444,7 @@
                                     </div>
                                     
                                     <div class="loader" id="loader-source"></div>
-                                    <div style="width: 100%;height: 480px;overflow: auto;">
+                                    <div style="width: 100%;height: 560px;overflow: auto;">
                                         <table id="heatmap-sources">
                                         </table>
                                     </div>
@@ -477,11 +477,11 @@
                                                 <div class="progressbar" style="padding: 0;">
                                                     {% if claim.prob_model < 0.5 %}
                                                         <div
-                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:#db1430">
+                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:#fd397a">
                                                         </div>
                                                     {% else %}
                                                         <div
-                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:green">
+                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:#22B9FF">
                                                         </div>
                                                     {% endif %}
                                                 </div>
@@ -635,7 +635,7 @@
                                             </div>
                                         <div id="submit-validation">
                                             <div style="text-align: right;padding-right: 10px;">
-                                                <input type=submit class="btn-form" style="padding: 8px 4px;background-color: #365899; color: #ffffff;" name="Credibility" value="Yes">
+                                                <input type=submit class="btn-form" style="padding: 8px 4px;background-color: brown; color: #ffffff;" name="Credibility" value="Yes">
                                             </div>
                                             <div style="text-align: left;padding-left: 10px;">
                                                 <input type=submit class="btn-form" style="padding: 8px 4px; background-color: #ccd0d5; color: #000000;" name="Non-Credibility" value="No">
@@ -651,7 +651,7 @@
 
 
                         <div style="border-left: 1px solid lightgray;">
-                            <div style="padding: 20px; text-align: center;" id="chart-overview">
+                            <div style="padding:40px 20px; text-align: center;" id="chart-overview">
                                 <div>
                                     <div class="chartjs-size-monitor">
                                         <div class="chartjs-size-monitor-expand">
@@ -792,8 +792,8 @@
                 </div>
                 <div style="height: 580px;display: none;" id="overview-sources">
                     <h3>Heatmap Sources</h3>
-                    <div id="heatmap-sources">
-                    </div>
+                    <!-- <div id="heatmap-sources">
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -823,8 +823,8 @@
         function showInfoSource(source) {
             document.getElementById("title-source-item").innerHTML = source.source;
             document.getElementById("total-claim-source-item").innerHTML = source.total;
-            document.getElementById("source-credibility-progress").style.width = ((source.credibility * 100)/source.total).toFixed(2) + '%' ;
-            document.getElementById("credibility-per").innerHTML =  ((source.credibility * 100)/source.total).toFixed(2) + '%' ;
+            document.getElementById("source-credibility-progress").style.width = ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
+            document.getElementById("credibility-per").innerHTML =  ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
             // document.getElementById("remain-claim-source-item").innerHTML = source.total - Math.floor(Math.random() * 5); 
             // document.getElementById("validation-source-item").innerHTML = source.credibility;
             // document.getElementById("unvalidation-source-item").innerHTML = source.total - source.credibility;
@@ -866,7 +866,7 @@
                     // .range(["#a9a9a9", "rgb(237,105,37)"])
 
                 var colorClaim = d3.scaleOrdinal().domain([-1, 1])
-                    .range(["grey","#db1430","#64bb5d"])
+                    .range(["grey","#1dc9b7","#fd397a"])
 
 
                 var tooltip = d3.select("#all-sources")
