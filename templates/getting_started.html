@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
+
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Fact Checking</title>
+    <script type="text/javascript" src="/static/js/fact.js"></script>
+</head>
+
+<body style="text-align: center;">
+    <div style="padding: 20px 0px 50px 0px; ">
+        <a href="/" style="font-size: 32px;color: #db1430;">
+            <div>Fact Checking</div>
+        </a>
+    </div>
+    <div style="color: #fff;font-size: 50px;padding: 50px 0px;">
+        Getting Started
+    </div>
+    <div style="color: #fff;font-size: 14px;padding: 20px 0px 40px 0px;">
+        No claim is in dataset. Please import your data!
+    </div>
+    <div id="select-file" class="header-content">
+        <form method=post action="/upload" enctype=multipart/form-data> <input type="file" name="file" id="file"
+            class="inputfile" data-multiple-caption="{count} files selected" multiple />
+        <input type=submit value=Upload id="upload-btn">
+        </form>
+    </div>
+</body>
+
+</html>

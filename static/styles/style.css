@@ -69,7 +69,7 @@ a {
 #block-list-claim {
   padding: 0px;
   /* margin: 0px 30px; */
-  height: 560px;
+  height: 650px;
   overflow: auto;
 }
 
@@ -432,7 +432,7 @@ th i {
 .topright:hover {color: red;}
 
 .item-tab {
-  height: 480px;
+  height: 560px;
   /* height: 800px; */
 }
 
@@ -690,7 +690,7 @@ text {
   padding: 20px 0px;
   font-size: 24px;
   font-weight: 900;
-  color: #22B9FF;
+  color: #5d78ff;
 }
 
 .overview-source__number {
@@ -997,7 +997,7 @@ text {
 
 #fact-checking{
   background: #f9f9fc !important;
-  border-radius: 0px 4px 0px 0px;
+  border-radius: 0px 4px 4px 4px;
 }
 
 #fact-checking-body {
