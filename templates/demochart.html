@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        #myInput {
+            background-image: url('/css/searchicon.png');
+            background-position: 10px 10px;
+            background-repeat: no-repeat;
+            width: 100%;
+            font-size: 16px;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;
+            margin-bottom: 12px;
+        }
+
+        #myTable {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+            font-size: 18px;
+        }
+
+        #myTable th,
+        #myTable td {
+            text-align: left;
+            /* padding: 12px; */
+        }
+
+        #myTable tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        #myTable tr.header,
+        #myTable tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>My Customers</h2>
+
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+
+    <table id="myTable">
+        <tr class="header">
+            <th style="width:60%;">Name</th>
+            <th style="width:40%;">Country</th>
+        </tr>
+    </table>
+
+    <script>
+        function myFunction() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+</body>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+<script>
+
+    // set the dimensions and margins of the graph
+    // var margin = {top: 80, right: 25, bottom: 30, left: 40},
+    //   width = 450 - margin.left - margin.right,
+    //   height = 450 - margin.top - margin.bottom;
+    var table = d3.select("table");
+    d3.json("http://localhost:5050/source/claim", function (data) {
+        var table = d3.select("table")
+            .selectAll("tr")
+            .data(data)
+            .enter()
+            .append("tr")
+        table.append("td")
+            .text(function (d) { return d.source })
+            .style("text-align","right")
+
+        table.append("td")
+            .attr("id",function(d){return d.source.replace(/\./g,'')})
+
+        data.map((source) => {
+            console.log(source);
+            var widthCell = 20, heightCell = 20, p = 10;
+
+            var width = widthCell * source.claims.length, height = heightCell * Math.ceil(source.claims.length / p);
+            // var data = data[0];
+
+            // append the svg object to the body of the page
+            var sourceId = "#" + source.source.replace(/\./g,'');            
+            var svg = d3.select(sourceId)
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+
+
+            var colorClaim = d3.scaleLinear().domain([1, 10])
+                .range(["#a9a9a9", "rgb(237,105,37)"])
+
+            var tooltip = d3.select("#overview-sources")
+                .append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .style("background-color", "white")
+                .style("border", "solid")
+                .style("border-width", "2px")
+                .style("border-radius", "5px")
+                .style("padding", "5px")
+                .style("position", "fixed")
+                .style("max-width", "250px")
+            // .style("margin-top", "20px")
+
+
+            // Three function that change the tooltip when user hover / move / leave a cell
+            var mouseover = function (d) {
+                tooltip
+                    .style("opacity", 1)
+                d3.select(this)
+                    .style("stroke", "black")
+                    .style("opacity", 1)
+
+                document.getElementById("title-source-item").innerHTML = d.source;
+                document.getElementById("total-claim-source-item").innerHTML = d.total;
+                document.getElementById("validation-source-item").innerHTML = d.validation;
+                document.getElementById("unvalidation-source-item").innerHTML = d.unvalidation;
+            }
+            var mousemove = function (d) {
+                var mouseTop = d3.mouse(this)[1] < 300 ? d3.mouse(this)[1] + 300 : d3.mouse(this)[1];
+                var mouseTop = (d3.mouse(this)[1] % 10) + 350;
+                tooltip
+                    .html(d.claim)
+                    .style("left", (d3.mouse(this)[0] + 200) + "px")
+                    .style("top", (mouseTop) + "px")
+                console.log(d3.mouse(this)[0], mouseTop);
+            }
+            var mouseleave = function (d) {
+                tooltip
+                    .style("opacity", 0)
+                d3.select(this)
+                    .style("stroke", "white")
+                    .style("opacity", 0.8)
+            }
+
+            var rectClick = function (d) {
+                openCity(event, "claims");
+                selectClaim(mapClaim.get(d.claim_id));
+                var claimLi = document.getElementById(d.claim_id);
+                claimLi.scrollIntoView(false);
+            }
+
+            svg.selectAll("rect")
+                .data(source.claims)
+                .enter()
+                .append("rect")
+                .attr("x", function (d, i) { return widthCell * (i % p); })
+                .attr("y", function (d, i) { return heightCell * (Math.floor(i / p)); })
+                .attr("width", "20")
+                .attr("height", "20")
+                .style("fill", function (d) { return colorClaim(d.credibility_claim); })
+                .style("stroke-width", 1)
+                .style("stroke", "white")
+                .style("opacity", 0.8)
+                .on("mouseover", mouseover)
+                .on("mousemove", mousemove)
+                .on("mouseleave", mouseleave)
+                .on("click", rectClick);
+        });
+
+    })
+
+</script>
+
+</html>
