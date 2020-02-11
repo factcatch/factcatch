@@ -30,7 +30,7 @@ python run.py
 Your app will be run on the url: <!-- markdownlint-capture --> [http://localhost:5050/](http://localhost:5050/)
 ### Getting Started
 If you first run the app, your database will be empty. So you need to import data from the `datasets` folder which contain a lot of claims. <br>
-The app use the template of *Snopes* datasets, you can find *Snopes* datasets at [here](http://www.snopes.com/food/ingredient/turkey.asp).
+The app use the template of *Snopes* datasets, you can find *Snopes* datasets at [here](http://resources.mpi-inf.mpg.de/impact/web_credibility_analysis/Snopes.tar.gz).
 ### You can make dataset
 If you would like to test the app with more datasets, you can generate dataset by using the following command with the argument `--num_of_claims`: 
 ```
