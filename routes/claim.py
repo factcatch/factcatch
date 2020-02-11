@@ -11,12 +11,12 @@ def getAllClaim():
     claims = ClaimServices.getAllClaims()
     claims = json.dumps(claims)
     claims = json.loads(claims)
+    if len(claims) == 0:
+        return render_template("getting_started.html")
     sources = [] #SourceServices.getAllSources()
     sources = json.dumps(sources)
     sources = json.loads(sources)
     analysis = ClaimServices.analysis()
-    if len(claims) == 0:
-        return render_template("getting_started.html")
     return render_template("home.html",data=claims,sources=sources,analysis=analysis)
 
 @app.route('/claim/getUserCredAndModel')
