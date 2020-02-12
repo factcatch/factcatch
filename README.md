@@ -18,7 +18,9 @@ dbpass=27101997
 dbhost='localhost'
 dbname='fact_checking'
 ``` 
-Command line for creating `fact_checking` database with password `27101997`:
+Or you can modify app/config.py to match with your DB config.
+
+Command line for creating `fact_checking` database:
 ```
 psql -U postgres -c "create database fact_checking" 
 ```
