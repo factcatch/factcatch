@@ -5,8 +5,10 @@ body {
   /* font-family:  "Open Sans Condensed", "Open Sans", helvetica, sans-serif; */
   font-family: "Open Sans", Helvetica, sans-serif;
   font-weight: 500;
-  overflow:hidden;
 }
+
+* { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+
 
 h2 {
   /* text-align: center;
