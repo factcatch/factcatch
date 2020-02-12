@@ -2,7 +2,7 @@ from app import app
 from services import ClaimServices
 from werkzeug.utils import secure_filename
 from flask import request, redirect,flash,send_file
-
+import os,pathlib
 
 # UPLOAD_FOLDER = "./static/data/"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','json'}
@@ -26,10 +26,11 @@ def upload_file():
             ClaimServices.saveToDatabase(file)
             filename = secure_filename(file.filename)
             return redirect('/')
-
-# @app.route('/download',methods=['GET'])
-# def getSnapshot():
-#     filename = session.get("filename") if session.get("filename") is not None else "default.json"
-#     filename = filename[:-4] + 'csv'
-#     path_file = os.path.join(app._static_folder,'data',filename)
-#     return send_file(path_file,as_attachment=True)
+@app.route('/download',methods=['GET'])
+def getSnapshot():
+    try:
+        os.remove(app.static_folder + '\snapshot.json')
+    except Exception as e:
+        pass
+    path_to_file = ClaimServices.export_to_json()
+    return send_file(path_to_file,as_attachment=True,cache_timeout=-1)

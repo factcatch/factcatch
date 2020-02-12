@@ -1,14 +1,15 @@
 from flask import json,jsonify
 from app.models import Claim,GoogleResult
-from app import db
+from app import db,app
 from sqlalchemy.orm import load_only
 import random
+import pathlib
 
 def getCredibility(credibility):
-    if credibility == "false":
-        return 0
+    if isinstance(credibility,str):
+        return 0 if credibility == "false" else 1
     else:
-        return 1
+        return credibility
 
 def getClaimFromData(data):
     claim = Claim()
@@ -24,7 +25,10 @@ def getClaimFromData(data):
     claim.claim = data["Claim"]
     claim.tags = data["Tags"]
     claim.url = data["URL"]
-    claim.prob_model = float("{0:.2f}".format(random.uniform(0.0, 1.0)))
+    if "Prob Model" in data:
+        claim.prob_model = data["Prob Model"] 
+    else:
+        claim.prob_model = float("{0:.2f}".format(random.uniform(0.0, 1.0)))
     return claim
 
 def getGoogleResultsFromData(claim_id,data):
@@ -48,9 +52,14 @@ def saveToDatabase(file):
         googleResults = item["Google Results"]
         for item_gg in googleResults:
             itemResult = item_gg["results"]
-            for item_result in itemResult:
-                googleResult = getGoogleResultsFromData(item["Claim_ID"],item_result)
+            try:
+                for item_result in itemResult:
+                    googleResult = getGoogleResultsFromData(item["Claim_ID"],item_result)
+                    db.session.add(googleResult)
+            except:
+                googleResult = getGoogleResultsFromData(item["Claim_ID"],itemResult)
                 db.session.add(googleResult)
+
         db.session.add(claim)
     db.session.commit()
 
@@ -102,5 +111,48 @@ def getUserCredAndModel():
         "modelProb" : modelProb,
     }
 
+def export_to_json():
+    path_to_file = app.static_folder + "\snapshot.json"
+    query = """
+        COPY(
+            SELECT 
+                json_agg(fact_checking)
+            FROM (
+                SELECT
+                    origins as "Origins",
+                    fack_check as "Fact Check",
+                    description as "Description",
+                    originally_published as "Originally Published",
+                    referred_links as "Referred Links",
+                    example as "Example",
+                    last_updated as "Last Updated",
+                    credibility as "Credibility",
+                    url as "URL",
+                    claim as "Claim",
+                    tags as "Tags",
+                    prob_model as "Prob Model",
+                    claim.id as "Claim_ID",
+                    json_agg(json_build_object('results',gg)) as "Google Results"
+                FROM claim,(
+                    SELECT
+                        claim_id,
+                        domain,
+                        link,
+                        link_type
+                    FROM 
+                        google_result
+                    ) gg
+                WHERE claim.id = gg.claim_id
+                GROUP BY claim.id
+            ) fact_checking
+        ) TO :path CSV QUOTE '$'
+    """
+    db.session.execute(query,{'path':path_to_file})
+    data = None
+    with open(path_to_file) as f:
+        data = f.read()
+    with open(path_to_file,"w") as f:
+        f.write(data[1:-2])        
+    return path_to_file
 
 
