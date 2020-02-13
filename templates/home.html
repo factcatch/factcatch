@@ -305,7 +305,7 @@
                             
                                                 <div class="overview-source__action overview-source__">
                                                     <span class="overview-source__change">
-                                                        Credibility
+                                                        Trustworthiness
                                                     </span>
                                                     <span class="overview-source__number" id="credibility-per">
                                                         78%
@@ -339,7 +339,6 @@
                                                 <div>
                                                     <span class="no-claim">{{ loop.index }}. </span> {{ claim.claim }}
                                                 </div>
-                                               
                                                 <div class="progressbar" style="padding: 0;">
                                                     {% if claim.prob_model < 0.5 %}
                                                         <div
@@ -350,6 +349,18 @@
                                                             style="width:{{  claim.prob_model*100 }}%;  background-color:#22B9FF">
                                                         </div>
                                                     {% endif %}
+                                                </div>
+                                                <div class="detail-progressbar-credi" style="padding: 4px 0px;font-size: 12px;">
+                                                    <div class="percentage-credib">
+                                                        {%if claim.prob_model >= 0.5 %}
+                                                            Credibility
+                                                        {% else %}
+                                                            Credibility
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="percentage-progressbar-credi">
+                                                        {{ '%0.2f' | format(claim.prob_model * 100 | float) }}%
+                                                    </div>
                                                 </div>
                                             </li>
                                             {% endfor %}
@@ -433,14 +444,18 @@
                                             <div style="text-align: center;">
                                                 Do you think this claim is credible ?
                                             </div>
-                                        <div id="submit-validation">
-                                            <div style="text-align: right;padding-right: 10px;">
-                                                <input type=submit class="btn-form" style="padding: 8px 4px;background-color: brown; color: #ffffff;" name="Credibility" value="Yes">
-                                            </div>
-                                            <div style="text-align: left;padding-left: 10px;">
-                                                <input type=submit class="btn-form" style="padding: 8px 4px; background-color: #ccd0d5; color: #000000;" name="Non-Credibility" value="No">
-                                            </div>
-                                        </div>
+                                            <form id="submit-validation" method="get" action="/">
+                                                <div style="text-align: right;padding-right: 10px;">
+                                                    <input type=submit class="btn-form" style="padding: 8px 4px;background-color: brown; color: #ffffff;" name="credible" value="Yes">
+                                                </div>
+                                                <div style="text-align: left;padding-left: 10px;">
+                                                    <input type=submit class="btn-form" style="padding: 8px 4px; background-color: #ccd0d5; color: #000000;" name="non-credible" value="No">
+                                                </div>
+                                            </form>
+                                            <!-- <div style="padding: 10px;">
+                                                <img src="{{ url_for('static', filename='img/validated.png') }}" width="32px"
+                                                style="opacity: 0.8;">
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -702,6 +717,16 @@
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave)
                     .on("click", rectClick);
+
+                // append text to rect
+                svg.selectAll("text")
+                    .data(source.claims)
+                    .enter()
+                    .append("text")
+                    .attr("x", function (d, i) { return widthCell * ((i%maxClaims) % p) + widthCell/3; })
+                    .attr("y", function (d, i) { return heightCell * (Math.floor((i/maxClaims))) + heightCell/1.5; })
+                    .style("fill", function (d) { return "#fff"; })
+                    .text(function(d) { return d.credibility_claim == -1 ? '?' : ''});
             });
 
         })

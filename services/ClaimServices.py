@@ -7,7 +7,12 @@ import pathlib
 
 def getCredibility(credibility):
     if isinstance(credibility,str):
-        return 0 if credibility == "false" else 1
+        if credibility == "false":
+            return 0
+        elif credibility == "true":
+            return 1
+        else:
+            return -1
     else:
         return credibility
 

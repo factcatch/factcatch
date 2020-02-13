@@ -108,14 +108,6 @@ function drawRelation(index) {
   var sources = claim.documents;
   var data = sources; //JSON.parse(sources);
 
-  // transform the data into a useful representation
-  // 1 is inner, 2, is outer
-
-  // need: inner, outer, links
-  //
-  // inner:
-  // links: { inner: outer: }
-
   var outer = d3.map();
   var inner = [];
   var links = [];
@@ -477,43 +469,12 @@ function selectMode(mode) {
   for (i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = "none";
   }
-  // tablinks = document.getElementsByClassName("tablinks");
-  // for (i = 0; i < tablinks.length; i++) {
-  //   tablinks[i].className = tablinks[i].className.replace(" active", "");
-  // }
   document.getElementById(mode.value).style.display = "block";
   // evt.currentTarget.className += " active";
 }
 
 function changeMode(mode) {
   selectMode(mode.value);
-  //   var contentList = d3
-  //     .select("#block-list-claim > ul")
-  //     .selectAll("li")
-  //     .remove();
-  //   d3.select("#block-list-claim > ul")
-  //     .selectAll("li")
-  //     .data(["facebook.com", "google.com", "youtube.com", "twitter.com"])
-  //     .enter()
-  //     .append("li")
-  //     .attr("class", "source-list")
-  //     .append("div")
-  //     .attr("class", "source-item")
-  //     .style("background-color", function(d) {
-  //       return randomColor();
-  //     })
-  //     .text(function(d) {
-  //       return d;
-  //     })
-  //     .on("click", sourceClick);
-  //   d3.selectAll("#block-list-claim > ul > li")
-  //     .append("div")
-  //     .attr("class", "content-source-item")
-  //     .selectAll("div")
-  //     .data(["huy","thuy","hoang","yen"])
-  //     .enter()
-  //     .append("div")
-  //     .text(function(d){return d;});
 }
 
 // Get the element with id="defaultOpen" and click on it
@@ -522,19 +483,6 @@ document.getElementById("defaultDetails").click();
 
 var coll = document.getElementsByClassName("source-item");
 var i;
-
-// for (i = 0; i < coll.length; i++) {
-//   coll[i].addEventListener("click", function() {
-//     this.classList.toggle("active");
-//     var content = this.nextElementSibling;
-//     console.log(content);
-//     if (content.style.maxHeight) {
-//       content.style.maxHeight = null;
-//     } else {
-//       content.style.maxHeight = content.scrollHeight + "px";
-//     }
-//   });
-// }
 
 var chartImg = false;
 $("#toggle-overview").click(function() {
