@@ -1183,7 +1183,7 @@ text {
 
 .detail-progressbar-credi {
   display: grid;
-  grid-template-columns: 50% auto;
+  grid-template-columns: 30% auto;
   color: #98a2cc;
   padding: 6px 0px 0px 0px;
   font-size: 10px;

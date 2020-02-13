@@ -17,6 +17,16 @@ function readMore() {
 
 var i_nextClaim = 0;
 
+function findIndexClaimById(claim_id){
+  let index_ = -1;
+  claims.forEach(function(item,index){
+    if(item.id === claim_id[0]){
+      index_ = index;
+    }
+  });
+  return index_;
+}
+
 function selectClaim(index) {
   drawRelation(index);
   // console.log("Select claim data",claims[index]);
@@ -83,7 +93,6 @@ function selectTab(evt, tabName) {
     activedTabs[i].style.display = "block";
   }
   evt.currentTarget.className += " active";
-  console.log("evt",evt);
 }
 
 function openTabClaim(evt, tabName) {
@@ -324,7 +333,8 @@ function drawRelation(index) {
       return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
     })
     .on("mouseover", mouseover)
-    .on("mouseout", mouseout);
+    .on("mouseout", mouseout)
+    .on("click",nodeClick);
 
   onode
     .append("circle")
@@ -433,6 +443,13 @@ function drawRelation(index) {
       d3.select("#" + d.related_links[i])
         .attr("stroke-width", link_width)
         .attr("stroke", "gray");
+  }
+
+  function nodeClick(d){
+      let index_claim = findIndexClaimById(d.name);
+      selectClaim(index_claim);
+      var claimLi = document.getElementById(d.name[0]);
+      claimLi.scrollIntoView(true);
   }
 }
 

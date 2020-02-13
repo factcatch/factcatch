@@ -358,6 +358,9 @@
                                                             Credibility
                                                         {% endif %}
                                                     </div>
+                                                    <!-- <div class="percentage-credi">
+                                                        validated
+                                                    </div> -->
                                                     <div class="percentage-progressbar-credi">
                                                         {{ '%0.2f' | format(claim.prob_model * 100 | float) }}%
                                                     </div>
@@ -698,7 +701,7 @@
                     document.getElementById('tab-claims').click();
                     selectClaim(mapClaim.get(d.claim_id));
                     var claimLi = document.getElementById(d.claim_id);
-                    claimLi.scrollIntoView(false);
+                    claimLi.scrollIntoView(true);
                 }
 
                 svg.selectAll("rect")
