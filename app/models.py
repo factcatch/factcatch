@@ -46,6 +46,6 @@ class GoogleResult(db.Model):
     
     id = db.Column(db.Integer,primary_key=True)
     claim_id = db.Column(db.String,db.ForeignKey('claim.id'),nullable=False)
-    domain = db.Column(db.String)
+    domain = db.Column(db.String,index=True)
     link = db.Column(db.String)
     link_type = db.Column(db.String)

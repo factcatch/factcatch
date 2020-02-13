@@ -644,7 +644,7 @@
                 // var data = data[0];
 
                 // append the svg object to the body of the page
-                var sourceId = "#" + source.source.replace(/\./g, '');
+                var sourceId = '[id="' + source.source.replace(/\./g, '') + '"]';
                 var svg = d3.select(sourceId)
                     .append("svg")
                     .attr("width", width)
