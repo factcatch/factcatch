@@ -1,4 +1,25 @@
 // alert('fact');
+const status_question = {
+  QUESTION : 'question',
+  VALIDATING : 'loading',
+  AFTER : 'validated'
+}
+
+const rank_mode = {
+  BY_PROB_MODEL : 0,
+  BY_CREDIBLE : 1,
+  BY_NON_CREDIBLE: 2
+}
+
+
+function setStatusQuestion(mode){
+  document.getElementById('question-validate').style = (mode == status_question.QUESTION) ? 'display:inline-block' : 'display:none';
+  document.getElementById('loading-validate-claim').style = (mode == status_question.VALIDATING) ? 'display:inline-block' : 'display:none';
+  document.getElementById('after-validated').style = (mode == status_question.AFTER) ? 'display:inline-block' : 'display:none';
+  document.getElementById('block-list-claim').style = (mode == status_question.VALIDATING)  ? 'opacity: 0.2' : 'opacity:';
+  document.getElementById('detail-source').style = (mode == status_question.VALIDATING)  ? 'opacity: 0.4' : 'opacity:';
+}
+
 function readMore() {
   var dots = document.getElementById("dots");
   var moreText = document.getElementById("more");
@@ -17,10 +38,10 @@ function readMore() {
 
 var i_nextClaim = 0;
 
-function findIndexClaimById(claim_id){
+function findIndexClaimById(claim_id) {
   let index_ = -1;
-  claims.forEach(function(item,index){
-    if(item.id === claim_id[0]){
+  claims.forEach(function(item, index) {
+    if (item.id === claim_id) {
       index_ = index;
     }
   });
@@ -29,9 +50,10 @@ function findIndexClaimById(claim_id){
 
 function selectClaim(index) {
   drawRelation(index);
-  // console.log("Select claim data",claims[index]);
-  // console.log("select map claim",index);
+  // document.getElementById("input_claim_id_for_form").setAttribute
   var claim = claims[index];
+  let status_ = (claim.credibility == -1) ? status_question.QUESTION : status_question.AFTER; 
+  setStatusQuestion(status_);
   var itemClicked = document.getElementsByClassName("row-clicked");
   if (itemClicked.length != 0) {
     itemClicked.item(0).classList.remove("row-clicked");
@@ -62,7 +84,7 @@ function selectClaim(index) {
   document.getElementById("tag-claim").innerHTML = tagHTML; //claim["Tags"];
 }
 
-function nextToClaim(){
+function nextToClaim() {
   selectClaim(i_nextClaim);
 }
 
@@ -106,7 +128,7 @@ function openTabClaim(evt, tabName) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
   document.getElementById(tabName).style.display = "block";
-  
+
   evt.currentTarget.className += " active";
 }
 
@@ -287,20 +309,27 @@ function drawRelation(index) {
     .select(".chart-sources-claim")
     .append("svg")
     .attr("viewBox", [0, 0, diameter, diameter]);
-    // .attr("width", diameter)
-    // .attr("height", diameter)
+  // .attr("width", diameter)
+  // .attr("height", diameter)
 
-  const g = svg .append("g")
+  const g = svg
+    .append("g")
     .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
 
-    svg.call(d3.zoom()
-    .extent([[0, 0], [diameter, diameter]])
-    .scaleExtent([1, 8])
-    .on("zoom", zoomed));
+  svg.call(
+    d3
+      .zoom()
+      .extent([
+        [0, 0],
+        [diameter, diameter]
+      ])
+      .scaleExtent([1, 8])
+      .on("zoom", zoomed)
+  );
 
-    function zoomed() {
-      g.attr("transform", d3.event.transform);
-    }
+  function zoomed() {
+    g.attr("transform", d3.event.transform);
+  }
 
   // links
   var link = g
@@ -334,7 +363,7 @@ function drawRelation(index) {
     })
     .on("mouseover", mouseover)
     .on("mouseout", mouseout)
-    .on("click",nodeClick);
+    .on("click", nodeClick);
 
   onode
     .append("circle")
@@ -445,11 +474,11 @@ function drawRelation(index) {
         .attr("stroke", "gray");
   }
 
-  function nodeClick(d){
-      let index_claim = findIndexClaimById(d.name);
-      selectClaim(index_claim);
-      var claimLi = document.getElementById(d.name[0]);
-      claimLi.scrollIntoView(true);
+  function nodeClick(d) {
+    let index_claim = findIndexClaimById(d.name[0]);
+    selectClaim(index_claim);
+    var claimLi = document.getElementById(d.name[0]);
+    claimLi.scrollIntoView(true);
   }
 }
 
@@ -512,12 +541,16 @@ $("#toggle-overview").click(function() {
       "grid-column-end": "3",
       "grid-template-columns": "auto auto auto auto",
       padding: "0px",
-      "margin-top" : "0px",
+      "margin-top": "0px",
       height: ""
     });
     // $("#toggle-overview").css({"margin-top":"15px"});
-    document.getElementById("icon-toggle-overview").classList.remove("fa-chevron-up");
-    document.getElementById("icon-toggle-overview").classList.add("fa-chevron-down");
+    document
+      .getElementById("icon-toggle-overview")
+      .classList.remove("fa-chevron-up");
+    document
+      .getElementById("icon-toggle-overview")
+      .classList.add("fa-chevron-down");
     $("#toggle-overview").css({ top: "20px" });
   } else {
     $("#overview").css({ height: "" });
@@ -526,12 +559,16 @@ $("#toggle-overview").click(function() {
       "grid-column-end": "",
       "grid-template-columns": "auto auto",
       height: "200px",
-      "margin-top" : "80px",
+      "margin-top": "80px"
     });
     $("#toggle-overview").css({ top: "270px" });
     // $("#toggle-overview").css({"margin-top":"220px"});
-    document.getElementById("icon-toggle-overview").classList.remove("fa-chevron-down");
-    document.getElementById("icon-toggle-overview").classList.add("fa-chevron-up");
+    document
+      .getElementById("icon-toggle-overview")
+      .classList.remove("fa-chevron-down");
+    document
+      .getElementById("icon-toggle-overview")
+      .classList.add("fa-chevron-up");
   }
 });
 function filterSource() {
@@ -541,16 +578,232 @@ function filterSource() {
   table = document.getElementById("heatmap-sources");
   tr = table.getElementsByTagName("tr");
   for (i = 0; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("td")[0];
-      if (td) {
-          txtValue = td.textContent || td.innerText;
-          if (txtValue.toUpperCase().indexOf(filter) > -1) {
-              tr[i].style.display = "";
-          } else {
-              tr[i].style.display = "none";
-          }
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
       }
+    }
   }
 }
 
-// chart for overview checking
+// validate claim
+
+function renderListClaim(){
+  d3.select("#list-claim")
+  .selectAll("li")
+  .data(claims)
+  // .enter()
+  // .append("li")
+  .attr("id",function(d){return d.id;})
+  .attr("onclick",function(d,i){return 'selectClaim(' +i+')';})
+  .style('display',function(d){return d.credibility >= 0 ? 'grid' : ''})
+  .style('grid-template-columns',function(d){return d.credibility >=0 ? 'auto 35px' : ''})
+  .html(function(d, i) {
+    let width_progressbar = d.prob_model * 100;
+    let bg_progressbar = (d.prob_model >= 0.5) ? '#22B9FF' : '#fd397a';
+    let level = (d.prob_model*100).toFixed(2);
+    // let style_validated = (d.credibility >= 0) ? 'style="display: grid;grid-template-columns:auto 35px;" ' : '';
+    let title = `
+      <div class="title-claim">
+            <span class="no-claim">` + (i + 1) + `. </span> 
+            <span>` + d.claim + `</span> 
+      </div>
+    `;
+    let validated_claim = (d.credibility == 1) ? 
+    `
+      <div style="padding: 75% 8px;">
+        <img src="../img/Credible.png" width="24px"
+        style="opacity: 0.8;">
+      <div>
+    ` : 
+    `
+      <div style="padding: 75% 8px;">
+          <img src="../img/fake.png" width="24px"
+            style="opacity: 0.8;">
+      </div>
+    `;
+    let non_validated_claim = `
+      <div class="progressbar" style="padding: 0;">
+            <div
+                style="width: ` + width_progressbar + `%;  background-color:`+ bg_progressbar+ `">
+            </div>
+        </div>
+        <div class="detail-progressbar-credi" style="padding: 4px 0px;font-size: 12px;">
+            <div class="percentage-credib">
+              Credibility
+            </div>
+            <div class="percentage-progressbar-credi">
+              ` +level +  `%
+            </div>
+        </div>
+    `;
+    let html = title + (d.credibility >= 0 ? validated_claim : non_validated_claim);
+
+    // let html = `
+    //   <div class="title-claim">
+    //         <span class="no-claim">` + i + `. </span> 
+    //         <span>` + d.claim + `</span> 
+    //   </div>
+    //   <div class="progressbar" style="padding: 0;">
+    //       <div
+    //           style="width: ` + width_progressbar + `%;  background-color:`+ bg_progressbar+ `">
+    //       </div>
+    //   </div>
+    //   <div class="detail-progressbar-credi" style="padding: 4px 0px;font-size: 12px;">
+    //       <div class="percentage-credib">
+    //         Credibility
+    //       </div>
+    //       <div class="percentage-progressbar-credi">
+    //         ` +level +  `%
+    //       </div>
+    //   </div>
+    // `;
+    return html; //'<span class="no-claim"> ' + (i+1) + '. </span>' + d.id;
+  });
+}
+
+function updateListClaim(claim_id_for_update) {
+  // console.log("updated claim");
+  d3.json("http://localhost:5050/claim/getAllClaims", function(err, res) {
+    claims = Array.from(res);
+      renderListClaim();
+      selectClaim(findIndexClaimById(claim_id_for_update));
+      setStatusQuestion(status_question.AFTER);
+  });
+}
+
+function updateOverview(){
+  d3.json('http://localhost:5050/claim/getAnalysis',function(err,data){
+      // document.getElementById('total-claim-detail_').innerHTML = data.claims
+      document.getElementById('remain-claim-source-item').innerHTML = data.claims - data.credibility - data.nonCredibility;
+      document.getElementById('credit-claim_').innerHTML = data.credibility + ' (' + data.perCred + '%)';
+      document.getElementById('noncredit-claim_').innerHTML = data.nonCredibility + ' (' + data.perNonCred + '%)';
+  });
+}
+
+function validateClaim(c) {
+  var claim_id_for_update = document.getElementById("input_claim_id_for_form").value
+  claim = {
+    id: claim_id_for_update,
+    credible: c
+  };
+  // d3.select('#question-validate').hide();
+  // document.getElementById('question-validate').style = 'display:none';
+  // document.getElementById('loading-validate-claim').style = 'display: inline-block';
+  setStatusQuestion(status_question.VALIDATING);
+  d3.request("http://localhost:5050/claim/validate")
+    .header("Content-Type", "application/json")
+    .post(JSON.stringify(claim), function(){
+      updateListClaim(claim_id_for_update);
+      updateOverview();
+      drawModelProb();
+    });
+}
+
+function drawModelProb(){
+  d3.json("http://localhost:5050/claim/getUserCredAndModel", function (data) {
+      // d3.select("#chart-overview > div > canvas").html('');
+      let lables_ = [...Array(Object.keys(data.modelProb).length).keys()];
+      lables_.map(function(val,index) {
+          lables_[index] = val + 1;
+      });
+      // console.log(lables_);
+      var config = {
+          type: 'line',
+          data: {
+              labels: lables_, //['1', '2', '3', '4', '5', '6', '7', '1', '2', '3', '4', '5', '6', '7'],
+              datasets: [{
+                  label: 'Model Probability',
+                  fillColor: "rgba(220,220,220,0.2)",
+                  strokeColor: "rgba(220,220,220,1)",
+                  // backgroundColor: window.chartColors.red,
+                  borderColor: 'rgba(151,187,205,1)',
+                  data: data.modelProb,
+              }],
+          },
+          options: {
+              responsive: true,
+              title: {
+                  display: true,
+                  text: 'Comparison Model and User Input'
+              },
+              scales: {
+                  xAxes:
+                      [{
+                          ticks: {
+                              autoSkip: true,
+                              maxTicksLimit: 5,
+                              // beginAtZero : false
+                              // display: false
+                          }
+                      }],
+                  yAxes: [{
+                      ticks: {
+                          autoSkip: true,
+                          maxTicksLimit: 5,
+                      }
+                  }]
+              }
+          }
+      };
+
+      var ctx = document.getElementById('canvas').getContext('2d');
+      window.myLine = new Chart(ctx, config);
+  });
+}
+
+
+function sortListClaim(m) {
+    let mode = parseInt(m);
+    console.log("mode",mode);
+    let claims_by_prob_model = [];
+    let credible_claims = [];
+    let non_credible_claim = [];
+    claims.map(function(val,key){
+      switch (val.credibility) {
+        case 1:
+          credible_claims.push(val);
+          break;
+        case 0:
+          non_credible_claim.push(val);
+          break;
+        default:
+          claims_by_prob_model.push(val);
+          break;
+      }
+    });
+    claims_by_prob_model.sort(function(a,b){
+      return b.prob_model - a.prob_model;
+    });
+    let claims_ = new Array();
+    console.log(claims_by_prob_model.length,credible_claims.length,non_credible_claim.length);
+    switch (mode) {
+      case rank_mode.BY_CREDIBLE:
+        claims_ = claims_.concat(credible_claims);
+        claims_ = claims_.concat(non_credible_claim);
+        claims_ = claims_.concat(claims_by_prob_model);
+        console.log(claims_.length);
+        break;
+      case rank_mode.BY_NON_CREDIBLE:
+        claims_ = claims_.concat(non_credible_claim);
+        claims_ = claims_.concat(credible_claims);
+        claims_ = claims_.concat(claims_by_prob_model);
+        break;
+      default:
+        claims_ = claims_.concat(claims_by_prob_model);
+        claims_ = claims_.concat(credible_claims);
+        claims_ = claims_.concat(non_credible_claim);
+        break;
+    }
+    claims = Array.from(claims_);
+    renderListClaim();
+    selectClaim(0);
+    let claimSelected = document.getElementById(claims[0].id);
+    claimSelected.scrollIntoView(true);
+}
+
+

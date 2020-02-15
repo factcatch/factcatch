@@ -128,7 +128,7 @@
                     <div class="title-detail-item-analysis">
                         #Claims
                     </div>
-                    <div class="claims  total-claim-detail">
+                    <div class="claims  total-claim-detail" id="total-claim-detail_">
                         {{ analysis.claims }}
                     </div>
                 </div>
@@ -139,9 +139,9 @@
                 </div>
                 <div class="detail-item-analysis">
                     <div class="title-detail-item-analysis">
-                        #Remains
+                        #Claims
                     </div>
-                    <div class="claims remain-claim">
+                    <div class="claims remain-claim" id="non-validated-claims">
                         {{ analysis.remains }}
                     </div>
                 </div>
@@ -229,7 +229,7 @@
                                 </div>
                                 <div style="text-align: left;" class="detail-item-analysis">
                                     <div class="title-detail-item-analysis">
-                                        #Remains
+                                        #Non-validated Claimss
                                     </div>
                                     <div class="claims remain-claim">
                                         {{ analysis.remains }}
@@ -298,7 +298,7 @@
                                                 <div class="progress progress--sm">
                                                     <div class="progressbar" style="padding: 0;">
                                                             <div id="source-credibility-progress"
-                                                                style="width:78%; height: 6px;  background-color:#22B9FF">
+                                                                style="width:78%; height: 6px;  background-color:#6ACB44 ">
                                                             </div>
                                                     </div>
                                                 </div>
@@ -331,14 +331,39 @@
                                         <!-- <span>Claims</span> -->
                                         <input type="text" id="input-for-claim" onkeyup="searchClaim()"
                                             placeholder="Search for claims.." title="Type in a name">
+                                       
+                                    </div>
+                                    <div style="display: grid;grid-template-columns: 50% 50%;">
+                                        <div>
+                                            rank
+                                        </div>
+                                        <div>
+                                            <select name="Ranking" id="" onchange="sortListClaim(this.value)">
+                                                <option value="0" >Default</option>
+                                                <option value="1" >Credible claim</option>
+                                                <option value="2" >Non-credible claim</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div id="block-list-claim">
                                         <ul id="list-claim">
                                             {% for claim in data %}
-                                            <li onclick="selectClaim({{ loop.index - 1 }})" id="{{ claim.id }}">
-                                                <div>
-                                                    <span class="no-claim">{{ loop.index }}. </span> {{ claim.claim }}
+                                            <li onclick="selectClaim({{ loop.index - 1 }})" id="{{ claim.id }}"  {% if claim.credibility != -1 %} style="display: grid;grid-template-columns:auto 35px;" {% endif %}>
+                                                <div class="title-claim">
+                                                    <span class="no-claim">{{ loop.index }}. </span> 
+                                                    <span>{{ claim.claim }}</span> 
                                                 </div>
+                                                {% if claim.credibility == 1 %}
+                                                    <div style="padding: 75% 8px;">
+                                                            <img src="{{ url_for('static', filename='img/Credible.png') }}" width="24px"
+                                                            style="opacity: 0.8;">
+                                                    <div>
+                                                {% elif claim.credibility == 0 %}
+                                                    <div style="padding: 75% 8px;">
+                                                            <img src="{{ url_for('static', filename='img/fake.png') }}" width="24px"
+                                                            style="opacity: 0.8;">
+                                                    </div>
+                                                {% else %}
                                                 <div class="progressbar" style="padding: 0;">
                                                     {% if claim.prob_model < 0.5 %}
                                                         <div
@@ -352,19 +377,17 @@
                                                 </div>
                                                 <div class="detail-progressbar-credi" style="padding: 4px 0px;font-size: 12px;">
                                                     <div class="percentage-credib">
-                                                        {%if claim.prob_model >= 0.5 %}
                                                             Credibility
-                                                        {% else %}
-                                                            Credibility
-                                                        {% endif %}
                                                     </div>
-                                                    <!-- <div class="percentage-credi">
-                                                        validated
-                                                    </div> -->
                                                     <div class="percentage-progressbar-credi">
                                                         {{ '%0.2f' | format(claim.prob_model * 100 | float) }}%
                                                     </div>
                                                 </div>
+                                                <!-- <div style="padding: 4px 0px;font-size: 12px;">
+                                                    <span>Validated: </span>
+                                                    <span style="color:#5578eb;">Credible</span>
+                                                </div> -->
+                                                {% endif %}
                                             </li>
                                             {% endfor %}
                                         </ul>
@@ -444,21 +467,36 @@
                                             </div>
                                         </div>
                                         <div id="question">
-                                            <div style="text-align: center;">
-                                                Do you think this claim is credible ?
+                                            <div id="question-validate">
+                                                <div style="text-align: center;">
+                                                    Do you think this claim is credible ?
+                                                </div>
+                                                <div id="submit-validation">
+                                                    <input type="hidden" id="input_claim_id_for_form" name="id" value="haha">
+                                                    <div style="text-align: right;padding-right: 10px;">
+                                                        <input type=submit onclick="validateClaim(1)" class="btn-form" id="submit_yes" style="padding: 8px 4px;background-color: brown; color: #ffffff;" name="credible" value="Yes">
+                                                    </div>
+                                                    <div style="text-align: left;padding-left: 10px;">
+                                                        <input type=submit onclick="validateClaim(0)" class="btn-form" id="submit_no" style="padding: 8px 4px; background-color: #ccd0d5; color: #000000;" name="credible" value="No">
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <form id="submit-validation" method="get" action="/">
-                                                <div style="text-align: right;padding-right: 10px;">
-                                                    <input type=submit class="btn-form" style="padding: 8px 4px;background-color: brown; color: #ffffff;" name="credible" value="Yes">
-                                                </div>
-                                                <div style="text-align: left;padding-left: 10px;">
-                                                    <input type=submit class="btn-form" style="padding: 8px 4px; background-color: #ccd0d5; color: #000000;" name="non-credible" value="No">
-                                                </div>
-                                            </form>
-                                            <!-- <div style="padding: 10px;">
-                                                <img src="{{ url_for('static', filename='img/validated.png') }}" width="32px"
-                                                style="opacity: 0.8;">
+                                            <!-- <div class="spinner">
+                                                <span>Loading</span>
+                                                <div class="bounce1"></div>
+                                                <div class="bounce2"></div>
+                                                <div class="bounce3"></div>
                                             </div> -->
+                                            <p id="loading-validate-claim" class="loading" style="display: none;">Validating claim</p>
+                                            <div id="after-validated" style="display: none;">
+                                                <div>
+                                                    Validated!
+                                                </div>
+                                                <div>
+                                                    <img src="{{ url_for('static', filename='img/validated.png') }}" width="32px"
+                                                    style="opacity: 0.8;">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -483,7 +521,7 @@
                                         height="600" class="chartjs-render-monitor"></canvas>
                                 </div>
                             </div>
-                            <div id="detail-source" class="tabcontent overview-sources claim-detail sources-claim detail-action-tab" style="display: none;">
+                            <div id="detail-source" class="overview-sources claim-detail sources-claim detail-action-tab" style="display: none;">
                                 <!-- <div id="title-source-item-fake">
                                     Source
                                 </div> -->
@@ -512,7 +550,7 @@
                                         </div>
                                         <div class="detail-item-analysis-source">
                                             <div class="title-detail-item-analysis">
-                                                #Remain
+                                                #Non-validated Claims
                                             </div>
                                             <div class="claims total-claim-detail" id="remain-claim-source-item"> {{ analysis.remains }}
                                             </div>
@@ -529,7 +567,7 @@
                                             <div class="title-detail-item-analysis">
                                                 #Credibility
                                             </div>
-                                            <div class="claims credit-claim">
+                                            <div class="claims credit-claim" id="credit-claim_">
                                                 {{ analysis.credibility }} ({{ analysis.perCred }}%)
                                             </div>
                                         </div>
@@ -543,7 +581,7 @@
                                             <div class="title-detail-item-analysis">
                                                 #Non-Credibility
                                             </div>
-                                            <div class="claims noncredit-claim">
+                                            <div class="claims noncredit-claim" id="noncredit-claim_">
                                                 {{ analysis.nonCredibility }} ({{ analysis.perNonCred }}%)
                                             </div>
                                         </div>
@@ -655,7 +693,9 @@
                     // .range(["#a9a9a9", "rgb(237,105,37)"])
 
                 var colorClaim = d3.scaleOrdinal().domain([-1, 1])
-                    .range(["grey","#1dc9b7","#fd397a"])
+                    // .range(["grey","#1dc9b7","#fd397a"])
+                    // .range(["grey","#66BC6D","#D20D01"])
+                    .range(["grey","#6ACB44","#F72A38"])
 
 
                 var tooltip = d3.select("#all-sources")
@@ -745,64 +785,9 @@
     <script>
         var randomScalingFactor = function () {
             return Math.random();
-            // return Math.ceil(Math.random() * 10.0) * Math.pow(10, Math.ceil(Math.random() * 5));
+      // return Math.ceil(Math.random() * 10.0) * Math.pow(10, Math.ceil(Math.random() * 5));
         };
-        d3.json("http://localhost:5050/claim/getUserCredAndModel", function (data) {
-            var config = {
-                type: 'line',
-                data: {
-                    labels: [...Array(Object.keys(data.modelProb).length).keys()], //['1', '2', '3', '4', '5', '6', '7', '1', '2', '3', '4', '5', '6', '7'],
-                    datasets: [{
-                        label: 'Model Probability',
-                        fillColor: "rgba(220,220,220,0.2)",
-                        strokeColor: "rgba(220,220,220,1)",
-                        // backgroundColor: window.chartColors.red,
-                        borderColor: 'rgba(151,187,205,1)',
-                        data: data.modelProb,
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    title: {
-                        display: true,
-                        text: 'Comparison Model and User Input'
-                    },
-                    scales: {
-                        xAxes:
-                            [{
-                                ticks: {
-                                    autoSkip: true,
-                                    maxTicksLimit: 15,
-                                    // display: false
-                                }
-                            }],
-                        yAxes: [{
-                            ticks: {
-                                autoSkip: true,
-                                maxTicksLimit: 5,
-                            }
-                        }]
-                    }
-                }
-            };
-
-            // window.myLine = new Chart(ctx, config);
-            // window.onload = function () {
-            var ctx = document.getElementById('canvas').getContext('2d');
-            window.myLine = new Chart(ctx, config);
-            // };
-        });
-
-        // document.getElementById('randomizeData').addEventListener('click', function () {
-        //     config.data.datasets.forEach(function (dataset) {
-        //         dataset.data = dataset.data.map(function () {
-        //             return randomScalingFactor();
-        //         });
-
-            // });
-
-            // window.myLine.update();
-        // });
+        drawModelProb();
     </script>
 </body>
 

@@ -97,20 +97,21 @@ def analysis():
     nonCred = Claim.query.filter_by(credibility=0).count()
     # perCred = (float(cred) / claims)*100
     perCred = float("{0:.2f}".format((float(cred) / (cred + nonCred))*100))
+    perNon = float("{0:.2f}".format(100 - perCred))
     return {
         'claims' : claims,
         'remains' : remains,
         'credibility' : cred,
         'perCred' : perCred,
         'nonCredibility' : nonCred,
-        'perNonCred' : 100 - perCred
+        'perNonCred' : perNon
     }
 
 def getUserCredAndModel():
-    userCred = db.session.query(Claim.credibility).all()
+    userCred = db.session.query(Claim.credibility).filter(Claim.credibility>-1).all()
     userCred = [cred for (cred,) in userCred]
-    modelProb = db.session.query(Claim.credibility,Claim.prob_model).all()
-    modelProb = [abs(cred - prob) for (cred,prob) in modelProb]
+    modelProb = db.session.query(Claim.credibility,Claim.prob_model).filter(Claim.credibility > -1).all()
+    modelProb = [float("{0:.2f}".format(abs(cred - prob))) for (cred,prob) in modelProb]
     return {
         "userCred" : userCred,
         "modelProb" : modelProb,
@@ -160,4 +161,9 @@ def export_to_json():
         f.write(data[1:-2])        
     return path_to_file
 
+def validateClaim(claim_id,credibility):
+    claim = Claim.query.get(claim_id)
+    claim.credibility = credibility
+    db.session.commit()
+    return True
 

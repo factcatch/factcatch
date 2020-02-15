@@ -876,11 +876,11 @@ text {
 }
 
 .credit-claim{
-  color: #1dc9b7!important;
+  color: #6ACB44 !important;
 }
 
 .noncredit-claim{
-  color: #fd397a!important;
+  color: #F72A38 !important;
 }
 
 .remain-claim{
@@ -1167,14 +1167,16 @@ text {
 }
 
 .percentage-credi {
-  background: red;
-  height: 20px;
-  border: 1px solid white;
-  box-shadow: 0px 0px 0 1.5px black;
+  /* background: red; */
+  /* float: right; */
+  /* height: 20px; */
+  /* width: 10px; */
+  /* border: 1px solid white; */
+  /* box-shadow: 0px 0px 0 1.5px black; */
   border-radius: 2px;
-  text-align: center;
+  text-align: right;
   font-size: 10px;
-  color: #fff;
+  color: #666666;
 }
 
 .percentage-progressbar-credi {
@@ -1189,3 +1191,57 @@ text {
   font-size: 10px;
 }
 
+/* loading vialidated claim  */
+#loading-validate-claim {
+  /* color: white; */
+  font-size: 18px;
+  font-weight: 600;
+  /* font: 100 2em/150% Impact; */
+  /* font: 300 2em/150%; */
+  text-align: center;
+}
+
+/* loading dots */
+
+.loading:after {
+  content: " .";
+  animation: dots 1s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    color: rgba(0, 0, 0, 0);
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
+  }
+  40% {
+    color: white;
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  60% {
+    text-shadow: 0.25em 0 0 gray, 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  80%,
+  100% {
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.validated-label {
+  border: 0;
+    padding-left: 0;
+    padding-right: .5rem;
+    padding-top: 20px;
+    vertical-align: top;
+    box-sizing: border-box;
+  height: auto;
+    width: auto;
+    padding: .15rem .75rem;
+    border-radius: 2px;
+    color: #fff;
+    background: #666;
+    display: inline-flex;
+    -webkit-box-pack: center;
+    font-size: .6rem;
+    -webkit-box-direction: normal;
+}
