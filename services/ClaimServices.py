@@ -6,6 +6,7 @@ import random
 import pathlib
 
 def getCredibility(credibility):
+    return random.randint(-1,1)
     if isinstance(credibility,str):
         if credibility == "false":
             return 0
