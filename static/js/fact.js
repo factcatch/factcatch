@@ -331,6 +331,7 @@ function drawRelation(index) {
     g.attr("transform", d3.event.transform);
   }
 
+
   // links
   var link = g
     .append("g")
@@ -477,8 +478,7 @@ function drawRelation(index) {
   function nodeClick(d) {
     let index_claim = findIndexClaimById(d.name[0]);
     selectClaim(index_claim);
-    var claimLi = document.getElementById(d.name[0]);
-    claimLi.scrollIntoView(true);
+    scrollToClaim(d.name[0]);
   }
 }
 
@@ -590,6 +590,141 @@ function filterSource() {
   }
 }
 
+// source map 
+
+function renderSources() {
+  var marginChartOverview = { top: 30, right: 30, bottom: 30, left: 50 },
+            widthChartOverview = $(window).width() * 0.75 - 30 - marginChartOverview.left - marginChartOverview.right,
+            heightChartOverview = 250 - marginChartOverview.top - marginChartOverview.bottom;
+
+        function showInfoSource(source) {
+            document.getElementById("title-source-item").innerHTML = source.source;
+            document.getElementById("total-claim-source-item").innerHTML = source.total;
+            document.getElementById("source-credibility-progress").style.width = ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
+            document.getElementById("credibility-per").innerHTML =  ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
+        };
+
+        let loader = d3.select("#loader-source");
+        loader.style("display","inline-block");
+        d3.select("table").html('');
+
+        var table = d3.select("table");
+        d3.json("http://localhost:5050/source/claim", function (data) {
+            // d3.select("#loader-source").remove();
+            loader.style("display","none");
+            var table = d3.select("table")
+                .selectAll("tr")
+                .data(data)
+                .enter()
+                .append("tr")
+            table.append("td")
+                .text(function (d) { return d.source })
+                .style("text-align", "right")
+
+            table.append("td")
+                .attr("id", function (d) { return d.source.replace(/\./g, '') })
+                .style("text-align", "left")
+            showInfoSource(data[0]);
+            data.map((source) => {
+                var widthCell = 20, heightCell = 20, p = 20,maxClaims = 30;
+                p = Math.floor(($(window).width() * 0.7 - 100 - marginChartOverview.left - marginChartOverview.right) / 20);
+                var width = widthCell * maxClaims; //source.claims.length;
+                var height = heightCell * Math.ceil(source.claims.length / maxClaims);
+                // var data = data[0];
+
+                // append the svg object to the body of the page
+                var sourceId = '[id="' + source.source.replace(/\./g, '') + '"]';
+                var svg = d3.select(sourceId)
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+
+
+                // var colorClaim = d3.scaleLinear().domain([1, 10])
+                    // .range(["#a9a9a9", "rgb(237,105,37)"])
+
+                var colorClaim = d3.scaleOrdinal().domain([-1, 1])
+                    // .range(["grey","#1dc9b7","#fd397a"])
+                    // .range(["grey","#66BC6D","#D20D01"])
+                    .range(["grey","#6ACB44","#F72A38"])
+
+
+                var tooltip = d3.select("#all-sources")
+                    .append("div")
+                    .style("opacity", 0)
+                    .attr("class", "tooltip")
+                    .style("background-color", "white")
+                    .style("border", "solid")
+                    .style("border-width", "2px")
+                    .style("border-radius", "5px")
+                    .style("padding", "5px")
+                    .style("position", "fixed")
+                    .style("max-width", "350px")
+                // .style("margin-top", "20px")
+
+
+                // Three function that change the tooltip when user hover / move / leave a cell
+                var mouseover = function (d) {
+                    tooltip
+                        .style("opacity", 1)
+                    d3.select(this)
+                        .style("stroke", "black")
+                        .style("opacity", 1)
+                    showInfoSource(source);
+                }
+                var mousemove = function (d) {
+                    var mouseTop = d3.mouse(this)[1] < 300 ? d3.mouse(this)[1] + 300 : d3.mouse(this)[1];
+                    var mouseTop = (d3.mouse(this)[1] % 10) + 350;
+                    tooltip
+                        .html(d.claim)
+                        .style("left", (d3.mouse(this)[0] + 200) + "px")
+                        .style("top", (mouseTop) + "px")
+                }
+                var mouseleave = function (d) {
+                    tooltip
+                        .style("opacity", 0)
+                    d3.select(this)
+                        .style("stroke", "white")
+                        .style("opacity", 0.8)
+                }
+
+                var rectClick = function (d) {
+                    document.getElementById('tab-claims').click();
+                    selectClaim(findIndexClaimById(d.claim_id));
+                    scrollToClaim(d.claim_id);
+                }
+
+                svg.selectAll("rect")
+                    .data(source.claims)
+                    .enter()
+                    .append("rect")
+                    .attr("x", function (d, i) { return widthCell * ((i%maxClaims) % p); })
+                    .attr("y", function (d, i) { return heightCell * (Math.floor((i/maxClaims))); })
+                    .attr("width", "20")
+                    .attr("height", "20")
+                    .style("fill", function (d) { return colorClaim(d.credibility_claim); })
+                    .style("stroke-width", 1)
+                    .style("stroke", "white")
+                    .style("opacity", 0.8)
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave)
+                    .on("click", rectClick);
+
+                // append text to rect
+                svg.selectAll("text")
+                    .data(source.claims)
+                    .enter()
+                    .append("text")
+                    .attr("x", function (d, i) { return widthCell * ((i%maxClaims) % p) + widthCell/3; })
+                    .attr("y", function (d, i) { return heightCell * (Math.floor((i/maxClaims))) + heightCell/1.5; })
+                    .style("fill", function (d) { return "#fff"; })
+                    .text(function(d) { return d.credibility_claim == -1 ? '?' : ''});
+            });
+
+        })
+}
+
 // validate claim
 
 function renderListClaim(){
@@ -604,7 +739,7 @@ function renderListClaim(){
   .style('grid-template-columns',function(d){return d.credibility >=0 ? 'auto 35px' : ''})
   .html(function(d, i) {
     let width_progressbar = d.prob_model * 100;
-    let bg_progressbar = (d.prob_model >= 0.5) ? '#22B9FF' : '#fd397a';
+    let bg_progressbar = (d.prob_model >= 0.5) ? '#6ACB44' : '#F72A38';
     let level = (d.prob_model*100).toFixed(2);
     // let style_validated = (d.credibility >= 0) ? 'style="display: grid;grid-template-columns:auto 35px;" ' : '';
     let title = `
@@ -616,20 +751,20 @@ function renderListClaim(){
     let validated_claim = (d.credibility == 1) ? 
     `
       <div style="padding: 75% 8px;">
-        <img src="../img/Credible.png" width="24px"
-        style="opacity: 0.8;">
+        <img src="../img/credit.png" width="24px"
+        style="opacity: 0.5;">
       <div>
     ` : 
     `
       <div style="padding: 75% 8px;">
-          <img src="../img/fake.png" width="24px"
-            style="opacity: 0.8;">
+          <img src="../img/danger2.png" width="24px"
+            style="opacity: 0.5;">
       </div>
     `;
     let non_validated_claim = `
       <div class="progressbar" style="padding: 0;">
             <div
-                style="width: ` + width_progressbar + `%;  background-color:`+ bg_progressbar+ `">
+                style="width: ` + width_progressbar + `%; opacity:0.8; background-color:`+ bg_progressbar+ `">
             </div>
         </div>
         <div class="detail-progressbar-credi" style="padding: 4px 0px;font-size: 12px;">
@@ -642,44 +777,35 @@ function renderListClaim(){
         </div>
     `;
     let html = title + (d.credibility >= 0 ? validated_claim : non_validated_claim);
-
-    // let html = `
-    //   <div class="title-claim">
-    //         <span class="no-claim">` + i + `. </span> 
-    //         <span>` + d.claim + `</span> 
-    //   </div>
-    //   <div class="progressbar" style="padding: 0;">
-    //       <div
-    //           style="width: ` + width_progressbar + `%;  background-color:`+ bg_progressbar+ `">
-    //       </div>
-    //   </div>
-    //   <div class="detail-progressbar-credi" style="padding: 4px 0px;font-size: 12px;">
-    //       <div class="percentage-credib">
-    //         Credibility
-    //       </div>
-    //       <div class="percentage-progressbar-credi">
-    //         ` +level +  `%
-    //       </div>
-    //   </div>
-    // `;
     return html; //'<span class="no-claim"> ' + (i+1) + '. </span>' + d.id;
   });
 }
 
+function scrollToClaim(claim_id){
+  let claim = document.getElementById(claim_id);
+  claim.scrollIntoView(true);
+}
+
 function updateListClaim(claim_id_for_update) {
-  // console.log("updated claim");
   d3.json("http://localhost:5050/claim/getAllClaims", function(err, res) {
     claims = Array.from(res);
-      renderListClaim();
-      selectClaim(findIndexClaimById(claim_id_for_update));
-      setStatusQuestion(status_question.AFTER);
+    let ranking = document.getElementById('ranking-select');
+    let sort_by = ranking.options[ranking.selectedIndex].value;
+    sortListClaim(sort_by);
+    renderListClaim();
+    let index_ = findIndexClaimById(claim_id_for_update)
+    selectClaim(index_);
+    scrollToClaim(claim_id_for_update);
+    if(document.getElementById('loading-validate-claim').innerHTML == 'Invalidating')
+      document.getElementById('loading-validate-claim').innerHTML = 'Validating claim';
+      // setStatusQuestion(status_question.AFTER);
   });
 }
 
 function updateOverview(){
   d3.json('http://localhost:5050/claim/getAnalysis',function(err,data){
       // document.getElementById('total-claim-detail_').innerHTML = data.claims
-      document.getElementById('remain-claim-source-item').innerHTML = data.claims - data.credibility - data.nonCredibility;
+      document.getElementById('remain-claim-source-item').innerHTML = (data.claims - data.credibility - data.nonCredibility) + ' (u: ' + data.uncertainty + '%)';
       document.getElementById('credit-claim_').innerHTML = data.credibility + ' (' + data.perCred + '%)';
       document.getElementById('noncredit-claim_').innerHTML = data.nonCredibility + ' (' + data.perNonCred + '%)';
   });
@@ -691,9 +817,8 @@ function validateClaim(c) {
     id: claim_id_for_update,
     credible: c
   };
-  // d3.select('#question-validate').hide();
-  // document.getElementById('question-validate').style = 'display:none';
-  // document.getElementById('loading-validate-claim').style = 'display: inline-block';
+  if(c==-1)
+    document.getElementById("loading-validate-claim").innerHTML = "Invalidating";
   setStatusQuestion(status_question.VALIDATING);
   d3.request("http://localhost:5050/claim/validate")
     .header("Content-Type", "application/json")
@@ -701,6 +826,7 @@ function validateClaim(c) {
       updateListClaim(claim_id_for_update);
       updateOverview();
       drawModelProb();
+      renderSources();
     });
 }
 
@@ -759,7 +885,6 @@ function drawModelProb(){
 
 function sortListClaim(m) {
     let mode = parseInt(m);
-    console.log("mode",mode);
     let claims_by_prob_model = [];
     let credible_claims = [];
     let non_credible_claim = [];
@@ -780,13 +905,11 @@ function sortListClaim(m) {
       return b.prob_model - a.prob_model;
     });
     let claims_ = new Array();
-    console.log(claims_by_prob_model.length,credible_claims.length,non_credible_claim.length);
     switch (mode) {
       case rank_mode.BY_CREDIBLE:
         claims_ = claims_.concat(credible_claims);
-        claims_ = claims_.concat(non_credible_claim);
         claims_ = claims_.concat(claims_by_prob_model);
-        console.log(claims_.length);
+        claims_ = claims_.concat(non_credible_claim);
         break;
       case rank_mode.BY_NON_CREDIBLE:
         claims_ = claims_.concat(non_credible_claim);
@@ -802,8 +925,7 @@ function sortListClaim(m) {
     claims = Array.from(claims_);
     renderListClaim();
     selectClaim(0);
-    let claimSelected = document.getElementById(claims[0].id);
-    claimSelected.scrollIntoView(true);
+    scrollToClaim(claims[0].id);
 }
 
 

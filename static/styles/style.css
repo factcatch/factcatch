@@ -71,7 +71,8 @@ a {
 #block-list-claim {
   padding: 0px;
   /* margin: 0px 30px; */
-  height: 650px;
+  height: 610px;
+  /* height: inherit; */
   overflow: auto;
 }
 
@@ -134,7 +135,7 @@ a {
 } */
 
 .button {
-  background-color: brown; /* Green */
+  background-color: #DB1430; /* Green */
   border: none;
   color: white;
   padding: 6px 10px;
@@ -1244,4 +1245,39 @@ text {
     -webkit-box-pack: center;
     font-size: .6rem;
     -webkit-box-direction: normal;
+}
+
+#ranking {
+  display: grid;
+  grid-template-columns: 46% auto;
+  grid-gap: 10px;
+  padding: 4px 10px 12px 10px;
+  font-size: 14px;
+}
+
+select {
+  /* margin-bottom: 1em; */
+  padding-bottom: .1em;
+  border: 0;
+  border-bottom: 1px solid #999;
+  /* font-weight: bold; */
+  /* letter-spacing: .15em; */
+  border-radius: 0;
+}
+select:focus, select:active {
+  outline: 0;
+  border-bottom-color: #D51D32;
+}
+
+#after-validated {
+  padding: 0px 0px;
+  text-align: center;
+}
+#after-validated > div {
+  padding: 5px 0px;
+}
+
+#after-validated > div > button {
+  width: 80px;
+  margin: 0px 5px;
 }

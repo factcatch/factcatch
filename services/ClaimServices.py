@@ -6,16 +6,18 @@ import random
 import pathlib
 
 def getCredibility(credibility):
-    return random.randint(-1,1)
+    credible = -1
     if isinstance(credibility,str):
         if credibility == "false":
-            return 0
+            credible = 0
         elif credibility == "true":
-            return 1
+            credible = 1
         else:
-            return -1
+            credible = -1
     else:
-        return credibility
+        credible = credibility
+    
+    return -1 if random.randint(1,10) <= 6 else credible
 
 def getClaimFromData(data):
     claim = Claim()
@@ -97,6 +99,11 @@ def analysis():
     cred = Claim.query.filter_by(credibility=1).count()
     nonCred = Claim.query.filter_by(credibility=0).count()
     # perCred = (float(cred) / claims)*100
+    nonValidatedClaims = Claim.query.filter_by(credibility=-1).all()
+    uncertainty = 0
+    for claim in nonValidatedClaims:
+        uncertainty +=  claim.prob_model
+    uncertainty = float("{0:.2f}".format(uncertainty*100/remains))
     perCred = float("{0:.2f}".format((float(cred) / (cred + nonCred))*100))
     perNon = float("{0:.2f}".format(100 - perCred))
     return {
@@ -105,7 +112,8 @@ def analysis():
         'credibility' : cred,
         'perCred' : perCred,
         'nonCredibility' : nonCred,
-        'perNonCred' : perNon
+        'perNonCred' : perNon,
+        'uncertainty' : uncertainty
     }
 
 def getUserCredAndModel():

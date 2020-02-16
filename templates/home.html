@@ -298,7 +298,7 @@
                                                 <div class="progress progress--sm">
                                                     <div class="progressbar" style="padding: 0;">
                                                             <div id="source-credibility-progress"
-                                                                style="width:78%; height: 6px;  background-color:#6ACB44 ">
+                                                                style="width:78%; height: 6px;  background-color:#6ACB44;opacity: 0.8; ">
                                                             </div>
                                                     </div>
                                                 </div>
@@ -333,15 +333,14 @@
                                             placeholder="Search for claims.." title="Type in a name">
                                        
                                     </div>
-                                    <div style="display: grid;grid-template-columns: 50% 50%;">
-                                        <div>
-                                            rank
+                                    <div id="ranking">
+                                        <div style="text-align: right;">
+                                            Ranking by:
                                         </div>
                                         <div>
-                                            <select name="Ranking" id="" onchange="sortListClaim(this.value)">
-                                                <option value="0" >Default</option>
-                                                <option value="1" >Credible claim</option>
-                                                <option value="2" >Non-credible claim</option>
+                                            <select name="Ranking" id="ranking-select" onchange="sortListClaim(this.value)">
+                                                <option value="0" selected>Entropy</option>
+                                                <option value="1" >Credibility</option>
                                             </select>
                                         </div>
                                     </div>
@@ -355,23 +354,23 @@
                                                 </div>
                                                 {% if claim.credibility == 1 %}
                                                     <div style="padding: 75% 8px;">
-                                                            <img src="{{ url_for('static', filename='img/Credible.png') }}" width="24px"
-                                                            style="opacity: 0.8;">
+                                                            <img src="{{ url_for('static', filename='img/credit.png') }}" width="24px"
+                                                            style="opacity: 0.5;">
                                                     <div>
                                                 {% elif claim.credibility == 0 %}
                                                     <div style="padding: 75% 8px;">
-                                                            <img src="{{ url_for('static', filename='img/fake.png') }}" width="24px"
-                                                            style="opacity: 0.8;">
+                                                            <img src="{{ url_for('static', filename='img/danger2.png') }}" width="24px"
+                                                            style="opacity: 0.5;">
                                                     </div>
                                                 {% else %}
                                                 <div class="progressbar" style="padding: 0;">
                                                     {% if claim.prob_model < 0.5 %}
                                                         <div
-                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:#fd397a">
+                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:#F72A38">
                                                         </div>
                                                     {% else %}
                                                         <div
-                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:#22B9FF">
+                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:#6ACB44">
                                                         </div>
                                                     {% endif %}
                                                 </div>
@@ -474,7 +473,7 @@
                                                 <div id="submit-validation">
                                                     <input type="hidden" id="input_claim_id_for_form" name="id" value="haha">
                                                     <div style="text-align: right;padding-right: 10px;">
-                                                        <input type=submit onclick="validateClaim(1)" class="btn-form" id="submit_yes" style="padding: 8px 4px;background-color: brown; color: #ffffff;" name="credible" value="Yes">
+                                                        <input type=submit onclick="validateClaim(1)" class="btn-form" id="submit_yes" style="padding: 8px 4px;background-color:#db1430; color: #ffffff;" name="credible" value="Yes">
                                                     </div>
                                                     <div style="text-align: left;padding-left: 10px;">
                                                         <input type=submit onclick="validateClaim(0)" class="btn-form" id="submit_no" style="padding: 8px 4px; background-color: #ccd0d5; color: #000000;" name="credible" value="No">
@@ -490,11 +489,13 @@
                                             <p id="loading-validate-claim" class="loading" style="display: none;">Validating claim</p>
                                             <div id="after-validated" style="display: none;">
                                                 <div>
-                                                    Validated!
+                                                    You validated this claim!
                                                 </div>
                                                 <div>
-                                                    <img src="{{ url_for('static', filename='img/validated.png') }}" width="32px"
-                                                    style="opacity: 0.8;">
+                                                    <button class="button" onclick="setStatusQuestion(status_question.QUESTION)">Revalidate</button>
+                                                    <button class="button" onclick="validateClaim(-1)">Invalidate</button>
+                                                    <!-- <img src="{{ url_for('static', filename='img/validated.png') }}" width="32px"
+                                                    style="opacity: 0.8;"> -->
                                                 </div>
                                             </div>
                                         </div>
@@ -550,9 +551,10 @@
                                         </div>
                                         <div class="detail-item-analysis-source">
                                             <div class="title-detail-item-analysis">
-                                                #Non-validated Claims
+                                                #Non-validated
                                             </div>
-                                            <div class="claims total-claim-detail" id="remain-claim-source-item"> {{ analysis.remains }}
+                                            <div class="claims total-claim-detail" id="remain-claim-source-item"> {{ analysis.remains }} 
+                                                (u: {{ analysis.uncertainty }}%)
                                             </div>
                                         </div>
                                     </div>
@@ -574,7 +576,7 @@
                                     </div>
                                     <div class="item-analysis-source">
                                         <div class="icon-item-analysis-source">
-                                            <img src="{{ url_for('static', filename='img/danger.png') }}" width="32px"
+                                            <img src="{{ url_for('static', filename='img/danger2.png') }}" width="32px"
                                                 style="opacity: 0.5;">
                                         </div>
                                         <div class="detail-item-analysis-source">
@@ -645,149 +647,19 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script>
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-
-    <script>
-        var marginChartOverview = { top: 30, right: 30, bottom: 30, left: 50 },
-            widthChartOverview = $(window).width() * 0.75 - 30 - marginChartOverview.left - marginChartOverview.right,
-            heightChartOverview = 250 - marginChartOverview.top - marginChartOverview.bottom;
-
-        function showInfoSource(source) {
-            document.getElementById("title-source-item").innerHTML = source.source;
-            document.getElementById("total-claim-source-item").innerHTML = source.total;
-            document.getElementById("source-credibility-progress").style.width = ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
-            document.getElementById("credibility-per").innerHTML =  ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
-        };
-
-        var table = d3.select("table");
-        d3.json("http://localhost:5050/source/claim", function (data) {
-            d3.select("#loader-source").remove();
-            var table = d3.select("table")
-                .selectAll("tr")
-                .data(data)
-                .enter()
-                .append("tr")
-            table.append("td")
-                .text(function (d) { return d.source })
-                .style("text-align", "right")
-
-            table.append("td")
-                .attr("id", function (d) { return d.source.replace(/\./g, '') })
-                .style("text-align", "left")
-            showInfoSource(data[0]);
-            data.map((source) => {
-                var widthCell = 20, heightCell = 20, p = 20,maxClaims = 30;
-                p = Math.floor(($(window).width() * 0.7 - 100 - marginChartOverview.left - marginChartOverview.right) / 20);
-                var width = widthCell * maxClaims; //source.claims.length;
-                var height = heightCell * Math.ceil(source.claims.length / maxClaims);
-                // var data = data[0];
-
-                // append the svg object to the body of the page
-                var sourceId = '[id="' + source.source.replace(/\./g, '') + '"]';
-                var svg = d3.select(sourceId)
-                    .append("svg")
-                    .attr("width", width)
-                    .attr("height", height)
-
-
-                // var colorClaim = d3.scaleLinear().domain([1, 10])
-                    // .range(["#a9a9a9", "rgb(237,105,37)"])
-
-                var colorClaim = d3.scaleOrdinal().domain([-1, 1])
-                    // .range(["grey","#1dc9b7","#fd397a"])
-                    // .range(["grey","#66BC6D","#D20D01"])
-                    .range(["grey","#6ACB44","#F72A38"])
-
-
-                var tooltip = d3.select("#all-sources")
-                    .append("div")
-                    .style("opacity", 0)
-                    .attr("class", "tooltip")
-                    .style("background-color", "white")
-                    .style("border", "solid")
-                    .style("border-width", "2px")
-                    .style("border-radius", "5px")
-                    .style("padding", "5px")
-                    .style("position", "fixed")
-                    .style("max-width", "350px")
-                // .style("margin-top", "20px")
-
-
-                // Three function that change the tooltip when user hover / move / leave a cell
-                var mouseover = function (d) {
-                    tooltip
-                        .style("opacity", 1)
-                    d3.select(this)
-                        .style("stroke", "black")
-                        .style("opacity", 1)
-                    showInfoSource(source);
-                }
-                var mousemove = function (d) {
-                    var mouseTop = d3.mouse(this)[1] < 300 ? d3.mouse(this)[1] + 300 : d3.mouse(this)[1];
-                    var mouseTop = (d3.mouse(this)[1] % 10) + 350;
-                    tooltip
-                        .html(d.claim)
-                        .style("left", (d3.mouse(this)[0] + 200) + "px")
-                        .style("top", (mouseTop) + "px")
-                }
-                var mouseleave = function (d) {
-                    tooltip
-                        .style("opacity", 0)
-                    d3.select(this)
-                        .style("stroke", "white")
-                        .style("opacity", 0.8)
-                }
-
-                var rectClick = function (d) {
-                    document.getElementById('tab-claims').click();
-                    selectClaim(mapClaim.get(d.claim_id));
-                    var claimLi = document.getElementById(d.claim_id);
-                    claimLi.scrollIntoView(true);
-                }
-
-                svg.selectAll("rect")
-                    .data(source.claims)
-                    .enter()
-                    .append("rect")
-                    .attr("x", function (d, i) { return widthCell * ((i%maxClaims) % p); })
-                    .attr("y", function (d, i) { return heightCell * (Math.floor((i/maxClaims))); })
-                    .attr("width", "20")
-                    .attr("height", "20")
-                    .style("fill", function (d) { return colorClaim(d.credibility_claim); })
-                    .style("stroke-width", 1)
-                    .style("stroke", "white")
-                    .style("opacity", 0.8)
-                    .on("mouseover", mouseover)
-                    .on("mousemove", mousemove)
-                    .on("mouseleave", mouseleave)
-                    .on("click", rectClick);
-
-                // append text to rect
-                svg.selectAll("text")
-                    .data(source.claims)
-                    .enter()
-                    .append("text")
-                    .attr("x", function (d, i) { return widthCell * ((i%maxClaims) % p) + widthCell/3; })
-                    .attr("y", function (d, i) { return heightCell * (Math.floor((i/maxClaims))) + heightCell/1.5; })
-                    .style("fill", function (d) { return "#fff"; })
-                    .text(function(d) { return d.credibility_claim == -1 ? '?' : ''});
-            });
-
-        })
-
-    </script>
-    <script>
-        $(document).ready(function () {
-            document.getElementById('{{ data[0].id }}').click();
-        });
-    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
+        renderSources();
+        $(document).ready(function () {
+            document.getElementById('{{ data[0].id }}').click();
+        });
         var randomScalingFactor = function () {
             return Math.random();
       // return Math.ceil(Math.random() * 10.0) * Math.pow(10, Math.ceil(Math.random() * 5));
         };
         drawModelProb();
+        sortListClaim(0);
     </script>
 </body>
 
