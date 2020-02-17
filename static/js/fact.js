@@ -611,6 +611,7 @@ function renderSources() {
         var table = d3.select("table");
         d3.json("http://localhost:5050/source/claim", function (data) {
             // d3.select("#loader-source").remove();
+            d3.select("table").html('');
             loader.style("display","none");
             var table = d3.select("table")
                 .selectAll("tr")
@@ -805,9 +806,10 @@ function updateListClaim(claim_id_for_update) {
 function updateOverview(){
   d3.json('http://localhost:5050/claim/getAnalysis',function(err,data){
       // document.getElementById('total-claim-detail_').innerHTML = data.claims
-      document.getElementById('remain-claim-source-item').innerHTML = (data.claims - data.credibility - data.nonCredibility) + ' (u: ' + data.uncertainty + '%)';
+      document.getElementById('remain-claim-source-item').innerHTML = (data.claims - data.credibility - data.nonCredibility);
       document.getElementById('credit-claim_').innerHTML = data.credibility + ' (' + data.perCred + '%)';
       document.getElementById('noncredit-claim_').innerHTML = data.nonCredibility + ' (' + data.perNonCred + '%)';
+      document.getElementById('uncertainty').innerHTML = data.uncertainty;
   });
 }
 
@@ -902,7 +904,9 @@ function sortListClaim(m) {
       }
     });
     claims_by_prob_model.sort(function(a,b){
-      return b.prob_model - a.prob_model;
+      let entropy_a =  - a.prob_model*Math.log(a.prob_model) - (1-a.prob_model)*Math.log(1-a.prob_model);
+      let entropy_b =  - b.prob_model*Math.log(b.prob_model) - (1-b.prob_model)*Math.log(1-b.prob_model); 
+      return entropy_b - entropy_a;
     });
     let claims_ = new Array();
     switch (mode) {

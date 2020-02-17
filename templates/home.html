@@ -205,69 +205,6 @@
                 </div>
             </div>
             <div id="block-content">
-
-                <div id="tab-main" style="display: none;">
-                    <div id="overview">
-                        <div id="analysis">
-                            <div class="item-analysis">
-                                <div style="text-align: right;" class="icon-item-analysis">
-                                    <img src="{{ url_for('static', filename='img/listing.png') }}"
-                                        style="opacity: 0.5;">
-                                </div>
-                                <div style="text-align: left;" class="detail-item-analysis">
-                                    <div class="title-detail-item-analysis">
-                                        #Claims
-                                    </div>
-                                    <div class="claims  total-claim-detail">
-                                        {{ analysis.claims }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item-analysis">
-                                <div style="text-align: right;" class="icon-item-analysis">
-                                    <img src="{{ url_for('static', filename='img/remain.png') }}" style="opacity: 0.5;">
-                                </div>
-                                <div style="text-align: left;" class="detail-item-analysis">
-                                    <div class="title-detail-item-analysis">
-                                        #Non-validated Claimss
-                                    </div>
-                                    <div class="claims remain-claim">
-                                        {{ analysis.remains }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item-analysis">
-                                <div style="text-align: right;" class="icon-item-analysis">
-                                    <img src="{{ url_for('static', filename='img/credit.png') }}" style="opacity: 0.5;">
-                                </div>
-                                <div style="text-align: left;" class="detail-item-analysis">
-                                    <div class="title-detail-item-analysis">
-                                        #Credibility
-                                    </div>
-                                    <div class="claims credit-claim">
-                                        {{ analysis.credibility }} ({{ analysis.perCred }}%)
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item-analysis">
-                                <div style="text-align: right;" class="icon-item-analysis">
-                                    <img src="{{ url_for('static', filename='img/danger.png') }}" width="64px"
-                                        style="opacity: 0.5;">
-                                </div>
-                                <div style="text-align: left;" class="detail-item-analysis"
-                                    style="background-color: red;">
-                                    <div class="title-detail-item-analysis">
-                                        #Non-credibility
-                                    </div>
-                                    <div class="claims noncredit-claim">
-                                        {{ analysis.nonCredibility }} ({{ analysis.perNonCred }}%)
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div id="fact-checking">
                     <div id="fact-checking-body" style="min-height: 700px;">
                         <!-- id="overview-sources" -->
@@ -554,7 +491,6 @@
                                                 #Non-validated
                                             </div>
                                             <div class="claims total-claim-detail" id="remain-claim-source-item"> {{ analysis.remains }} 
-                                                (u: {{ analysis.uncertainty }}%)
                                             </div>
                                         </div>
                                     </div>
@@ -585,6 +521,22 @@
                                             </div>
                                             <div class="claims noncredit-claim" id="noncredit-claim_">
                                                 {{ analysis.nonCredibility }} ({{ analysis.perNonCred }}%)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-analysis-source">
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/statistic.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Uncertainty
+                                            </div>
+                                            <div class="claims total-claim-detail" id="uncertainty">
+                                                {{ analysis.uncertainty }}%
                                             </div>
                                         </div>
                                     </div>
