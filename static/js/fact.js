@@ -8,7 +8,6 @@ const status_question = {
 const rank_mode = {
   BY_PROB_MODEL : 0,
   BY_CREDIBLE : 1,
-  BY_NON_CREDIBLE: 2
 }
 
 
@@ -903,24 +902,22 @@ function sortListClaim(m) {
           break;
       }
     });
-    claims_by_prob_model.sort(function(a,b){
-      let entropy_a =  - a.prob_model*Math.log(a.prob_model) - (1-a.prob_model)*Math.log(1-a.prob_model);
-      let entropy_b =  - b.prob_model*Math.log(b.prob_model) - (1-b.prob_model)*Math.log(1-b.prob_model); 
-      return entropy_b - entropy_a;
-    });
     let claims_ = new Array();
     switch (mode) {
       case rank_mode.BY_CREDIBLE:
+        claims_by_prob_model.sort(function(a,b){
+          return b.prob_model - a.prob_model;
+        });
         claims_ = claims_.concat(credible_claims);
         claims_ = claims_.concat(claims_by_prob_model);
         claims_ = claims_.concat(non_credible_claim);
-        break;
-      case rank_mode.BY_NON_CREDIBLE:
-        claims_ = claims_.concat(non_credible_claim);
-        claims_ = claims_.concat(credible_claims);
-        claims_ = claims_.concat(claims_by_prob_model);
         break;
       default:
+        claims_by_prob_model.sort(function(a,b){
+          let entropy_a =  - a.prob_model*Math.log(a.prob_model) - (1-a.prob_model)*Math.log(1-a.prob_model);
+          let entropy_b =  - b.prob_model*Math.log(b.prob_model) - (1-b.prob_model)*Math.log(1-b.prob_model); 
+          return entropy_b - entropy_a;
+        });
         claims_ = claims_.concat(claims_by_prob_model);
         claims_ = claims_.concat(credible_claims);
         claims_ = claims_.concat(non_credible_claim);

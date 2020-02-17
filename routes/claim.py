@@ -49,3 +49,6 @@ def getAnalysis():
     analysis = json.loads(analysis)
     return jsonify(analysis)
    
+@app.route('/heatmap')
+def heatmap():
+   return render_template("heatmap.html")
