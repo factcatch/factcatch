@@ -29,3 +29,19 @@ def getSourceDesc():
 def getSourceClaim():
     sources = SourceServices.getSourceClaim()
     return jsonify(sources)
+
+@app.route('/source/getLinks')
+def getLinksMatrix():
+    links = SourceServices.getLinksMatrix()
+    return jsonify(links)
+
+@app.route('/source/getNodes')
+def getNodesMatrix():
+    nodes = SourceServices.getNodesMatrix()
+    return jsonify(nodes)
+
+@app.route('/source/getMatrixData')
+def getMatrixData():
+    links = SourceServices.getLinksMatrix()
+    nodes = SourceServices.getNodesMatrix()
+    return jsonify({"links":links,"nodes":nodes})

@@ -10,6 +10,13 @@ const rank_mode = {
   BY_CREDIBLE : 1,
 }
 
+function triggerMatrix(mode){
+  document.getElementById('fact-checking-body')
+    .style.display = (mode == 0) ? '' : 'none';
+  document.getElementById('matrix-factorization')
+    .style.display =  (mode==1) ? '' : 'none';
+}
+
 
 function setStatusQuestion(mode){
   document.getElementById('question-validate').style = (mode == status_question.QUESTION) ? 'display:inline-block' : 'display:none';

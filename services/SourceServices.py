@@ -4,19 +4,6 @@ import random
 import json
 from sqlalchemy import func
 
-# def getAllSources():
-#     sources = GoogleResult.query.with_entities(GoogleResult.claim_id,GoogleResult.domain).distinct().all()
-#     results = []
-#     for id,source in enumerate(sources):
-#         sourceClaim = []
-#         sourceClaim.append(source[1])
-#         claims = Claim.query.filter_by(id=source[0]).all()
-#         for idc, claim in enumerate(claims):
-#             claims[idc].documents = []
-#         sourceClaim.append(claims)
-#         results.append(sourceClaim)
-#     return results
-
 
 def sortSource(source):
     return len(source[1])
@@ -141,6 +128,24 @@ def getSourcesWithClaim():
     # print(sources[0])
     return {"max_index": max_index, "sources": sources, "relations": results}
 
+# def getSourceHasGreaterNumClaims():
+    # domains = GoogleResult.query.with_entities(GoogleResult.domain).distinct().all()
+    # query = 
+    # results = []
+    # for domain in domains:
+    #     if domain[0] == "":
+    #         continue
+    #     total =  GoogleResult.query.filter_by(domain=domain).count() #random.randint(100, 200)
+    #     credibility = GoogleResult.query.join(Claim).filter(GoogleResult.domain==domain,Claim.credibility==1).count() #Claim.query.filter_by(credibility=1).count() #random.randint(0, 100)
+    #     uncredibility = GoogleResult.query.join(Claim).filter(GoogleResult.domain==domain,Claim.credibility==0).count() #random.randint(0, 100)
+    #     claimsId = (
+    #         GoogleResult.query.with_entities(GoogleResult.claim_id)
+    #         .filter_by(domain=domain[0])
+    #         .all()
+    #     )
+    #     if len(claimsId) < 5:
+    #         continue
+
 
 def getSourceClaim():
     domains = GoogleResult.query.with_entities(GoogleResult.domain).distinct().all()
@@ -180,3 +185,42 @@ def getSourceClaim():
             }
         )
     return results
+
+def getLinksMatrix():
+    # links = db.session.query(GoogleResult.domain,GoogleResult.claim_id).group_by(GoogleResult.domain).having(func.count(GoogleResult.claim_id) > 5).all()
+    # links = GoogleResult.query.with_entities(GoogleResult.domain,GoogleResult.claim_id).all()
+    domains = GoogleResult.query.with_entities(GoogleResult.domain).group_by(GoogleResult.domain).having(func.count(GoogleResult.claim_id) > 5).all()
+    domains = [x for x, in domains]
+    links = GoogleResult.query.filter(GoogleResult.domain.in_(domains)).all()
+    results = []
+    for link in links:
+        results.append({
+            'source' : link.domain,
+            'target' : link.claim_id,
+            'value' : 1
+        })
+
+    return results
+
+def getNodesMatrix():
+    domains = GoogleResult.query.with_entities(GoogleResult.domain).distinct().all()
+    domains = GoogleResult.query.with_entities(GoogleResult.domain).group_by(GoogleResult.domain).having(func.count(GoogleResult.claim_id) > 5).all()
+    print(len(domains))
+    claims = GoogleResult.query.with_entities(GoogleResult.claim_id).distinct().all()
+    print(len(claims))
+    results = []
+    for domain in domains:
+        results.append({
+            'name' : domain[0],
+            'group' : random.randint(0,5),
+            'category' : 'source'
+        })
+    for claim in claims:
+        results.append({
+            'name' : claim[0],
+            'group': random.randint(0,5),
+            'category' : 'claim'
+        })
+
+    return results
+

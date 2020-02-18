@@ -1,0 +1,44 @@
+.highlight-bar {
+
+	fill: black;
+	stroke: white;
+	opacity: 0.1;
+}
+
+line {
+  stroke: #fff;
+}
+
+
+header aside,
+footer aside {
+  float: left;
+  margin-right: .5em;
+}
+
+header aside:after,
+footer aside:after {
+  padding-left: .5em;
+  content: "/";
+}
+
+#matrix-factorization > svg {
+  font: 10px sans-serif;
+}
+
+text.active {
+  fill : red;
+}
+
+#matrix-factorization {
+    box-sizing: border-box;
+    /* padding: 0px 180px; */
+    height: 705px;
+    text-align: center;
+}
+
+#for-svg-matrix {
+    height: 610px;
+    width: 1300px;
+    overflow: auto;
+}

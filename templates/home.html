@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale = 1.0">
     <!-- <meta charset="UTF-8"> -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/matrix.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/font.css') }}">
@@ -214,7 +214,8 @@
                                     <div style="display: grid;grid-template-columns:50% 50%;">
                                         <div style="padding:30px 10px">
                                             <input type="text" id="input-sourceFilter" onkeyup="filterSource()"
-                                            placeholder="Search for names.." title="Type in a name">
+                                            placeholder="Search for names.." title="Type in a name"> <br>
+                                            <button class="button" style="margin-left: 28px; margin-bottom: 0px;" onclick="triggerMatrix(1)">matrix factorization</button>
                                         </div>
                                             <div class="overview-source">
                                                 <div class="overview-source__details overview-source__">
@@ -445,6 +446,7 @@
 
 
                         <div style="border-left: 1px solid lightgray;">
+                            <!-- <div style="text-align: right;" onclick="triggerMatrix(1)">Open matrix factorization</div> -->
                             <div style="padding:40px 20px; text-align: center;" id="chart-overview">
                                 <div>
                                     <div class="chartjs-size-monitor">
@@ -545,41 +547,29 @@
                            
                         </div>
                     </div>
-                </div>
 
-
-
-                <div class="detail content" style="display: none;">
-
-                    <div style="height: 580px;">
-                        <div class="tab">
-                            <button class="tablinks" onclick="selectTab(event,'info-claim')"
-                                id="defaultOpen1">Detail</button>
-                            <button class="tablinks" onclick="selectTab(event, 'sources')">Sources</button>
-                            <div>
-                                <form method=post action="/process">
-                                    <input type="hidden" name="claimId" value="{{ data[0].claim_id }}">
-                                    <!-- <div class="validation-claim"> -->
-                                    <input type=submit style="margin-right: 30px;" class="btn-validation"
-                                        name="Credibility" value="Non-Credibility">
-                                    <input type=submit class="btn-validation" name="Credibility" value="Credibility">
-                                    <!-- </div> -->
-                                </form>
-                            </div>
+                    <!-- matrix factorization  -->
+                    <div id="matrix-factorization" style="display:none;">
+                        <div style="display: grid; grid-template-columns: 30% auto;">
+                            <h3>FSD Matrix</h3>
+                            <aside style="margin-top: 0.2em;">
+                                <p>Order: <select id="order">
+                                <option class="top-level-option" value="name">by Name</option>
+                                <option class="top-level-option" value="count">by Number of links</option>
+                                <option class="top-level-option" value="group">by Group</option>
+                                <!-- <option class="top-level-option" value="distance">by Distance to...</option>  -->
+                                </select>
+                            </aside>
+                           
                         </div>
+                        <img src="{{ url_for('static', filename='img/close.png') }}" width="24px"
+                        style="opacity: 0.7;position: absolute; right: 36px; top: 55px;" onclick="triggerMatrix(0)">
+                        <div id="for-svg-matrix">
 
-                        <div id="sources" class="tabcontent item-tab">
-                            <div class="chart"
-                                style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div style="height: 580px;display: none;" id="overview-sources">
-                    <h3>Heatmap Sources</h3>
-                    <!-- <div id="heatmap-sources">
-                    </div> -->
-                </div>
+                
             </div>
         </div>
     </div>
@@ -613,6 +603,10 @@
         drawModelProb();
         sortListClaim(0);
     </script>
+    <!-- <script src="https://d3js.org/d3.v2.min.js"></script> -->
+    <script src="{{ url_for('static', filename='js/matrix/ShortestPathCalculator.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/matrix/tabletop.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/matrix/matrix.js') }}"></script>
 </body>
 
 
