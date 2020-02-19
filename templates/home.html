@@ -549,14 +549,14 @@
                     </div>
 
                     <!-- matrix factorization  -->
-                    <div id="matrix-factorization" style="display:none;">
+                    <div id="matrix-factorization" style="display:none;z-index: 10;">
                         <div style="display: grid; grid-template-columns: 30% auto;">
                             <h3>FSD Matrix</h3>
                             <aside style="margin-top: 0.2em;">
-                                <p>Order: <select id="order">
-                                <option class="top-level-option" value="name">by Name</option>
-                                <option class="top-level-option" value="count">by Number of links</option>
-                                <option class="top-level-option" value="group">by Group</option>
+                                <p>Order by: <select id="order">
+                                <option class="top-level-option" value="name">Name</option>
+                                <option class="top-level-option" value="count">Number of links</option>
+                                <option class="top-level-option" value="group">Entropy</option>
                                 <!-- <option class="top-level-option" value="distance">by Distance to...</option>  -->
                                 </select>
                             </aside>
@@ -564,7 +564,7 @@
                         </div>
                         <img src="{{ url_for('static', filename='img/close.png') }}" width="24px"
                         style="opacity: 0.7;position: absolute; right: 36px; top: 55px;" onclick="triggerMatrix(0)">
-                        <div id="for-svg-matrix">
+                        <div id="for-svg-matrix" class="svg-matrix">
 
                         </div>
                     </div>
@@ -573,10 +573,11 @@
             </div>
         </div>
     </div>
+   
 
     <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.min.js') }}"></script> -->
     <script src="https://d3js.org/d3.v3.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script> -->
     <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/conversation.min.js') }}"></script> -->
     <script>
         var claims = {{ data| tojson }};
@@ -587,10 +588,31 @@
         }
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script>
+    
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/selection-js/dist/selection.min.js"></script>
+    <script>
+		const selection = new Selection({
+			class : 'box-wrap',
+            selectables: ['g.row','g.column'],
+            boundaries : ['#for-svg-matrix']
+		});
+		selection.on('stop', e => {filterForHeatmap(e.selected);})
+    </script>
+    <!-- <script src="https://thibaultjanbeyer.github.io/DragSelect/ds.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const ds = new DragSelect({
+                selectables: document.querySelectorAll('rect'),
+                area: document.getElementById("for-svg-matrix"),
+                callback: e => {filterForHeatmap(e)}
+            });
+        });
+       
+    </script> -->
     <script>
         renderSources();
         $(document).ready(function () {
@@ -607,6 +629,7 @@
     <script src="{{ url_for('static', filename='js/matrix/ShortestPathCalculator.js') }}"></script>
     <script src="{{ url_for('static', filename='js/matrix/tabletop.js') }}"></script>
     <script src="{{ url_for('static', filename='js/matrix/matrix.js') }}"></script>
+    
 </body>
 
 

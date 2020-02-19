@@ -62,19 +62,22 @@ text.active {
 <script src="https://d3js.org/d3.v2.min.js"></script>
 <script src="{{ url_for('static', filename='js/matrix/ShortestPathCalculator.js') }}"></script>
 <script src="{{ url_for('static', filename='js/matrix/tabletop.js') }}"></script>
-<h1>FSD Matrix</h1>
+<div class="map">
+	<h1>FSD Matrix</h1>
 
-<aside style="margin-top:80px;">
-<p>Order: <select id="order">
-  <option class="top-level-option" value="name">by Name</option>
-  <option class="top-level-option" value="count">by Number of links</option>
-  <option class="top-level-option" value="group">by Group</option>
-  <option class="top-level-option" value="distance">by Distance to...</option> 
-</select>
-
-
-
-</aside>
+	<aside style="margin-top:80px;">
+	<p>Order: <select id="order">
+	  <option class="top-level-option" value="name">by Name</option>
+	  <option class="top-level-option" value="count">by Number of links</option>
+	  <option class="top-level-option" value="group">by Group</option>
+	  <option class="top-level-option" value="distance">by Distance to...</option> 
+	</select>
+	
+	
+	
+	</aside>
+	
+</div>
 
 <script>
 
@@ -534,5 +537,21 @@ function drawGraph() {
 
 getNodeData();
 getLinkData();
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@simonwep/selection-js/dist/selection.min.js"></script>
+<script>
+        // $(document).ready(function () {
+            // new DragSelect({
+            //     selectables: document.getElementsByTagName('rect'),
+            //     // area: document.getElementById("for-svg-matrix"),
+            //     callback: e => {console.log(e)}
+            // });
+		// });
+		const selection = new Selection({
+			class : 'map',
+			selectables: ['rect'],
+		});
+		selection.on('stop',e => {console.log(e);})
 
 </script>

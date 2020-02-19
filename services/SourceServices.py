@@ -2,6 +2,8 @@ from app.models import Claim, GoogleResult
 from app import db
 import random
 import json
+import math
+from collections import OrderedDict
 from sqlalchemy import func
 
 
@@ -202,10 +204,10 @@ def getLinksMatrix():
 
     return results
 
-def getNodesMatrix():
+def getNodes():
     domains = GoogleResult.query.with_entities(GoogleResult.domain).distinct().all()
     domains = GoogleResult.query.with_entities(GoogleResult.domain).group_by(GoogleResult.domain).having(func.count(GoogleResult.claim_id) > 5).all()
-    print(len(domains))
+    print(domains)
     claims = GoogleResult.query.with_entities(GoogleResult.claim_id).distinct().all()
     print(len(claims))
     results = []
@@ -224,3 +226,35 @@ def getNodesMatrix():
 
     return results
 
+def calculateEntropy(p):
+    return 0 if (p==0 or p==1) else float("{0:.2}".format(p*math.log(p) - (1-p)*math.log(1-p)))
+
+
+def getNodesMatrix():
+    query = """
+    SELECT * FROM (
+        SELECT 
+            domain,claim_id,prob_model,count(claim_id) 
+                over (partition by domain) as num_claims
+        FROM google_result,claim
+        WHERE google_result.claim_id = claim.id
+        ) as T
+    WHERE T.num_claims > 5
+    """
+    result = db.session.execute(query)
+    nodes = []
+    # print(result)
+    for r in result:
+        nodes.append({
+            'name': r[0],
+            'group' : r[3],
+            'category' : 'source'
+        })
+        nodes.append({
+            'name': r[1],
+            'group' : calculateEntropy(float(r[2])),
+            'category' : 'claim'
+        })
+    nodes = [dict(t) for t in {tuple(d.items()) for d in nodes}]
+    print('set node',len(list(nodes)))
+    return list(nodes)

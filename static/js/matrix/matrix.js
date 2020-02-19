@@ -1,5 +1,5 @@
 var margin = { top: 150, right: 0, bottom: 10, left: 150 },
-  rectSize = 18,
+  rectSize = 8,
   width = rectSize * 30, //1000,
   height = rectSize * 19, // ,0.8*width;
   graph = { nodes: [], links: [] };
@@ -139,7 +139,8 @@ function drawGraph() {
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  var matrix = [];
+  // var matrix = [];
+  var rowMatrix = [], colMatrix  = [];
   var nodes = graph.nodes;
   var n = nodesClaim.length;
   var m = nodesSource.length;
@@ -152,12 +153,28 @@ function drawGraph() {
   yBoundaryLines.range([0, height]);
 
   // Compute index per node.
-  nodes.forEach(function(node, i) {
+  nodesSource.forEach(function(node, i) {
     node.index = i;
     node.count = 0;
-    matrix[i] = d3.range(n).map(function(j) {
+    rowMatrix[i] = d3.range(n).map(function(j) {
       return { x: j, y: i, z: 0, category: node.category, name: node.name };
     });
+  });
+
+  // nodesSource.forEach(function(node, i) {
+  //   node.index = i;
+  //   node.count = 0;
+  //   matrix.push(d3.range(n).map(function(j) {
+  //     return { x: j, y: i, z: 0, category: node.category, name: node.name };
+  //   }));
+  // });
+
+  nodesClaim.forEach(function(node, i) {
+    node.index = i;
+    node.count = 0;
+    colMatrix[i] = (d3.range(m).map(function(j) {
+      return { x: j, y: i, z: 0, category: node.category, name: node.name };
+    }));
   });
 
   //fill the drop down menu with names, in alphabetical order
@@ -186,13 +203,13 @@ function drawGraph() {
 
   // Convert links to matrix; count character occurrences.
   graph.links.forEach(function(link) {
-    matrix[link.source][link.target].z += 1;
-    matrix[link.target][link.source].z += 1;
+    rowMatrix[link.source][link.target].z += 1;
+    colMatrix[link.target][link.source].z += 1;
 
     // matrix[link.source][link.source].z += 1;
     // matrix[link.target][link.target].z += 1;
-    nodes[link.source].count += 1;
-    nodes[link.target].count += 1;
+    nodesSource[link.source].count += 1;
+    nodesClaim[link.target].count += 1;
     // console.log('matrix link',matrix[link.source][link.target]);
   });
 
@@ -213,7 +230,7 @@ function drawGraph() {
       return nodesClaim[b].count - nodesClaim[a].count;
     }),
     group: d3.range(n).sort(function(a, b) {
-      return d3.ascending(nodesClaim[a].group, nodesClaim[b].group);
+      return nodesClaim[b].group -  nodesClaim[b].group;
     }),
     distance: d3.range(n).sort(function(a, b) {
       return d3.ascending(nodesClaim[a].distancetocentre, nodesClaim[b].distancetocentre);
@@ -228,7 +245,7 @@ function drawGraph() {
       return nodesSource[b].count - nodesSource[a].count;
     }),
     group: d3.range(m).sort(function(a, b) {
-      return d3.ascending(nodesSource[a].group, nodesSource[b].group);
+      return nodesSource[b].group - nodesSource[a].group;
     }),
     distance: d3.range(m).sort(function(a, b) {
       return d3.ascending(nodesSource[a].distancetocentre, nodesSource[b].distancetocentre);
@@ -246,6 +263,7 @@ function drawGraph() {
   svg
     .append("rect")
     .attr("class", "background")
+    .attr("fill","#EEEEEE")
     .attr("width", width)
     .attr("height", height);
 
@@ -259,18 +277,31 @@ function drawGraph() {
       return yBoundaryLines(d.y);
     })
     .interpolate("linear");
+  
+  // let rowMatrix = matrix.filter(function(e){
+  //   return e[0].category == "source";
+  // });
+  // rowMatrix.map(function(e,i){
+  //   e.x = i
+  // });
+
+  // let colMatrix = matrix.filter(function(e){
+  //   return e[0].category == "claim";
+  // });
+  // colMatrix.map(function(e,i){
+  //   e.x = i;
+  // });
 
   var row = svg
     .selectAll(".row")
     .data(
-      matrix.filter(function(e) {
-        return e[0].category == "source";
-      })
+      rowMatrix
     )
     .enter()
     .append("g")
     .attr("class", "row")
     //.attr("class", function(d, i) {return nodes[i].name; }
+    .attr("data",function(d){ return d[0].name})
     .attr("transform", function(d, i) {
       return "translate(0," + y(i) + ")";
     })
@@ -304,13 +335,15 @@ function drawGraph() {
   var column = svg
     .selectAll(".column")
     .data(
-      matrix.filter(function(e) {
-        return e[0].category == "claim";
-      })
+      // matrix.filter(function(e) {
+      //   return e[0].category == "claim";
+      // })
+      colMatrix
     )
     .enter()
     .append("g")
     .attr("class", "column")
+    .attr("data",function(d){return d[0].name})
     .attr("transform", function(d, i) {
       return "translate(" + x(i) + ")rotate(-90)";
     });
@@ -358,7 +391,7 @@ function drawGraph() {
       .attr("width", x.rangeBand())
       .attr("height", x.rangeBand())
       //.style("fill-opacity", function(d) { return z(d.z); })
-      .style("fill", "MediumBlue")
+      .style("fill", "#5d78ff")
       .on("mouseover", mouseover)
       .on("mouseout", mouseout);
   }
@@ -406,8 +439,10 @@ function drawGraph() {
   //reorder everthing based on selection from drop down
   function order(value) {
     if (value === "name" || value === "count" || value === "group") {
-	  x.domain(ordersClaim[value]);
-	  y.domain(ordersSource[value])
+      // if (value !== "count")
+      console.log("value for sort",value);
+	    x.domain(ordersClaim[value]);
+	    y.domain(ordersSource[value])
 
       //d3.selectAll(".boundaryLines").remove();
       var t = svg.transition().duration(1500);
@@ -416,19 +451,19 @@ function drawGraph() {
 
       t.selectAll(".row")
         .delay(function(d, i) {
-          return x(i) * 4;
+          return y(i) * 4;
         })
         .attr("transform", function(d, i) {
           return "translate(0," + y(i) + ")";
         })
         .selectAll(".cell")
         .delay(function(d) {
-          return y(d.x) * 4;
+          return x(d.x) * 4;
         })
         .attr("x", function(d) {
-          return y(d.x);
+          // console.log(d.name,y(d.x));
+          return x(d.x);
         });
-
       t.selectAll(".column")
         .delay(function(d, i) {
           return x(i) * 4;
@@ -436,7 +471,6 @@ function drawGraph() {
         .attr("transform", function(d, i) {
           return "translate(" + x(i) + ")rotate(-90)";
         });
-
       t.selectAll(".boundaryLines").remove();
     } else if (value === "distance") {
       alert("Please choose a life event from the list below.");

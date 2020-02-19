@@ -45,3 +45,9 @@ def getMatrixData():
     links = SourceServices.getLinksMatrix()
     nodes = SourceServices.getNodesMatrix()
     return jsonify({"links":links,"nodes":nodes})
+
+
+@app.route('/source/getN')
+def getN():
+   SourceServices.getNodes()
+   return jsonify({"success":True})

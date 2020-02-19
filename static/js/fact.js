@@ -598,148 +598,191 @@ function filterSource() {
 
 // source map 
 
-function renderSources() {
+var sourcesHeatmap,fullSources,batchData,batchClaim = [],fullClaims=Array.from(claims);
+
+function showInfoSource(source) {
+  document.getElementById("title-source-item").innerHTML = source.source;
+  document.getElementById("total-claim-source-item").innerHTML = source.total;
+  document.getElementById("source-credibility-progress").style.width = ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
+  document.getElementById("credibility-per").innerHTML =  ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
+};
+
+function renderHeatmap(){ 
+  if(batchData !== undefined){
+    batchClaim = [];
+    let cache = fullSources.filter(function(e){
+      return batchData.includes(e.source);
+    });
+    sourcesHeatmap = JSON.parse(JSON.stringify(cache));
+    sourcesHeatmap.map(function(e,i){
+      e.claims = [...e.claims.filter(function(c){
+        return batchData.includes(c.claim_id);
+      })];
+      e.claims.map(function(c,i){
+        batchClaim.push(c.claim_id);
+      })
+    });
+  }
   var marginChartOverview = { top: 30, right: 30, bottom: 30, left: 50 },
             widthChartOverview = $(window).width() * 0.75 - 30 - marginChartOverview.left - marginChartOverview.right,
             heightChartOverview = 250 - marginChartOverview.top - marginChartOverview.bottom;
 
-        function showInfoSource(source) {
-            document.getElementById("title-source-item").innerHTML = source.source;
-            document.getElementById("total-claim-source-item").innerHTML = source.total;
-            document.getElementById("source-credibility-progress").style.width = ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
-            document.getElementById("credibility-per").innerHTML =  ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
-        };
+  let loader = d3.select("#loader-source");
+  d3.select("table").html('');
+  loader.style("display","none");
+  var table = d3.select("table")
+      .selectAll("tr")
+      .data(sourcesHeatmap)
+      .enter()
+      .append("tr")
+  table.append("td")
+      .text(function (d) { return d.source })
+      .style("text-align", "right")
 
+  table.append("td")
+      .attr("id", function (d) { return d.source.replace(/\./g, '') })
+      .style("text-align", "left")
+  // showInfoSource(data[0]);
+  sourcesHeatmap.map((source) => {
+      var widthCell = 20, heightCell = 20, p = 20,maxClaims = 30;
+      p = Math.floor(($(window).width() * 0.7 - 100 - marginChartOverview.left - marginChartOverview.right) / 20);
+      var width = widthCell * maxClaims; //source.claims.length;
+      var height = heightCell * Math.ceil(source.claims.length / maxClaims);
+      // var data = data[0];
+
+      // append the svg object to the body of the page
+      var sourceId = '[id="' + source.source.replace(/\./g, '') + '"]';
+      var svg = d3.select(sourceId)
+          .append("svg")
+          .attr("width", width)
+          .attr("height", height)
+
+
+      // var colorClaim = d3.scaleLinear().domain([1, 10])
+          // .range(["#a9a9a9", "rgb(237,105,37)"])
+
+      var colorClaim = d3.scaleOrdinal().domain([-1, 1])
+          // .range(["grey","#1dc9b7","#fd397a"])
+          // .range(["grey","#66BC6D","#D20D01"])
+          .range(["grey","#6ACB44","#F72A38"])
+
+
+      var tooltip = d3.select("#all-sources")
+          .append("div")
+          .style("opacity", 0)
+          .attr("class", "tooltip")
+          .style("background-color", "white")
+          .style("border", "solid")
+          .style("border-width", "2px")
+          .style("border-radius", "5px")
+          .style("padding", "5px")
+          .style("position", "fixed")
+          .style("max-width", "350px")
+      // .style("margin-top", "20px")
+
+
+      // Three function that change the tooltip when user hover / move / leave a cell
+      var mouseover = function (d) {
+          tooltip
+              .style("opacity", 1)
+          d3.select(this)
+              .style("stroke", "black")
+              .style("opacity", 1)
+          showInfoSource(source);
+      }
+      var mousemove = function (d) {
+          var mouseTop = d3.mouse(this)[1] < 300 ? d3.mouse(this)[1] + 300 : d3.mouse(this)[1];
+          var mouseTop = (d3.mouse(this)[1] % 10) + 350;
+          tooltip
+              .html(d.claim)
+              .style("left", (d3.mouse(this)[0] + 200) + "px")
+              .style("top", (mouseTop) + "px")
+      }
+      var mouseleave = function (d) {
+          tooltip
+              .style("opacity", 0)
+          d3.select(this)
+              .style("stroke", "white")
+              .style("opacity", 0.8)
+      }
+
+      var rectClick = function (d) {
+          document.getElementById('tab-claims').click();
+          selectClaim(findIndexClaimById(d.claim_id));
+          scrollToClaim(d.claim_id);
+      }
+
+      svg.selectAll("rect")
+          .data(source.claims)
+          .enter()
+          .append("rect")
+          .attr("x", function (d, i) { return widthCell * ((i%maxClaims) % p); })
+          .attr("y", function (d, i) { return heightCell * (Math.floor((i/maxClaims))); })
+          .attr("width", "20")
+          .attr("height", "20")
+          .style("fill", function (d) { return colorClaim(d.credibility_claim); })
+          .style("stroke-width", 1)
+          .style("stroke", "white")
+          .style("opacity", 0.8)
+          .on("mouseover", mouseover)
+          .on("mousemove", mousemove)
+          .on("mouseleave", mouseleave)
+          .on("click", rectClick);
+
+      // append text to rect
+      svg.selectAll("text")
+          .data(source.claims)
+          .enter()
+          .append("text")
+          .attr("x", function (d, i) { return widthCell * ((i%maxClaims) % p) + widthCell/3; })
+          .attr("y", function (d, i) { return heightCell * (Math.floor((i/maxClaims))) + heightCell/1.5; })
+          .style("fill", function (d) { return "#fff"; })
+          .text(function(d) { return d.credibility_claim == -1 ? '?' : ''});
+  });
+}
+
+function renderSources() {
         let loader = d3.select("#loader-source");
         loader.style("display","inline-block");
         d3.select("table").html('');
 
         var table = d3.select("table");
         d3.json("http://localhost:5050/source/claim", function (data) {
-            // d3.select("#loader-source").remove();
-            d3.select("table").html('');
-            loader.style("display","none");
-            var table = d3.select("table")
-                .selectAll("tr")
-                .data(data)
-                .enter()
-                .append("tr")
-            table.append("td")
-                .text(function (d) { return d.source })
-                .style("text-align", "right")
-
-            table.append("td")
-                .attr("id", function (d) { return d.source.replace(/\./g, '') })
-                .style("text-align", "left")
-            showInfoSource(data[0]);
-            data.map((source) => {
-                var widthCell = 20, heightCell = 20, p = 20,maxClaims = 30;
-                p = Math.floor(($(window).width() * 0.7 - 100 - marginChartOverview.left - marginChartOverview.right) / 20);
-                var width = widthCell * maxClaims; //source.claims.length;
-                var height = heightCell * Math.ceil(source.claims.length / maxClaims);
-                // var data = data[0];
-
-                // append the svg object to the body of the page
-                var sourceId = '[id="' + source.source.replace(/\./g, '') + '"]';
-                var svg = d3.select(sourceId)
-                    .append("svg")
-                    .attr("width", width)
-                    .attr("height", height)
-
-
-                // var colorClaim = d3.scaleLinear().domain([1, 10])
-                    // .range(["#a9a9a9", "rgb(237,105,37)"])
-
-                var colorClaim = d3.scaleOrdinal().domain([-1, 1])
-                    // .range(["grey","#1dc9b7","#fd397a"])
-                    // .range(["grey","#66BC6D","#D20D01"])
-                    .range(["grey","#6ACB44","#F72A38"])
-
-
-                var tooltip = d3.select("#all-sources")
-                    .append("div")
-                    .style("opacity", 0)
-                    .attr("class", "tooltip")
-                    .style("background-color", "white")
-                    .style("border", "solid")
-                    .style("border-width", "2px")
-                    .style("border-radius", "5px")
-                    .style("padding", "5px")
-                    .style("position", "fixed")
-                    .style("max-width", "350px")
-                // .style("margin-top", "20px")
-
-
-                // Three function that change the tooltip when user hover / move / leave a cell
-                var mouseover = function (d) {
-                    tooltip
-                        .style("opacity", 1)
-                    d3.select(this)
-                        .style("stroke", "black")
-                        .style("opacity", 1)
-                    showInfoSource(source);
-                }
-                var mousemove = function (d) {
-                    var mouseTop = d3.mouse(this)[1] < 300 ? d3.mouse(this)[1] + 300 : d3.mouse(this)[1];
-                    var mouseTop = (d3.mouse(this)[1] % 10) + 350;
-                    tooltip
-                        .html(d.claim)
-                        .style("left", (d3.mouse(this)[0] + 200) + "px")
-                        .style("top", (mouseTop) + "px")
-                }
-                var mouseleave = function (d) {
-                    tooltip
-                        .style("opacity", 0)
-                    d3.select(this)
-                        .style("stroke", "white")
-                        .style("opacity", 0.8)
-                }
-
-                var rectClick = function (d) {
-                    document.getElementById('tab-claims').click();
-                    selectClaim(findIndexClaimById(d.claim_id));
-                    scrollToClaim(d.claim_id);
-                }
-
-                svg.selectAll("rect")
-                    .data(source.claims)
-                    .enter()
-                    .append("rect")
-                    .attr("x", function (d, i) { return widthCell * ((i%maxClaims) % p); })
-                    .attr("y", function (d, i) { return heightCell * (Math.floor((i/maxClaims))); })
-                    .attr("width", "20")
-                    .attr("height", "20")
-                    .style("fill", function (d) { return colorClaim(d.credibility_claim); })
-                    .style("stroke-width", 1)
-                    .style("stroke", "white")
-                    .style("opacity", 0.8)
-                    .on("mouseover", mouseover)
-                    .on("mousemove", mousemove)
-                    .on("mouseleave", mouseleave)
-                    .on("click", rectClick);
-
-                // append text to rect
-                svg.selectAll("text")
-                    .data(source.claims)
-                    .enter()
-                    .append("text")
-                    .attr("x", function (d, i) { return widthCell * ((i%maxClaims) % p) + widthCell/3; })
-                    .attr("y", function (d, i) { return heightCell * (Math.floor((i/maxClaims))) + heightCell/1.5; })
-                    .style("fill", function (d) { return "#fff"; })
-                    .text(function(d) { return d.credibility_claim == -1 ? '?' : ''});
-            });
-
+            sourcesHeatmap = data;
+            fullSources = Array.from(data);
+            renderHeatmap();
         })
+}
+
+function filterForHeatmap(e){
+  // console.log("full sources before",fullSources);
+  // console.log("full claims before",fullClaims);
+  batchData = Array.from(e.map(function(val,index){
+    // console.log(val.getAttribute("data"));
+    return val.getAttribute("data");
+  }));
+  console.log("batch Data",batchData);
+  renderHeatmap();
+  renderListClaim();
+  triggerMatrix(0);
+  // console.log("full sources after",fullSources);
+  // console.log("full claims after",fullClaims);
 }
 
 // validate claim
 
 function renderListClaim(){
+  if(batchClaim.length > 0)
+    claims = Array.from(fullClaims.filter(function(e){
+      return batchClaim.includes(e.id);
+    }));
+  // console.log('render list claim',claims);
+  d3.select("#list-claim").html('');
   d3.select("#list-claim")
   .selectAll("li")
   .data(claims)
-  // .enter()
-  // .append("li")
+  .enter()
+  .append("li")
   .attr("id",function(d){return d.id;})
   .attr("onclick",function(d,i){return 'selectClaim(' +i+')';})
   .style('display',function(d){return d.credibility >= 0 ? 'grid' : ''})
@@ -796,6 +839,7 @@ function scrollToClaim(claim_id){
 function updateListClaim(claim_id_for_update) {
   d3.json("http://localhost:5050/claim/getAllClaims", function(err, res) {
     claims = Array.from(res);
+    fullClaims = Array.from(claims);
     let ranking = document.getElementById('ranking-select');
     let sort_by = ranking.options[ranking.selectedIndex].value;
     sortListClaim(sort_by);
