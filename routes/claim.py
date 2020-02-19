@@ -2,22 +2,18 @@ from app import app
 from flask import jsonify,render_template,json,request
 from services import ClaimServices,SourceServices
 
-@app.route("/claim",methods=['GET'])
-def hello():
-    return render_template("demo.html")
-
 @app.route("/",methods=['GET'])
 def getDashboard():
-    claims = ClaimServices.getAllClaims()
-    claims = json.dumps(claims)
-    claims = json.loads(claims)
-    if len(claims) == 0:
+    # claims = ClaimServices.getAllClaims()
+    # claims = json.dumps(claims)
+    # claims = json.loads(claims)
+    if ClaimServices.databaseIsEmpty():
         return render_template("getting_started.html")
-    sources = [] #SourceServices.getAllSources()
-    sources = json.dumps(sources)
-    sources = json.loads(sources)
+    # sources = [] #SourceServices.getAllSources()
+    # sources = json.dumps(sources)
+    # sources = json.loads(sources)
     analysis = ClaimServices.analysis()
-    return render_template("home.html",data=claims,sources=sources,analysis=analysis)
+    return render_template("home.html",analysis=analysis)
 
 @app.route('/claim/getUserCredAndModel')
 def getUserCredAndModel():

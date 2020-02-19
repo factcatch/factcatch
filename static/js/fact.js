@@ -1,4 +1,7 @@
 // alert('fact');
+var claims = [];
+updateListClaim('');
+
 const status_question = {
   QUESTION : 'question',
   VALIDATING : 'loading',
@@ -8,6 +11,7 @@ const status_question = {
 const rank_mode = {
   BY_PROB_MODEL : 0,
   BY_CREDIBLE : 1,
+  BY_RANDOM : 2,
 }
 
 function triggerMatrix(mode){
@@ -45,7 +49,7 @@ function readMore() {
 var i_nextClaim = 0;
 
 function findIndexClaimById(claim_id) {
-  let index_ = -1;
+  let index_ = 0;
   claims.forEach(function(item, index) {
     if (item.id === claim_id) {
       index_ = index;
@@ -598,7 +602,7 @@ function filterSource() {
 
 // source map 
 
-var sourcesHeatmap,fullSources,batchData,batchClaim = [],fullClaims=Array.from(claims);
+var sourcesHeatmap,fullSources,batchData,batchClaim = [],fullClaims=claims;
 
 function showInfoSource(source) {
   document.getElementById("title-source-item").innerHTML = source.source;
@@ -837,7 +841,15 @@ function scrollToClaim(claim_id){
 }
 
 function updateListClaim(claim_id_for_update) {
+  if(claim_id_for_update === ''){
+    document.getElementById('block-content2').style.display = 'none';
+    document.getElementById('loader-claim').style.display = '';
+  }
   d3.json("http://localhost:5050/claim/getAllClaims", function(err, res) {
+    if(claim_id_for_update === ''){
+      document.getElementById('loader-claim').style.display = 'none';
+      document.getElementById('block-content2').style.display = 'grid';
+    }
     claims = Array.from(res);
     fullClaims = Array.from(claims);
     let ranking = document.getElementById('ranking-select');
@@ -846,10 +858,9 @@ function updateListClaim(claim_id_for_update) {
     renderListClaim();
     let index_ = findIndexClaimById(claim_id_for_update)
     selectClaim(index_);
-    scrollToClaim(claim_id_for_update);
+    scrollToClaim(claim_id_for_update === '' ? claims[0].id : claim_id_for_update);
     if(document.getElementById('loading-validate-claim').innerHTML == 'Invalidating')
       document.getElementById('loading-validate-claim').innerHTML = 'Validating claim';
-      // setStatusQuestion(status_question.AFTER);
   });
 }
 
@@ -962,6 +973,17 @@ function sortListClaim(m) {
         claims_ = claims_.concat(credible_claims);
         claims_ = claims_.concat(claims_by_prob_model);
         claims_ = claims_.concat(non_credible_claim);
+        claims = Array.from(claims_);
+        break;
+      case rank_mode.BY_RANDOM:
+        var currentIndex = claims.length, temporaryValue, randomIndex;
+        while (0 !== currentIndex) {
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+          temporaryValue = claims[currentIndex];
+          claims[currentIndex] = claims[randomIndex];
+          claims[randomIndex] = temporaryValue;
+        }
         break;
       default:
         claims_by_prob_model.sort(function(a,b){
@@ -972,9 +994,10 @@ function sortListClaim(m) {
         claims_ = claims_.concat(claims_by_prob_model);
         claims_ = claims_.concat(credible_claims);
         claims_ = claims_.concat(non_credible_claim);
+        claims = Array.from(claims_);
         break;
     }
-    claims = Array.from(claims_);
+    // claims = Array.from(claims_);
     renderListClaim();
     selectClaim(0);
     scrollToClaim(claims[0].id);

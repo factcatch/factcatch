@@ -176,3 +176,9 @@ def validateClaim(claim_id,credibility):
     db.session.commit()
     return True
 
+def databaseIsEmpty():
+    query = "SELECT count(id) FROM claim"
+    result = db.session.execute(query)
+    r = [row[0] for row in result]
+    return True if r[0] == 0 else False
+

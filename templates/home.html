@@ -212,10 +212,12 @@
                             <div>
                                 <div>
                                     <div style="display: grid;grid-template-columns:50% 50%;">
-                                        <div style="padding:30px 10px">
+                                        <div style="padding:20px 10px 0px 10px;">
                                             <input type="text" id="input-sourceFilter" onkeyup="filterSource()"
                                             placeholder="Search for names.." title="Type in a name"> <br>
-                                            <button class="button" style="margin-left: 28px; margin-bottom: 0px;" onclick="triggerMatrix(1)">matrix factorization</button>
+                                            <button class="button" style="margin-left: 30px; margin-bottom: 0px;width: 300px; border-radius:0" onclick="triggerMatrix(1)">
+                                                Open Matrix Factorization
+                                            </button>
                                         </div>
                                             <div class="overview-source">
                                                 <div class="overview-source__details overview-source__">
@@ -263,7 +265,8 @@
                         </div>
                         <!-- id="claims" -->
                         <div style="height: 700px;" class="claim-detail tabcontent item-tab">
-                            <div id="block-content2">
+                            <div class="loader" id="loader-claim" style="display: none;"></div>
+                            <div id="block-content2" style="display: grid;">
                                 <div>
                                     <div id="title-list-claim">
                                         <!-- <span>Claims</span> -->
@@ -279,54 +282,12 @@
                                             <select name="Ranking" id="ranking-select" onchange="sortListClaim(this.value)">
                                                 <option value="0" selected>Entropy</option>
                                                 <option value="1" >Credibility</option>
+                                                <option value="2" >Random</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div id="block-list-claim">
                                         <ul id="list-claim">
-                                            {% for claim in data %}
-                                            <li onclick="selectClaim({{ loop.index - 1 }})" id="{{ claim.id }}"  {% if claim.credibility != -1 %} style="display: grid;grid-template-columns:auto 35px;" {% endif %}>
-                                                <div class="title-claim">
-                                                    <span class="no-claim">{{ loop.index }}. </span> 
-                                                    <span>{{ claim.claim }}</span> 
-                                                </div>
-                                                {% if claim.credibility == 1 %}
-                                                    <div style="padding: 75% 8px;">
-                                                            <img src="{{ url_for('static', filename='img/credit.png') }}" width="24px"
-                                                            style="opacity: 0.5;">
-                                                    <div>
-                                                {% elif claim.credibility == 0 %}
-                                                    <div style="padding: 75% 8px;">
-                                                            <img src="{{ url_for('static', filename='img/danger2.png') }}" width="24px"
-                                                            style="opacity: 0.5;">
-                                                    </div>
-                                                {% else %}
-                                                <div class="progressbar" style="padding: 0;">
-                                                    {% if claim.prob_model < 0.5 %}
-                                                        <div
-                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:#F72A38">
-                                                        </div>
-                                                    {% else %}
-                                                        <div
-                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:#6ACB44">
-                                                        </div>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="detail-progressbar-credi" style="padding: 4px 0px;font-size: 12px;">
-                                                    <div class="percentage-credib">
-                                                            Credibility
-                                                    </div>
-                                                    <div class="percentage-progressbar-credi">
-                                                        {{ '%0.2f' | format(claim.prob_model * 100 | float) }}%
-                                                    </div>
-                                                </div>
-                                                <!-- <div style="padding: 4px 0px;font-size: 12px;">
-                                                    <span>Validated: </span>
-                                                    <span style="color:#5578eb;">Credible</span>
-                                                </div> -->
-                                                {% endif %}
-                                            </li>
-                                            {% endfor %}
                                         </ul>
                                     </div>
                                 </div>
@@ -346,7 +307,6 @@
                                                         Origins
                                                     </h4>
                                                     <p id="origins-claim">
-                                                        {{ data[0].origins }}
                                                     </p>
                                                 </div>
                                                 <div>
@@ -355,11 +315,9 @@
                                                     </h4>
                                                     <span>
                                                         <span id="description-short">
-                                                            {{ data[0].description }}
                                                         </span>
                                                         <span id="dots">...</span>
                                                         <span id="more">
-                                                            {{ data[0].description }}
                                                         </span>
 
                                                         <button onclick="readMore()" id="btn-readmore"
@@ -371,7 +329,6 @@
                                                         Example
                                                     </h4>
                                                     <p id="example-claim">
-                                                        {{ data[0].example }}
                                                     </p>
                                                 </div>
                                                 <div>
@@ -379,7 +336,6 @@
                                                         Originally Published
                                                     </h4>
                                                     <p id="originally-published-claim">
-                                                        {{ data[0].originally_published }}
                                                     </p>
                                                 </div>
                                                 <div>
@@ -387,13 +343,10 @@
                                                         Last Updated
                                                     </h4>
                                                     <p id="last-updated-claim">
-                                                        {{ data[0].last_updated }}
                                                     </p>
                                                 </div>
                                                 <div id="tag-claim">
-                                                    {% for tag in data[0].tags%}
                                                     <span class="tag-claim-item"> #{{ tag }} </span>
-                                                    {% endfor %}
                                                 </div>
                                             </div>
                                         </div>
@@ -577,16 +530,6 @@
 
     <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.min.js') }}"></script> -->
     <script src="https://d3js.org/d3.v3.min.js"></script>
-    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script> -->
-    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/conversation.min.js') }}"></script> -->
-    <script>
-        var claims = {{ data| tojson }};
-        var mapClaim = new Map();
-        var i;
-        for (i = 0; i < claims.length; i++) {
-            mapClaim.set(claims[i].id, i);
-        }
-    </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script>
     
     <script src="https://d3js.org/d3.v4.js"></script>
@@ -602,37 +545,20 @@
 		});
 		selection.on('stop', e => {filterForHeatmap(e.selected);})
     </script>
-    <!-- <script src="https://thibaultjanbeyer.github.io/DragSelect/ds.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            const ds = new DragSelect({
-                selectables: document.querySelectorAll('rect'),
-                area: document.getElementById("for-svg-matrix"),
-                callback: e => {filterForHeatmap(e)}
-            });
-        });
-       
-    </script> -->
     <script>
         renderSources();
-        $(document).ready(function () {
-            document.getElementById('{{ data[0].id }}').click();
-        });
         var randomScalingFactor = function () {
             return Math.random();
       // return Math.ceil(Math.random() * 10.0) * Math.pow(10, Math.ceil(Math.random() * 5));
         };
         drawModelProb();
-        sortListClaim(0);
+        // sortListClaim(0);
     </script>
-    <!-- <script src="https://d3js.org/d3.v2.min.js"></script> -->
     <script src="{{ url_for('static', filename='js/matrix/ShortestPathCalculator.js') }}"></script>
     <script src="{{ url_for('static', filename='js/matrix/tabletop.js') }}"></script>
     <script src="{{ url_for('static', filename='js/matrix/matrix.js') }}"></script>
     
 </body>
-
-
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/search.js') }}"></script>

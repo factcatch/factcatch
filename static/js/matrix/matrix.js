@@ -33,18 +33,6 @@ function init() {
   	c = d3.scale.category10().domain(d3.range(10));
 }
 
-// function getNodeData() {
-//   d3.json("http://localhost:5050/source/getNodes", function(data) {
-//     processNodesData(data);
-//   });
-// }
-
-// function getLinkData() {
-//   d3.json("http://localhost:5050/source/getLinks", function(data) {
-//     processLinksData(data);
-//   });
-// }
-
 function getData(){
 	d3.json("http://localhost:5050/source/getMatrixData", function(data) {
 		processNodesData(data.nodes);
@@ -116,8 +104,6 @@ function processLinksData(data) {
     // }
   }
 
-//   loadedLinks = true;
-//   drawGraphIfComplete();
 }
 
 function drawGraphIfComplete() {
@@ -160,14 +146,6 @@ function drawGraph() {
       return { x: j, y: i, z: 0, category: node.category, name: node.name };
     });
   });
-
-  // nodesSource.forEach(function(node, i) {
-  //   node.index = i;
-  //   node.count = 0;
-  //   matrix.push(d3.range(n).map(function(j) {
-  //     return { x: j, y: i, z: 0, category: node.category, name: node.name };
-  //   }));
-  // });
 
   nodesClaim.forEach(function(node, i) {
     node.index = i;
@@ -255,8 +233,6 @@ function drawGraph() {
   // The default sort order.
   x.domain(ordersClaim.name);
   y.domain(ordersSource.name);
-//   console.log("nodes Source: ", nodesSource);
-//   console.log("order names: ", orders.name);
 
   //draw some stuff
 
@@ -278,20 +254,7 @@ function drawGraph() {
     })
     .interpolate("linear");
   
-  // let rowMatrix = matrix.filter(function(e){
-  //   return e[0].category == "source";
-  // });
-  // rowMatrix.map(function(e,i){
-  //   e.x = i
-  // });
-
-  // let colMatrix = matrix.filter(function(e){
-  //   return e[0].category == "claim";
-  // });
-  // colMatrix.map(function(e,i){
-  //   e.x = i;
-  // });
-
+ 
   var row = svg
     .selectAll(".row")
     .data(
@@ -335,9 +298,6 @@ function drawGraph() {
   var column = svg
     .selectAll(".column")
     .data(
-      // matrix.filter(function(e) {
-      //   return e[0].category == "claim";
-      // })
       colMatrix
     )
     .enter()
@@ -605,6 +565,4 @@ function drawGraph() {
   }
 }
 
-// getNodeData();
-// getLinkData();
 getData();
