@@ -9,14 +9,10 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/font.css') }}">
-    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/graph.css') }}"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- <link href='https://fonts.googleapis.com/css?family=Open+Sans|Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'> -->
-    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script> -->
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <!-- <script src="//d3js.org/d3-scale-chromatic.v1.min.js"></script> -->
@@ -371,12 +367,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- <div class="spinner">
-                                                <span>Loading</span>
-                                                <div class="bounce1"></div>
-                                                <div class="bounce2"></div>
-                                                <div class="bounce3"></div>
-                                            </div> -->
                                             <p id="loading-validate-claim" class="loading" style="display: none;">Validating claim</p>
                                             <div id="after-validated" style="display: none;">
                                                 <div>
@@ -385,8 +375,6 @@
                                                 <div>
                                                     <button class="button" onclick="setStatusQuestion(status_question.QUESTION)">Revalidate</button>
                                                     <button class="button" onclick="validateClaim(-1)">Invalidate</button>
-                                                    <!-- <img src="{{ url_for('static', filename='img/validated.png') }}" width="32px"
-                                                    style="opacity: 0.8;"> -->
                                                 </div>
                                             </div>
                                         </div>
@@ -552,7 +540,6 @@
       // return Math.ceil(Math.random() * 10.0) * Math.pow(10, Math.ceil(Math.random() * 5));
         };
         drawModelProb();
-        // sortListClaim(0);
     </script>
     <script src="{{ url_for('static', filename='js/matrix/ShortestPathCalculator.js') }}"></script>
     <script src="{{ url_for('static', filename='js/matrix/tabletop.js') }}"></script>

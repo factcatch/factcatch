@@ -767,7 +767,8 @@ function filterForHeatmap(e){
   }));
   console.log("batch Data",batchData);
   renderHeatmap();
-  renderListClaim();
+  sortListClaim();
+  // renderListClaim();
   triggerMatrix(0);
   // console.log("full sources after",fullSources);
   // console.log("full claims after",fullClaims);
@@ -776,10 +777,6 @@ function filterForHeatmap(e){
 // validate claim
 
 function renderListClaim(){
-  if(batchClaim.length > 0)
-    claims = Array.from(fullClaims.filter(function(e){
-      return batchClaim.includes(e.id);
-    }));
   // console.log('render list claim',claims);
   d3.select("#list-claim").html('');
   d3.select("#list-claim")
@@ -852,10 +849,8 @@ function updateListClaim(claim_id_for_update) {
     }
     claims = Array.from(res);
     fullClaims = Array.from(claims);
-    let ranking = document.getElementById('ranking-select');
-    let sort_by = ranking.options[ranking.selectedIndex].value;
-    sortListClaim(sort_by);
-    renderListClaim();
+    sortListClaim();
+    // renderListClaim();
     let index_ = findIndexClaimById(claim_id_for_update)
     selectClaim(index_);
     scrollToClaim(claim_id_for_update === '' ? claims[0].id : claim_id_for_update);
@@ -946,8 +941,14 @@ function drawModelProb(){
 }
 
 
-function sortListClaim(m) {
-    let mode = parseInt(m);
+function sortListClaim() {
+    let ranking = document.getElementById('ranking-select');
+    let sort_by = ranking.options[ranking.selectedIndex].value;
+    let mode = parseInt(sort_by);
+    if(batchClaim.length > 0)
+      claims = Array.from(fullClaims.filter(function(e){
+        return batchClaim.includes(e.id);
+      }));
     let claims_by_prob_model = [];
     let credible_claims = [];
     let non_credible_claim = [];
