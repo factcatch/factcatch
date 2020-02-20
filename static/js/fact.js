@@ -899,7 +899,7 @@ function drawModelProb(){
       var config = {
           type: 'line',
           data: {
-              labels: lables_, //['1', '2', '3', '4', '5', '6', '7', '1', '2', '3', '4', '5', '6', '7'],
+              labels: lables_,
               datasets: [{
                   label: 'Model Probability',
                   fillColor: "rgba(220,220,220,0.2)",

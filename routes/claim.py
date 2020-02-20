@@ -4,14 +4,8 @@ from services import ClaimServices,SourceServices
 
 @app.route("/",methods=['GET'])
 def getDashboard():
-    # claims = ClaimServices.getAllClaims()
-    # claims = json.dumps(claims)
-    # claims = json.loads(claims)
     if ClaimServices.databaseIsEmpty():
         return render_template("getting_started.html")
-    # sources = [] #SourceServices.getAllSources()
-    # sources = json.dumps(sources)
-    # sources = json.loads(sources)
     analysis = ClaimServices.analysis()
     return render_template("home.html",analysis=analysis)
 
@@ -34,7 +28,6 @@ def getAllClaims():
 @app.route('/claim/validate',methods=['POST'])
 def validateClaim():
     data = request.json
-    # print(data)
     ClaimServices.validateClaim(data['id'],data['credible'])
     return jsonify({"success":True})
 
@@ -45,6 +38,7 @@ def getAnalysis():
     analysis = json.loads(analysis)
     return jsonify(analysis)
    
-@app.route('/heatmap')
-def heatmap():
-   return render_template("heatmap.html")
+@app.route('/dohits')
+def dohits():
+    ClaimServices.doHITS(10)
+    return jsonify({"Success":True})
