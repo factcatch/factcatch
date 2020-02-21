@@ -3,6 +3,7 @@ from app.models import Claim,GoogleResult
 from app import db,app
 from sqlalchemy.orm import load_only
 import random
+import math
 import pathlib
 
 def getCredibility(credibility):
@@ -95,21 +96,26 @@ def getAllClaims():
         claims[id].documents = getSourcesRelations(claim.id)
     return claims
 
+def calculateEntropy(p):
+    return p if(p==0 or p==1) else - p*math.log(p) - (1-p)*math.log(1-p)
+
 def analysis():
     claims = Claim.query.count()
     remains = Claim.query.filter_by(credibility=-1).count()
     cred = Claim.query.filter_by(credibility=1).count()
     nonCred = Claim.query.filter_by(credibility=0).count()
+    sources = GoogleResult.query.with_entities(GoogleResult.domain).distinct().count()
     # perCred = (float(cred) / claims)*100
     nonValidatedClaims = Claim.query.filter_by(credibility=-1).all()
     uncertainty = 0
     for claim in nonValidatedClaims:
-        uncertainty +=  claim.prob_model
+        uncertainty +=  calculateEntropy(claim.prob_model)
     uncertainty = float("{0:.2f}".format(uncertainty*100/remains))
     perCred = float("{0:.2f}".format((float(cred) / (cred + nonCred))*100))
     perNon = float("{0:.2f}".format(100 - perCred))
     return {
         'claims' : claims,
+        'sources' : sources,
         'remains' : remains,
         'credibility' : cred,
         'perCred' : perCred,

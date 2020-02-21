@@ -865,7 +865,7 @@ function updateOverview(){
       document.getElementById('remain-claim-source-item').innerHTML = (data.claims - data.credibility - data.nonCredibility);
       document.getElementById('credit-claim_').innerHTML = data.credibility + ' (' + data.perCred + '%)';
       document.getElementById('noncredit-claim_').innerHTML = data.nonCredibility + ' (' + data.perNonCred + '%)';
-      document.getElementById('uncertainty').innerHTML = data.uncertainty;
+      document.getElementById('uncertainty').innerHTML = data.uncertainty + '%';
   });
 }
 

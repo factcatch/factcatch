@@ -21,7 +21,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Fact Checking</title>
+    <title>FactCatch</title>
     <link rel='stylesheet' id='style-css' href="{{ url_for('static', filename='styles/style_conservation.css') }}"
         type='text/css' media='all' />
     <script>
@@ -109,67 +109,6 @@
             </div>
         </div>
     </div>
-    <div class="grid-container" style="display: none;">
-        <div id="overview-left" 
-            <div id="logo-griffith">
-                <a href="/">
-                    <div>Fact Checking</div>
-                </a>
-            </div>
-            <div class="item-analysis">
-                <div class="icon-item-analysis">
-                    <img src="{{ url_for('static', filename='img/listing.png') }}" style="opacity: 0.5;">
-                </div>
-                <div class="detail-item-analysis">
-                    <div class="title-detail-item-analysis">
-                        #Claims
-                    </div>
-                    <div class="claims  total-claim-detail" id="total-claim-detail_">
-                        {{ analysis.claims }}
-                    </div>
-                </div>
-            </div>
-            <div class="item-analysis">
-                <div class="icon-item-analysis">
-                    <img src="{{ url_for('static', filename='img/remain.png') }}" style="opacity: 0.5;">
-                </div>
-                <div class="detail-item-analysis">
-                    <div class="title-detail-item-analysis">
-                        #Claims
-                    </div>
-                    <div class="claims remain-claim" id="non-validated-claims">
-                        {{ analysis.remains }}
-                    </div>
-                </div>
-            </div>
-            <div class="item-analysis">
-                <div class="icon-item-analysis">
-                    <img src="{{ url_for('static', filename='img/credit.png') }}" style="opacity: 0.5;">
-                </div>
-                <div class="detail-item-analysis">
-                    <div class="title-detail-item-analysis">
-                        #Credibility
-                    </div>
-                    <div class="claims credit-claim">
-                        {{ analysis.credibility }} ({{ analysis.perCred }}%)
-                    </div>
-                </div>
-            </div>
-            <div class="item-analysis">
-                <div class="icon-item-analysis">
-                    <img src="{{ url_for('static', filename='img/danger.png') }}" width="64px" style="opacity: 0.5;">
-                </div>
-                <div class="detail-item-analysis">
-                    <div class="title-detail-item-analysis">
-                        #Non-credibility
-                    </div>
-                    <div class="claims noncredit-claim">
-                        {{ analysis.nonCredibility }} ({{ analysis.perNonCred }}%)
-
-                    </div>
-                </div>
-            </div>
-        </div>
         <div>
             <div class="header">
                 <div class="grid-header">
@@ -180,7 +119,7 @@
                     </div>
                     <div id="logo-griffith">
                         <a href="/">
-                            <div>Fact Checking</div>
+                            <div>FactCatch</div>
                         </a>
                     </div>
                     <div id="select-file" class="header-content">
@@ -426,6 +365,23 @@
                                     </div>
                                     <div class="item-analysis-source">
                                         <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/network.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Sources
+                                            </div>
+                                            <div class="claims total-claim-detail" id="analysis-sources">
+                                                {{ analysis.sources }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                                <div class="row-analysis-source">
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
                                             <img src="{{ url_for('static', filename='img/remain.png') }}" width="32px"
                                                 style="opacity: 0.5;">
                                         </div>
@@ -434,6 +390,20 @@
                                                 #Non-validated
                                             </div>
                                             <div class="claims total-claim-detail" id="remain-claim-source-item"> {{ analysis.remains }} 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/statistic.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                Uncertainty
+                                            </div>
+                                            <div class="claims total-claim-detail" id="uncertainty">
+                                                {{ analysis.uncertainty }}%
                                             </div>
                                         </div>
                                     </div>
@@ -468,31 +438,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row-analysis-source">
-                                    <div class="item-analysis-source">
-                                        <div class="icon-item-analysis-source">
-                                            <img src="{{ url_for('static', filename='img/statistic.png') }}" width="32px"
-                                                style="opacity: 0.5;">
-                                        </div>
-                                        <div class="detail-item-analysis-source">
-                                            <div class="title-detail-item-analysis">
-                                                #Uncertainty
-                                            </div>
-                                            <div class="claims total-claim-detail" id="uncertainty">
-                                                {{ analysis.uncertainty }}%
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
-                           
                         </div>
                     </div>
 
                     <!-- matrix factorization  -->
                     <div id="matrix-factorization" style="display:none;z-index: 10;">
                         <div style="display: grid; grid-template-columns: 30% auto;">
-                            <h3>FSD Matrix</h3>
+                            <h3>Matrix Canvas</h3>
                             <aside style="margin-top: 0.2em;">
                                 <p>Order by: <select id="order">
                                 <option class="top-level-option" value="name">Name</option>
