@@ -62,6 +62,7 @@ function selectClaim(index) {
   drawRelation(index);
   // document.getElementById("input_claim_id_for_form").setAttribute
   var claim = claims[index];
+  drawNeuralNetwork(claim.id);
   let status_ = (claim.credibility == -1) ? status_question.QUESTION : status_question.AFTER; 
   setStatusQuestion(status_);
   var itemClicked = document.getElementsByClassName("row-clicked");
@@ -889,55 +890,149 @@ function validateClaim(c) {
 }
 
 function drawModelProb(){
-  d3.json("http://localhost:5050/claim/getUserCredAndModel", function (data) {
-      // d3.select("#chart-overview > div > canvas").html('');
-      let lables_ = [...Array(Object.keys(data.modelProb).length).keys()];
-      lables_.map(function(val,index) {
-          lables_[index] = val + 1;
-      });
-      // console.log(lables_);
-      var config = {
-          type: 'line',
-          data: {
-              labels: lables_,
-              datasets: [{
-                  label: 'Model Probability',
-                  fillColor: "rgba(220,220,220,0.2)",
-                  strokeColor: "rgba(220,220,220,1)",
-                  // backgroundColor: window.chartColors.red,
-                  borderColor: 'rgba(151,187,205,1)',
-                  data: data.modelProb,
-              }],
-          },
-          options: {
-              responsive: true,
-              title: {
-                  display: true,
-                  text: 'Comparison Model and User Input'
+  d3.json("http://localhost:5050/claim/getHistogram", function (data) {
+          var ctx = document.getElementById("myChart").getContext('2d');
+          ctx.canvas.parentNode.style.height = '340px';
+          ctx.canvas.parentNode.style.width = '380px';
+            var myChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: ["0.0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0"],
+                datasets: [{
+                  label: '#Claims',
+                  data: data.histogram,
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                  ],
+                  borderWidth: 0.5
+                }]
               },
-              scales: {
-                  xAxes:
-                      [{
-                          ticks: {
-                              autoSkip: true,
-                              maxTicksLimit: 5,
-                              // beginAtZero : false
-                              // display: false
-                          }
-                      }],
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                title: {
+                  display: true,
+                  text: 'Histogram Probability'
+                },
+                scales: {
+                  xAxes: [{
+                    barPercentage: 0.8,
+                    ticks: {
+                      maxRotation: 90,
+                      minRotation: 80
+                    }
+                  }],
                   yAxes: [{
-                      ticks: {
-                          autoSkip: true,
-                          maxTicksLimit: 5,
-                      }
+                    ticks: {
+                      beginAtZero: true
+                    }
                   }]
+                }
               }
-          }
-      };
-
-      var ctx = document.getElementById('canvas').getContext('2d');
-      window.myLine = new Chart(ctx, config);
+            });
   });
+
+//         var ctx = document.getElementById("myChart").getContext('2d');
+  //         ctx.canvas.parentNode.style.height = '300px';
+  //         ctx.canvas.parentNode.style.width = '380px';
+  //         var dataValues = data.histogram;
+  //         var dataLabels = [0.0, 0.1, 0.2, 0.3, 0.4,0.5,0.6,0.7,0.8,0.9,1.0];
+  //         var myChart = new Chart(ctx, {
+  //           type: 'bar',
+  //           data: {
+  //             labels: dataLabels,
+  //             datasets: [{
+  //               label: 'Claims',
+  //               data: dataValues,
+  //               backgroundColor: '#4575B4',
+  //             }]
+  //           },
+  //           options: {
+  //             responsive: true,
+  //             maintainAspectRatio: false,
+  //             scales: {
+  //               gridLines:{
+  //                 offsetGridLines: false
+  //               },
+  //               xAxes: [{
+  //                 display: true,
+  //                 barPercentage: 1.3,
+  //                 ticks: {
+  //                     // max: 5,
+  //                     autoSkip: true,
+  //                     // maxTicksLimit: 5,
+  //                 }
+  //             }],
+  //               yAxes: [{
+  //                 ticks: {
+  //                   beginAtZero:true
+  //                 }
+  //               }]
+  //             }
+  //           }
+  //         });
+         
+  //   });
+
+
+
+
+    // d3.json("http://localhost:5050/claim/getUserCredAndModel", function (data) {
+    //   d3.select("#chart-overview > div > canvas").html('');
+    //   let lables_ = [...Array(Object.keys(data.modelProb).length).keys()];
+    //   lables_.map(function(val,index) {
+    //       lables_[index] = val + 1;
+    //   });
+    //   var config = {
+    //       type: 'line',
+    //       data: {
+    //           labels: lables_,
+    //           datasets: [{
+    //               label: 'Model Probability',
+    //               fillColor: "rgba(220,220,220,0.2)",
+    //               strokeColor: "rgba(220,220,220,1)",
+    //               // backgroundColor: window.chartColors.red,
+    //               borderColor: 'rgba(151,187,205,1)',
+    //               data: data.modelProb,
+    //           }],
+    //       },
+    //       options: {
+    //           responsive: true,
+    //           title: {
+    //               display: true,
+    //               text: 'Comparison Model and User Input'
+    //           },
+    //           scales: {
+    //               xAxes:
+    //                   [{
+    //                       ticks: {
+    //                           autoSkip: true,
+    //                           maxTicksLimit: 5,
+    //                       }
+    //                   }],
+    //               yAxes: [{
+    //                   ticks: {
+    //                       autoSkip: true,
+    //                       maxTicksLimit: 5,
+    //                   }
+    //               }]
+    //           }
+    //       }
+    //   };
+    //   var ctx = document.getElementById('canvas').getContext('2d');
+    //   window.myLine = new Chart(ctx, config);
+    // });
 }
 
 
@@ -1004,4 +1099,222 @@ function sortListClaim() {
     scrollToClaim(claims[0].id);
 }
 
+
+function drawNeuralNetwork(claim_id){
+  d3.select("#svg-neural-network").html('');
+  var diameter = 800;
+
+  var svg = d3
+    .select("#svg-neural-network")
+    .attr("viewBox", [0, 0, diameter, diameter]);
+  // .attr("width", diameter)
+  // .attr("height", diameter)
+  var width = +svg.attr("width"), 
+  height = +svg.attr("height")
+
+  const g = svg
+    .append("g")
+    .attr("transform", "translate(" + diameter*0 / 2 + "," + diameter *0/ 2 + ")");
+  
+    // zoom
+    svg.call(
+      d3
+        .zoom()
+        .extent([
+          [0, 0],
+          [diameter, diameter]
+        ])
+        .scaleExtent([1, 8])
+        .on("zoom", zoomed)
+    );
+  
+    function zoomed() {
+      console.log("zoom",d3.event.transform);
+      g.attr("transform", d3.event.transform);
+    }
+  // svg = g;
+
+  let api =  "http://localhost:5050/claim/getNeural?id=" + claim_id;
+
+        var simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(function(d) { return d.id; }))
+            //.force("charge", d3.forceManyBody().strength(-200))
+            .force('charge', d3.forceManyBody()
+              .strength(-3000)
+              .theta(0.8)
+            //   .distanceMin(100)
+              .distanceMax(150)
+            )
+        // 		.force('collide', d3.forceCollide()
+        //       .radius(d => 40)
+        //       .iterations(2)
+        //     )
+            .force("center", d3.forceCenter(width / 2, height / 2));
+        var colors = [
+          // "#99CB8A",
+          "#D2849E",
+          "#CFEB8A",
+          "#D0D0FF",
+          "#CA8DAD",
+          // "#D1B897",
+          // "#85E982",
+          // "#E6DE95",
+          // "#c0392b",
+          "#e0f3f8",
+          "#abd9e9",
+          "#74add1",
+          "#4575b4",
+          "#FDAE61",
+          // "#D73027"
+        ]
+
+        var color = d3.scaleLinear()
+            .domain([0, 100])
+            .range([colors.length - 1, 0])
+            .clamp(true);
+
+        function get_color(name) {
+            var c = Math.round(color(name));
+            if (isNaN(c)) return "#dddddd"; // fallback color
+
+            return colors[c];
+          }
+
+        var colorClaim = d3.scaleOrdinal().domain([-1, 1])
+          // .range(["grey","#6ACB44","#F72A38"])
+          .range(["grey","#77C458","#F7535F"])
+
+
+          
+        function run(graph) {
+          
+          // graph.links.forEach(function(d){
+        //     d.source = d.source_id;    
+        //     d.target = d.target_id;
+          // });           
+
+          var link = g.append("g")
+                        .attr("class", "links")
+                        .style("stroke", "#666")
+                        .selectAll("line")
+                        .data(graph.links)
+                        .enter().append("line")
+                        .attr('id',function(d){return d.source + '' + d.target + '' + d.value;})
+                        .style("stroke",function(d){ return "#999999"/*get_color(d.value)*/;})
+                        .style("stroke-width",function(d) { return d.value / 200 + 'px'});
+
+          var node = g.append("g")
+                    .attr("class", "nodes")
+          .selectAll("circle")
+                    .data(graph.nodes)
+          .enter().append("circle")
+                  .attr("r", 2)
+                  .call(d3.drag()
+                      .on("start", dragstarted)
+                      .on("drag", dragged)
+                      .on("end", dragended));
+          
+          var label = g.append("g")
+              .attr("class", "labels")
+              .selectAll("text")
+              .data(graph.nodes)
+              .enter().append("text")
+                .attr("class", "label")
+                // .style("fill",'red')
+                .text(function(d) { return d.name; })
+
+          simulation
+              .nodes(graph.nodes)
+              .on("tick", ticked);
+
+          simulation.force("link")
+              .links(graph.links);
+          
+          function getSizeSource(d){
+            if(d.group < 6){
+              return (d.group + 6)*2;
+            }
+            return d.group > 40 ?  d.group / 2 : d.group*2; 
+          }
+          
+
+          function ticked() {
+            link
+                .attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+
+            node
+                .attr("r", function(d){ return d.category == 'source' ? getSizeSource(d) : 6})
+                .style("fill", function(d){return d.category == 'source' ? get_color(d.group) : colorClaim(d.group)})
+                .style("stroke", "#333")
+                .style("stroke-width", "1.0px")
+                .on("mouseover", mouseover)
+                .on('mouseout',mouseout)
+                .on("click", nodeClick)
+                .attr("cx", function (d) { return d.x+5; })
+                .attr("cy", function(d) { return d.y-3; });
+            
+            label
+                .attr("x", function(d) { return d.x; })
+                    .attr("y", function (d) { return d.y; })
+                    .style("font-size",function(d){ return d.category == "source" ? '18px' : '8px'})
+                    .style("font-weight", function(d){ return d.category == "source" ? '500' : '300'})
+                    .style("fill", function(d){return d.category == "source" ? "#DB1430" : "#ddd"});
+          }
+
+          function mouseover(d) {
+            for (var i = 0; i < graph.links.length; i++)
+              if(d.id == graph.links[i].source.id){
+                d3.select('[id="' + graph.links[i].source.id + '' + graph.links[i].target.id +'' + graph.links[i].value + '"]')
+                  .style("stroke-width", "1px")
+                  .style("stroke", "#0da4d3");
+              }
+          }
+        
+          function mouseout(d) {
+            for (var i = 0; i < graph.links.length; i++)
+            if(d.id == graph.links[i].source.id){
+              d3.select('[id="' + graph.links[i].source.id + '' + graph.links[i].target.id +'' + graph.links[i].value + '"]')
+                .style("stroke-width", '0.2px')
+                .style("stroke", "#999999");
+            }
+          }
+
+          function nodeClick(d) {
+            if(d.category == "claim"){
+              let index_claim = findIndexClaimById(d.name);
+              selectClaim(index_claim);
+              scrollToClaim(d.name);
+            } else {
+              window.open("https://" + d.name);
+            }
+          }
+        }
+
+        function dragstarted(d) {
+          if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+          d.fx = d.x
+          d.fy = d.y
+        //  simulation.fix(d);
+        }
+
+        function dragged(d) {
+          d.fx = d3.event.x
+          d.fy = d3.event.y
+        //  simulation.fix(d, d3.event.x, d3.event.y);
+        }
+
+        function dragended(d) {
+          d.fx = d3.event.x
+          d.fy = d3.event.y
+          if (!d3.event.active) simulation.alphaTarget(0);
+          //simulation.unfix(d);
+        }
+          
+    d3.json(api, function(err,data) {
+        run(data);
+    });
+}
 

@@ -38,7 +38,21 @@ def getAnalysis():
     analysis = json.loads(analysis)
     return jsonify(analysis)
    
-@app.route('/dohits')
+@app.route('/claim/neural')
 def dohits():
-    ClaimServices.doHITS(10)
-    return jsonify({"Success":True})
+    # ClaimServices.doHITS(10)
+    # return jsonify({"Success":True})
+    return render_template("neural.html")
+
+@app.route('/claim/getHistogram')
+def getHistogram():
+   histogram = ClaimServices.getHistogram()
+   return jsonify({"histogram":histogram})
+
+@app.route('/claim/getNeural')
+def getNeural():
+    claim_id = request.args.get('id')
+    print(claim_id)
+    result = ClaimServices.getNeural(claim_id)
+    return jsonify(result)
+

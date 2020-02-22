@@ -96,6 +96,13 @@ def getAllClaims():
         claims[id].documents = getSourcesRelations(claim.id)
     return claims
 
+def getListClaim():
+    claims = Claim.query.all()
+    for id,claim in enumerate(claims):
+        claims[id].tags = claim.tags.split(";")[:-1]
+        claims[id].documents = getNeural(claim.id)
+    return claims
+
 def calculateEntropy(p):
     return p if(p==0 or p==1) else - p*math.log(p) - (1-p)*math.log(1-p)
 
@@ -193,6 +200,7 @@ def validateClaim(claim_id,credibility):
     claim.credibility = credibility
     claim.prob_model = credibility if credibility > -1 else 0.5
     db.session.commit()
+    doHITS(10)
     return True
 
 def databaseIsEmpty():
@@ -237,3 +245,88 @@ def doHITS(n):
         claim.prob_model = claims[claim.id] if claim.credibility <0 else claim.credibility
     db.session.commit()
 
+def getHistogram():
+    claims = Claim.query.all()
+    # histogram = {'0.0':0,'0.1':0,'0.2':0,'0.3':0,'0.4':0,'0.5':0,'0.6':0,'0.7':0,'0.8':0,'0.9':0,'1.0':0}
+    histogram = {'0.0':0,'0.2':0,'0.4':0,'0.6':0,'0.8':0}
+    for c in claims:
+        f = (math.floor(math.floor(c.prob_model*10)/2))/10
+        if c.prob_model == 1:
+            f = 0.8
+        histogram[str(f)] += 1
+
+    return list(histogram.values())
+
+def getNeural_deprecated(claim_id):
+    domains = GoogleResult.query.with_entities(GoogleResult.domain).filter_by(claim_id=claim_id).distinct().all()
+    rDB = db.session.query(GoogleResult).with_entities(GoogleResult.domain,GoogleResult.claim_id).filter(GoogleResult.domain.in_(domains))
+    sources = {}
+    claims = {}
+    nodes = {}
+    for r in rDB:
+        try:
+            sources[r[0]] = sources[r[0]] + 1
+        except:
+            sources[r[0]] = 1
+        try:
+            claims[r[1]] = claims[r[1]] + 1
+        except:
+            claims[r[1]] = 1
+    
+    i = 0
+    for s in sources:
+        nodes[s] = {"name":s,"group" : sources[s],"category" : "source","index" : i}
+        i += 1
+    for c in claims:
+        nodes[c] = {"name":c, "group" : claims[c],"category" : "claim", "index" : i }
+        i += 1
+    
+    # for node in nodes.values():
+        # print(node)
+    links = []
+    for r in rDB:
+        links.append({"source":nodes[r[0]]["index"],"target": nodes[r[1]]["index"],"weight":1})
+    # for link in links:
+    # print('links',links)
+    # print('nodes',nodes)
+    nodes = [node for node in nodes.values()]
+    return {
+        'nodes' : nodes,
+        'links' : links
+    }
+
+
+def getNeural(claim_id):
+    domains = GoogleResult.query.with_entities(GoogleResult.domain).filter_by(claim_id=claim_id).distinct().all()
+    rDB = db.session.query(GoogleResult,Claim).with_entities(GoogleResult.domain,GoogleResult.claim_id,Claim.credibility).filter(GoogleResult.domain.in_(domains),GoogleResult.claim_id != claim_id,GoogleResult.claim_id==Claim.id)
+    sources = {}
+    claims = {}
+    nodes = {}
+    for r in rDB:
+        try:
+            sources[r[0]] = sources[r[0]] + 1
+        except:
+            sources[r[0]] = 1
+        # try:
+            # claims[r[1]] = claims[r[1]] + 1
+        # except:
+        claims[r[1]] = r[2]
+    
+    i = 0
+    for s in sources:
+        nodes[s] = {"id":i,"name":s,"group" : sources[s],"category" : "source","index" : i}
+        i += 1
+    for c in claims:
+        nodes[c] = {"id":i,"name":c,"group" : claims[c],"category" : "claim", "index" : i }
+        i += 1
+    
+    links = []
+    for r in rDB:
+        links.append({"source":nodes[r[0]]["id"],"target": nodes[r[1]]["id"],"value":nodes[r[0]]["group"]})
+    # print('links',len(links))
+    # print('nodes',len(nodes))
+    nodes = [node for node in nodes.values()]
+    return {
+        'nodes' : nodes,
+        'links' : links
+    }

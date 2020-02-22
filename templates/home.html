@@ -21,7 +21,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>FactCatch</title>
+    <title>FactCATCH</title>
     <link rel='stylesheet' id='style-css' href="{{ url_for('static', filename='styles/style_conservation.css') }}"
         type='text/css' media='all' />
     <script>
@@ -119,7 +119,7 @@
                     </div>
                     <div id="logo-griffith">
                         <a href="/">
-                            <div>FactCatch</div>
+                            <div>FactCATCH</div>
                         </a>
                     </div>
                     <div id="select-file" class="header-content">
@@ -233,6 +233,8 @@
                                                 id="defaultDetails">Meta-data</button>
                                             <button class="tablinkclaims"
                                                 onclick="openTabClaim(event, 'sources-claim')">Related Sources</button>
+                                            <button class="tablinkclaims"
+                                                onclick="openTabClaim(event, 'neural-network')">Neural Network</button>
                                         </div>
                                         <!-- id="info-claim" -->
                                         <div id="info-claim" class="tabclaims item-tab">
@@ -291,6 +293,9 @@
                                                 style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
                                             </div>
                                         </div>
+                                        <div id="neural-network" class="tabclaims item-tab" style="display: none;">
+                                            <svg width="618" height="560" style="background: #333333;" id="svg-neural-network"></svg>
+                                        </div>
                                         <div id="question">
                                             <div id="question-validate">
                                                 <div style="text-align: center;">
@@ -327,8 +332,8 @@
 
                         <div style="border-left: 1px solid lightgray;">
                             <!-- <div style="text-align: right;" onclick="triggerMatrix(1)">Open matrix factorization</div> -->
-                            <div style="padding:40px 20px;text-align: center;" id="chart-overview">
-                                <div>
+                            <div style="padding:20px 20px;text-align: center; height: 300px;" id="chart-overview">
+                                <!-- <div>
                                     <div class="chartjs-size-monitor">
                                         <div class="chartjs-size-monitor-expand">
                                             <div class=""></div>
@@ -339,13 +344,14 @@
                                     </div>
                                     <canvas id="canvas" style="display: block; width: 100%; height: 400px;" width="800"
                                         height="600" class="chartjs-render-monitor"></canvas>
-                                </div>
+                                </div> -->
+                                <canvas id="myChart" width="600" height="600"></canvas>
                             </div>
                             <div id="detail-source" class="overview-sources claim-detail sources-claim detail-action-tab" style="display: none;">
                                 <!-- <div id="title-source-item-fake">
                                     Source
                                 </div> -->
-                                <div class="source-credit " style="margin-bottom: 20px;font-size:18px;text-align: center;">
+                                <div class="source-credit " style="margin-bottom: 20px;font-size:18px;margin-left: 120px;">
                                     <span>Overview</span> 
                                     <!-- <span class="credit" id="overall-source">80%</span> -->
                                 </div>
@@ -443,7 +449,7 @@
                     </div>
 
                     <!-- matrix factorization  -->
-                    <div id="matrix-factorization" style="display:none;z-index: 10;">
+                    <div id="matrix-factorization" style="display:none;z-index: 10;max-height: 702px;">
                         <div style="display: grid; grid-template-columns: 30% auto;">
                             <h3>Matrix Canvas</h3>
                             <aside style="margin-top: 0.2em;">
