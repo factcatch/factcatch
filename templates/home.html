@@ -5,18 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale = 1.0">
     <!-- <meta charset="UTF-8"> -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/matrix.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/font.css') }}">
-    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/graph.css') }}"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- <link href='https://fonts.googleapis.com/css?family=Open+Sans|Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'> -->
-    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script> -->
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <!-- <script src="//d3js.org/d3-scale-chromatic.v1.min.js"></script> -->
@@ -25,7 +21,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Fact Checking</title>
+    <title>FactCATCH</title>
     <link rel='stylesheet' id='style-css' href="{{ url_for('static', filename='styles/style_conservation.css') }}"
         type='text/css' media='all' />
     <script>
@@ -113,67 +109,6 @@
             </div>
         </div>
     </div>
-    <div class="grid-container" style="display: none;">
-        <div id="overview-left" 
-            <div id="logo-griffith">
-                <a href="/">
-                    <div>Fact Checking</div>
-                </a>
-            </div>
-            <div class="item-analysis">
-                <div class="icon-item-analysis">
-                    <img src="{{ url_for('static', filename='img/listing.png') }}" style="opacity: 0.5;">
-                </div>
-                <div class="detail-item-analysis">
-                    <div class="title-detail-item-analysis">
-                        #Claims
-                    </div>
-                    <div class="claims  total-claim-detail">
-                        {{ analysis.claims }}
-                    </div>
-                </div>
-            </div>
-            <div class="item-analysis">
-                <div class="icon-item-analysis">
-                    <img src="{{ url_for('static', filename='img/remain.png') }}" style="opacity: 0.5;">
-                </div>
-                <div class="detail-item-analysis">
-                    <div class="title-detail-item-analysis">
-                        #Remains
-                    </div>
-                    <div class="claims remain-claim">
-                        {{ analysis.remains }}
-                    </div>
-                </div>
-            </div>
-            <div class="item-analysis">
-                <div class="icon-item-analysis">
-                    <img src="{{ url_for('static', filename='img/credit.png') }}" style="opacity: 0.5;">
-                </div>
-                <div class="detail-item-analysis">
-                    <div class="title-detail-item-analysis">
-                        #Credibility
-                    </div>
-                    <div class="claims credit-claim">
-                        {{ analysis.credibility }} ({{ analysis.perCred }}%)
-                    </div>
-                </div>
-            </div>
-            <div class="item-analysis">
-                <div class="icon-item-analysis">
-                    <img src="{{ url_for('static', filename='img/danger.png') }}" width="64px" style="opacity: 0.5;">
-                </div>
-                <div class="detail-item-analysis">
-                    <div class="title-detail-item-analysis">
-                        #Non-credibility
-                    </div>
-                    <div class="claims noncredit-claim">
-                        {{ analysis.nonCredibility }} ({{ analysis.perNonCred }}%)
-
-                    </div>
-                </div>
-            </div>
-        </div>
         <div>
             <div class="header">
                 <div class="grid-header">
@@ -184,7 +119,7 @@
                     </div>
                     <div id="logo-griffith">
                         <a href="/">
-                            <div>Fact Checking</div>
+                            <div>FactCATCH</div>
                         </a>
                     </div>
                     <div id="select-file" class="header-content">
@@ -205,69 +140,6 @@
                 </div>
             </div>
             <div id="block-content">
-
-                <div id="tab-main" style="display: none;">
-                    <div id="overview">
-                        <div id="analysis">
-                            <div class="item-analysis">
-                                <div style="text-align: right;" class="icon-item-analysis">
-                                    <img src="{{ url_for('static', filename='img/listing.png') }}"
-                                        style="opacity: 0.5;">
-                                </div>
-                                <div style="text-align: left;" class="detail-item-analysis">
-                                    <div class="title-detail-item-analysis">
-                                        #Claims
-                                    </div>
-                                    <div class="claims  total-claim-detail">
-                                        {{ analysis.claims }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item-analysis">
-                                <div style="text-align: right;" class="icon-item-analysis">
-                                    <img src="{{ url_for('static', filename='img/remain.png') }}" style="opacity: 0.5;">
-                                </div>
-                                <div style="text-align: left;" class="detail-item-analysis">
-                                    <div class="title-detail-item-analysis">
-                                        #Remains
-                                    </div>
-                                    <div class="claims remain-claim">
-                                        {{ analysis.remains }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item-analysis">
-                                <div style="text-align: right;" class="icon-item-analysis">
-                                    <img src="{{ url_for('static', filename='img/credit.png') }}" style="opacity: 0.5;">
-                                </div>
-                                <div style="text-align: left;" class="detail-item-analysis">
-                                    <div class="title-detail-item-analysis">
-                                        #Credibility
-                                    </div>
-                                    <div class="claims credit-claim">
-                                        {{ analysis.credibility }} ({{ analysis.perCred }}%)
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item-analysis">
-                                <div style="text-align: right;" class="icon-item-analysis">
-                                    <img src="{{ url_for('static', filename='img/danger.png') }}" width="64px"
-                                        style="opacity: 0.5;">
-                                </div>
-                                <div style="text-align: left;" class="detail-item-analysis"
-                                    style="background-color: red;">
-                                    <div class="title-detail-item-analysis">
-                                        #Non-credibility
-                                    </div>
-                                    <div class="claims noncredit-claim">
-                                        {{ analysis.nonCredibility }} ({{ analysis.perNonCred }}%)
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div id="fact-checking">
                     <div id="fact-checking-body" style="min-height: 700px;">
                         <!-- id="overview-sources" -->
@@ -275,9 +147,12 @@
                             <div>
                                 <div>
                                     <div style="display: grid;grid-template-columns:50% 50%;">
-                                        <div style="padding:30px 10px">
+                                        <div style="padding:20px 10px 0px 10px;">
                                             <input type="text" id="input-sourceFilter" onkeyup="filterSource()"
-                                            placeholder="Search for names.." title="Type in a name">
+                                            placeholder="Search for names.." title="Type in a name"> <br>
+                                            <button class="button" style="margin-left: 30px; margin-bottom: 0px;width: 300px; border-radius:0" onclick="triggerMatrix(1)">
+                                                Open Matrix Factorization
+                                            </button>
                                         </div>
                                             <div class="overview-source">
                                                 <div class="overview-source__details overview-source__">
@@ -298,7 +173,7 @@
                                                 <div class="progress progress--sm">
                                                     <div class="progressbar" style="padding: 0;">
                                                             <div id="source-credibility-progress"
-                                                                style="width:78%; height: 6px;  background-color:#22B9FF">
+                                                                style="width:78%; height: 6px;  background-color:#6ACB44;opacity: 0.8; ">
                                                             </div>
                                                     </div>
                                                 </div>
@@ -325,48 +200,29 @@
                         </div>
                         <!-- id="claims" -->
                         <div style="height: 700px;" class="claim-detail tabcontent item-tab">
-                            <div id="block-content2">
+                            <div class="loader" id="loader-claim" style="display: none;"></div>
+                            <div id="block-content2" style="display: grid;">
                                 <div>
                                     <div id="title-list-claim">
                                         <!-- <span>Claims</span> -->
                                         <input type="text" id="input-for-claim" onkeyup="searchClaim()"
                                             placeholder="Search for claims.." title="Type in a name">
+                                       
+                                    </div>
+                                    <div id="ranking">
+                                        <div style="text-align: right;">
+                                            Ranking by:
+                                        </div>
+                                        <div>
+                                            <select name="Ranking" id="ranking-select" onchange="sortListClaim(this.value)">
+                                                <option value="0" selected>Entropy</option>
+                                                <option value="1" >Credibility</option>
+                                                <option value="2" >Random</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div id="block-list-claim">
                                         <ul id="list-claim">
-                                            {% for claim in data %}
-                                            <li onclick="selectClaim({{ loop.index - 1 }})" id="{{ claim.id }}">
-                                                <div>
-                                                    <span class="no-claim">{{ loop.index }}. </span> {{ claim.claim }}
-                                                </div>
-                                                <div class="progressbar" style="padding: 0;">
-                                                    {% if claim.prob_model < 0.5 %}
-                                                        <div
-                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:#fd397a">
-                                                        </div>
-                                                    {% else %}
-                                                        <div
-                                                            style="width:{{  claim.prob_model*100 }}%;  background-color:#22B9FF">
-                                                        </div>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="detail-progressbar-credi" style="padding: 4px 0px;font-size: 12px;">
-                                                    <div class="percentage-credib">
-                                                        {%if claim.prob_model >= 0.5 %}
-                                                            Credibility
-                                                        {% else %}
-                                                            Credibility
-                                                        {% endif %}
-                                                    </div>
-                                                    <!-- <div class="percentage-credi">
-                                                        validated
-                                                    </div> -->
-                                                    <div class="percentage-progressbar-credi">
-                                                        {{ '%0.2f' | format(claim.prob_model * 100 | float) }}%
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            {% endfor %}
                                         </ul>
                                     </div>
                                 </div>
@@ -374,9 +230,11 @@
                                     <div id="content-claim">
                                         <div class="tab">
                                             <button class="tablinkclaims" onclick="openTabClaim(event,'info-claim')"
-                                                id="defaultDetails">Detail</button>
+                                                id="defaultDetails">Meta-data</button>
                                             <button class="tablinkclaims"
                                                 onclick="openTabClaim(event, 'sources-claim')">Related Sources</button>
+                                            <button class="tablinkclaims"
+                                                onclick="openTabClaim(event, 'neural-network')">Neural Network</button>
                                         </div>
                                         <!-- id="info-claim" -->
                                         <div id="info-claim" class="tabclaims item-tab">
@@ -386,7 +244,6 @@
                                                         Origins
                                                     </h4>
                                                     <p id="origins-claim">
-                                                        {{ data[0].origins }}
                                                     </p>
                                                 </div>
                                                 <div>
@@ -395,11 +252,9 @@
                                                     </h4>
                                                     <span>
                                                         <span id="description-short">
-                                                            {{ data[0].description }}
                                                         </span>
                                                         <span id="dots">...</span>
                                                         <span id="more">
-                                                            {{ data[0].description }}
                                                         </span>
 
                                                         <button onclick="readMore()" id="btn-readmore"
@@ -411,7 +266,6 @@
                                                         Example
                                                     </h4>
                                                     <p id="example-claim">
-                                                        {{ data[0].example }}
                                                     </p>
                                                 </div>
                                                 <div>
@@ -419,7 +273,6 @@
                                                         Originally Published
                                                     </h4>
                                                     <p id="originally-published-claim">
-                                                        {{ data[0].originally_published }}
                                                     </p>
                                                 </div>
                                                 <div>
@@ -427,13 +280,10 @@
                                                         Last Updated
                                                     </h4>
                                                     <p id="last-updated-claim">
-                                                        {{ data[0].last_updated }}
                                                     </p>
                                                 </div>
                                                 <div id="tag-claim">
-                                                    {% for tag in data[0].tags%}
                                                     <span class="tag-claim-item"> #{{ tag }} </span>
-                                                    {% endfor %}
                                                 </div>
                                             </div>
                                         </div>
@@ -443,22 +293,34 @@
                                                 style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
                                             </div>
                                         </div>
+                                        <div id="neural-network" class="tabclaims item-tab" style="display: none;">
+                                            <svg width="618" height="560" style="background: #333333;" id="svg-neural-network"></svg>
+                                        </div>
                                         <div id="question">
-                                            <div style="text-align: center;">
-                                                Do you think this claim is credible ?
+                                            <div id="question-validate">
+                                                <div style="text-align: center;">
+                                                    Do you think this claim is credible ?
+                                                </div>
+                                                <div id="submit-validation">
+                                                    <input type="hidden" id="input_claim_id_for_form" name="id" value="haha">
+                                                    <div style="text-align: right;padding-right: 10px;">
+                                                        <input type=submit onclick="validateClaim(1)" class="btn-form" id="submit_yes" style="padding: 8px 4px;background-color:#db1430; color: #ffffff;" name="credible" value="Yes">
+                                                    </div>
+                                                    <div style="text-align: left;padding-left: 10px;">
+                                                        <input type=submit onclick="validateClaim(0)" class="btn-form" id="submit_no" style="padding: 8px 4px; background-color: #ccd0d5; color: #000000;" name="credible" value="No">
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <form id="submit-validation" method="get" action="/">
-                                                <div style="text-align: right;padding-right: 10px;">
-                                                    <input type=submit class="btn-form" style="padding: 8px 4px;background-color: brown; color: #ffffff;" name="credible" value="Yes">
+                                            <p id="loading-validate-claim" class="loading" style="display: none;">Validating claim</p>
+                                            <div id="after-validated" style="display: none;">
+                                                <div>
+                                                    You validated this claim!
                                                 </div>
-                                                <div style="text-align: left;padding-left: 10px;">
-                                                    <input type=submit class="btn-form" style="padding: 8px 4px; background-color: #ccd0d5; color: #000000;" name="non-credible" value="No">
+                                                <div>
+                                                    <button class="button" onclick="setStatusQuestion(status_question.QUESTION)">Revalidate</button>
+                                                    <button class="button" onclick="validateClaim(-1)">Invalidate</button>
                                                 </div>
-                                            </form>
-                                            <!-- <div style="padding: 10px;">
-                                                <img src="{{ url_for('static', filename='img/validated.png') }}" width="32px"
-                                                style="opacity: 0.8;">
-                                            </div> -->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -469,8 +331,9 @@
 
 
                         <div style="border-left: 1px solid lightgray;">
-                            <div style="padding:40px 20px; text-align: center;" id="chart-overview">
-                                <div>
+                            <!-- <div style="text-align: right;" onclick="triggerMatrix(1)">Open matrix factorization</div> -->
+                            <div style="padding:20px 20px;text-align: center; height: 300px;" id="chart-overview">
+                                <!-- <div>
                                     <div class="chartjs-size-monitor">
                                         <div class="chartjs-size-monitor-expand">
                                             <div class=""></div>
@@ -481,13 +344,14 @@
                                     </div>
                                     <canvas id="canvas" style="display: block; width: 100%; height: 400px;" width="800"
                                         height="600" class="chartjs-render-monitor"></canvas>
-                                </div>
+                                </div> -->
+                                <canvas id="myChart" width="600" height="600"></canvas>
                             </div>
-                            <div id="detail-source" class="tabcontent overview-sources claim-detail sources-claim detail-action-tab" style="display: none;">
+                            <div id="detail-source" class="overview-sources claim-detail sources-claim detail-action-tab" style="display: none;">
                                 <!-- <div id="title-source-item-fake">
                                     Source
                                 </div> -->
-                                <div class="source-credit " style="margin-bottom: 20px;font-size:18px;text-align: center;">
+                                <div class="source-credit " style="margin-bottom: 20px;font-size:18px;margin-left: 120px;">
                                     <span>Overview</span> 
                                     <!-- <span class="credit" id="overall-source">80%</span> -->
                                 </div>
@@ -507,14 +371,45 @@
                                     </div>
                                     <div class="item-analysis-source">
                                         <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/network.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Sources
+                                            </div>
+                                            <div class="claims total-claim-detail" id="analysis-sources">
+                                                {{ analysis.sources }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                                <div class="row-analysis-source">
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
                                             <img src="{{ url_for('static', filename='img/remain.png') }}" width="32px"
                                                 style="opacity: 0.5;">
                                         </div>
                                         <div class="detail-item-analysis-source">
                                             <div class="title-detail-item-analysis">
-                                                #Remain
+                                                #Non-validated
                                             </div>
-                                            <div class="claims total-claim-detail" id="remain-claim-source-item"> {{ analysis.remains }}
+                                            <div class="claims total-claim-detail" id="remain-claim-source-item"> {{ analysis.remains }} 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/statistic.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                Uncertainty
+                                            </div>
+                                            <div class="claims total-claim-detail" id="uncertainty">
+                                                {{ analysis.uncertainty }}%
                                             </div>
                                         </div>
                                     </div>
@@ -529,284 +424,87 @@
                                             <div class="title-detail-item-analysis">
                                                 #Credibility
                                             </div>
-                                            <div class="claims credit-claim">
+                                            <div class="claims credit-claim" id="credit-claim_">
                                                 {{ analysis.credibility }} ({{ analysis.perCred }}%)
                                             </div>
                                         </div>
                                     </div>
                                     <div class="item-analysis-source">
                                         <div class="icon-item-analysis-source">
-                                            <img src="{{ url_for('static', filename='img/danger.png') }}" width="32px"
+                                            <img src="{{ url_for('static', filename='img/danger2.png') }}" width="32px"
                                                 style="opacity: 0.5;">
                                         </div>
                                         <div class="detail-item-analysis-source">
                                             <div class="title-detail-item-analysis">
                                                 #Non-Credibility
                                             </div>
-                                            <div class="claims noncredit-claim">
+                                            <div class="claims noncredit-claim" id="noncredit-claim_">
                                                 {{ analysis.nonCredibility }} ({{ analysis.perNonCred }}%)
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- matrix factorization  -->
+                    <div id="matrix-factorization" style="display:none;z-index: 10;max-height: 702px;">
+                        <div style="display: grid; grid-template-columns: 30% auto;">
+                            <h3>Matrix Canvas</h3>
+                            <aside style="margin-top: 0.2em;">
+                                <p>Order by: <select id="order">
+                                <option class="top-level-option" value="name">Name</option>
+                                <option class="top-level-option" value="count">Number of links</option>
+                                <option class="top-level-option" value="group">Entropy</option>
+                                <!-- <option class="top-level-option" value="distance">by Distance to...</option>  -->
+                                </select>
+                            </aside>
                            
                         </div>
-                    </div>
-                </div>
+                        <img src="{{ url_for('static', filename='img/close.png') }}" width="24px"
+                        style="opacity: 0.7;position: absolute; right: 36px; top: 55px;" onclick="triggerMatrix(0)">
+                        <div id="for-svg-matrix" class="svg-matrix">
 
-
-
-                <div class="detail content" style="display: none;">
-
-                    <div style="height: 580px;">
-                        <div class="tab">
-                            <button class="tablinks" onclick="selectTab(event,'info-claim')"
-                                id="defaultOpen1">Detail</button>
-                            <button class="tablinks" onclick="selectTab(event, 'sources')">Sources</button>
-                            <div>
-                                <form method=post action="/process">
-                                    <input type="hidden" name="claimId" value="{{ data[0].claim_id }}">
-                                    <!-- <div class="validation-claim"> -->
-                                    <input type=submit style="margin-right: 30px;" class="btn-validation"
-                                        name="Credibility" value="Non-Credibility">
-                                    <input type=submit class="btn-validation" name="Credibility" value="Credibility">
-                                    <!-- </div> -->
-                                </form>
-                            </div>
-                        </div>
-
-                        <div id="sources" class="tabcontent item-tab">
-                            <div class="chart"
-                                style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div style="height: 580px;display: none;" id="overview-sources">
-                    <h3>Heatmap Sources</h3>
-                    <!-- <div id="heatmap-sources">
-                    </div> -->
-                </div>
+                
             </div>
         </div>
     </div>
+   
 
     <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.min.js') }}"></script> -->
     <script src="https://d3js.org/d3.v3.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/conversation.min.js') }}"></script> -->
-    <script>
-        var claims = {{ data| tojson }};
-        var mapClaim = new Map();
-        var i;
-        for (i = 0; i < claims.length; i++) {
-            mapClaim.set(claims[i].id, i);
-        }
-    </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script>
+    
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-
-    <script>
-        var marginChartOverview = { top: 30, right: 30, bottom: 30, left: 50 },
-            widthChartOverview = $(window).width() * 0.75 - 30 - marginChartOverview.left - marginChartOverview.right,
-            heightChartOverview = 250 - marginChartOverview.top - marginChartOverview.bottom;
-
-        function showInfoSource(source) {
-            document.getElementById("title-source-item").innerHTML = source.source;
-            document.getElementById("total-claim-source-item").innerHTML = source.total;
-            document.getElementById("source-credibility-progress").style.width = ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
-            document.getElementById("credibility-per").innerHTML =  ((source.credibility * 100)/(source.credibility + source.uncredibility)).toFixed(2) + '%' ;
-        };
-
-        var table = d3.select("table");
-        d3.json("http://localhost:5050/source/claim", function (data) {
-            d3.select("#loader-source").remove();
-            var table = d3.select("table")
-                .selectAll("tr")
-                .data(data)
-                .enter()
-                .append("tr")
-            table.append("td")
-                .text(function (d) { return d.source })
-                .style("text-align", "right")
-
-            table.append("td")
-                .attr("id", function (d) { return d.source.replace(/\./g, '') })
-                .style("text-align", "left")
-            showInfoSource(data[0]);
-            data.map((source) => {
-                var widthCell = 20, heightCell = 20, p = 20,maxClaims = 30;
-                p = Math.floor(($(window).width() * 0.7 - 100 - marginChartOverview.left - marginChartOverview.right) / 20);
-                var width = widthCell * maxClaims; //source.claims.length;
-                var height = heightCell * Math.ceil(source.claims.length / maxClaims);
-                // var data = data[0];
-
-                // append the svg object to the body of the page
-                var sourceId = '[id="' + source.source.replace(/\./g, '') + '"]';
-                var svg = d3.select(sourceId)
-                    .append("svg")
-                    .attr("width", width)
-                    .attr("height", height)
-
-
-                // var colorClaim = d3.scaleLinear().domain([1, 10])
-                    // .range(["#a9a9a9", "rgb(237,105,37)"])
-
-                var colorClaim = d3.scaleOrdinal().domain([-1, 1])
-                    .range(["grey","#1dc9b7","#fd397a"])
-
-
-                var tooltip = d3.select("#all-sources")
-                    .append("div")
-                    .style("opacity", 0)
-                    .attr("class", "tooltip")
-                    .style("background-color", "white")
-                    .style("border", "solid")
-                    .style("border-width", "2px")
-                    .style("border-radius", "5px")
-                    .style("padding", "5px")
-                    .style("position", "fixed")
-                    .style("max-width", "350px")
-                // .style("margin-top", "20px")
-
-
-                // Three function that change the tooltip when user hover / move / leave a cell
-                var mouseover = function (d) {
-                    tooltip
-                        .style("opacity", 1)
-                    d3.select(this)
-                        .style("stroke", "black")
-                        .style("opacity", 1)
-                    showInfoSource(source);
-                }
-                var mousemove = function (d) {
-                    var mouseTop = d3.mouse(this)[1] < 300 ? d3.mouse(this)[1] + 300 : d3.mouse(this)[1];
-                    var mouseTop = (d3.mouse(this)[1] % 10) + 350;
-                    tooltip
-                        .html(d.claim)
-                        .style("left", (d3.mouse(this)[0] + 200) + "px")
-                        .style("top", (mouseTop) + "px")
-                }
-                var mouseleave = function (d) {
-                    tooltip
-                        .style("opacity", 0)
-                    d3.select(this)
-                        .style("stroke", "white")
-                        .style("opacity", 0.8)
-                }
-
-                var rectClick = function (d) {
-                    document.getElementById('tab-claims').click();
-                    selectClaim(mapClaim.get(d.claim_id));
-                    var claimLi = document.getElementById(d.claim_id);
-                    claimLi.scrollIntoView(true);
-                }
-
-                svg.selectAll("rect")
-                    .data(source.claims)
-                    .enter()
-                    .append("rect")
-                    .attr("x", function (d, i) { return widthCell * ((i%maxClaims) % p); })
-                    .attr("y", function (d, i) { return heightCell * (Math.floor((i/maxClaims))); })
-                    .attr("width", "20")
-                    .attr("height", "20")
-                    .style("fill", function (d) { return colorClaim(d.credibility_claim); })
-                    .style("stroke-width", 1)
-                    .style("stroke", "white")
-                    .style("opacity", 0.8)
-                    .on("mouseover", mouseover)
-                    .on("mousemove", mousemove)
-                    .on("mouseleave", mouseleave)
-                    .on("click", rectClick);
-
-                // append text to rect
-                svg.selectAll("text")
-                    .data(source.claims)
-                    .enter()
-                    .append("text")
-                    .attr("x", function (d, i) { return widthCell * ((i%maxClaims) % p) + widthCell/3; })
-                    .attr("y", function (d, i) { return heightCell * (Math.floor((i/maxClaims))) + heightCell/1.5; })
-                    .style("fill", function (d) { return "#fff"; })
-                    .text(function(d) { return d.credibility_claim == -1 ? '?' : ''});
-            });
-
-        })
-
-    </script>
-    <script>
-        $(document).ready(function () {
-            document.getElementById('{{ data[0].id }}').click();
-        });
-    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/selection-js/dist/selection.min.js"></script>
     <script>
+		const selection = new Selection({
+			class : 'box-wrap',
+            selectables: ['g.row','g.column'],
+            boundaries : ['#for-svg-matrix']
+		});
+		selection.on('stop', e => {filterForHeatmap(e.selected);})
+    </script>
+    <script>
+        renderSources();
         var randomScalingFactor = function () {
             return Math.random();
-            // return Math.ceil(Math.random() * 10.0) * Math.pow(10, Math.ceil(Math.random() * 5));
+      // return Math.ceil(Math.random() * 10.0) * Math.pow(10, Math.ceil(Math.random() * 5));
         };
-        d3.json("http://localhost:5050/claim/getUserCredAndModel", function (data) {
-            var config = {
-                type: 'line',
-                data: {
-                    labels: [...Array(Object.keys(data.modelProb).length).keys()], //['1', '2', '3', '4', '5', '6', '7', '1', '2', '3', '4', '5', '6', '7'],
-                    datasets: [{
-                        label: 'Model Probability',
-                        fillColor: "rgba(220,220,220,0.2)",
-                        strokeColor: "rgba(220,220,220,1)",
-                        // backgroundColor: window.chartColors.red,
-                        borderColor: 'rgba(151,187,205,1)',
-                        data: data.modelProb,
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    title: {
-                        display: true,
-                        text: 'Comparison Model and User Input'
-                    },
-                    scales: {
-                        xAxes:
-                            [{
-                                ticks: {
-                                    autoSkip: true,
-                                    maxTicksLimit: 15,
-                                    // display: false
-                                }
-                            }],
-                        yAxes: [{
-                            ticks: {
-                                autoSkip: true,
-                                maxTicksLimit: 5,
-                            }
-                        }]
-                    }
-                }
-            };
-
-            // window.myLine = new Chart(ctx, config);
-            // window.onload = function () {
-            var ctx = document.getElementById('canvas').getContext('2d');
-            window.myLine = new Chart(ctx, config);
-            // };
-        });
-
-        // document.getElementById('randomizeData').addEventListener('click', function () {
-        //     config.data.datasets.forEach(function (dataset) {
-        //         dataset.data = dataset.data.map(function () {
-        //             return randomScalingFactor();
-        //         });
-
-            // });
-
-            // window.myLine.update();
-        // });
+        drawModelProb();
     </script>
+    <script src="{{ url_for('static', filename='js/matrix/ShortestPathCalculator.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/matrix/tabletop.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/matrix/matrix.js') }}"></script>
+    
 </body>
-
-
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/search.js') }}"></script>

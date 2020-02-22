@@ -6,26 +6,14 @@ from services import SourceServices
 def getAllSources():
     sources = SourceServices.getAllSources()
     return jsonify(sources)
-    # return jsonify({"success":True})
-
-@app.route("/sources2",methods=['GET'])
-def getAllSources2():
-    sources = SourceServices.getAllSources2()
-    return jsonify(sources)
-    # return jsonify({"success":True})
-
-@app.route("/sc",methods=['GET'])
-def getSourcesWithClaim():
-    sources = SourceServices.getSourcesWithClaim()
-    return jsonify(sources)
-
-@app.route("/source/sort",methods=['GET'])
-def getSourceDesc():
-    sources = SourceServices.getSourceDesc()
-    return jsonify(sources)
-    # return jsonify({"success":True})
 
 @app.route("/source/claim", methods=["GET"])
 def getSourceClaim():
     sources = SourceServices.getSourceClaim()
     return jsonify(sources)
+
+@app.route('/source/getMatrixData')
+def getMatrixData():
+    links = SourceServices.getLinksMatrix()
+    nodes = SourceServices.getNodesMatrix()
+    return jsonify({"links":links,"nodes":nodes})

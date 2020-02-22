@@ -17,4 +17,4 @@ class AppConfig(object):
     JSON_AS_ASCII = False
     UPLOAD_FOLDER = "./static/data/"
     SECRET_KEY='super secret key'
-
+    SQLALCHEMY_ECHO = False
