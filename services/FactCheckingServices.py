@@ -54,10 +54,8 @@ def getTopClaim(filename,startId,endId):
     data , googleResults = getDataFrame(filename,startId,endId)
     for id,d in enumerate(data):
         data[id]["Tags"] = str(data[id]["Tags"]).split(";")[:-1]
-        # print(d["Claim_ID"])
         data[id]["Google Results"] = json.dumps(generateGraph(googleResults.loc[googleResults["Claim_ID"] == d["Claim_ID"]]))
         domains = googleResults.loc[googleResults["Claim_ID"] == d["Claim_ID"]]
-        # print(domains.shape)
         sources = set()
         for idx,row in domains.iterrows():
             sources.add(row["domain"])
@@ -75,8 +73,6 @@ def generateGraph(df_gg):
     docs_link = list(docs_link)
     nodes = [dictNode(s,1,round(random.uniform(0,1),2)) for s in sources_domain]
     sources_domain.extend(docs_link)
-    # sources_domain.append("claim")
-    # nodes = [dictNode(s,1,round(random.uniform(0,1),2)) for s in sources_domain]
     nodesDoc = [dictNode(d,2,100) for d in docs_link]
     nodes.extend(nodesDoc)
     nodes.append(dictNode("claim",3,100))
@@ -90,8 +86,6 @@ def generateGraph(df_gg):
         links.append(link)
         links.append(linkDocClaim)
 
-    # get sources relations
-    # sourcesRelation = getSourceRelation(sources_domain,df_gg)
     return {"nodes":nodes,"links":links}
 
 
@@ -127,17 +121,14 @@ def getSources(sources,df):
 def getSourceRelation(sources,df):
     episodes = []
     claims = set()
-    # index = 1
     for id,source in enumerate(sources):
         df_claim = df.loc[df["domain"] == source]
         if df_claim.shape[0] <= 1:
             continue
-        # print(df_claim.shape)
         links = []
         for id,row in df_claim.iterrows():
             links.append(row["Claim_ID"])
             claims.add(row["Claim_ID"])
-            # print(row["Claim_ID"])
         episodes.append({
             "type" : "episode",
             "name" : source,
@@ -147,9 +138,7 @@ def getSourceRelation(sources,df):
             "slug" : "episode-one-reverend-john-fife",
             "links" : links
         })
-        # index += 1
     claims = list(claims)
-    # print(claims)
     themes = []
     for claim in claims[:int(len(claims)/2)]:
         themes.append({
@@ -172,21 +161,3 @@ def getSourceRelation(sources,df):
 
 def inferrence(claimId,cred):
     print(claimId,cred)
-
-# def getDataFrame(filename):
-#     df_filename = os.path.join(current_app._static_folder,'data',filename[:-4] + 'csv')
-#     df_gg_filename = os.path.join(current_app._static_folder,'data',filename[:-5] + '_google_results.csv')   
-#     try:
-#         df = pd.read_csv(df_filename,encoding='utf-8')
-#         df_gg = pd.read_csv(df_gg_filename,encoding='utf-8')
-#         df = df.fillna('')
-#         df_gg = df_gg.fillna('')
-#     except:
-#         df,df_gg = generateDataframe(filename)
-#     return df,df_gg
-
-
-# def getAllSources(filename):
-#     df_claim,df_gg = getDataFrame(filename)
-#     sources = df["domain"].unique()
-#     print(sources.shape)

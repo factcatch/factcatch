@@ -1281,3 +1281,8 @@ select:focus, select:active {
   width: 80px;
   margin: 0px 5px;
 }
+
+#neural-network {
+  border: 1px solid #ccc;
+  border-top: none;
+}

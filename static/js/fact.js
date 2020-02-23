@@ -863,10 +863,10 @@ function updateListClaim(claim_id_for_update) {
 function updateOverview(){
   d3.json('http://localhost:5050/claim/getAnalysis',function(err,data){
       // document.getElementById('total-claim-detail_').innerHTML = data.claims
-      document.getElementById('remain-claim-source-item').innerHTML = (data.claims - data.credibility - data.nonCredibility);
+      document.getElementById('remain-claim-source-item').innerHTML = (data.claims - data.credibility - data.nonCredibility) + ' ('  + data.perNonValidated + '%)';
       document.getElementById('credit-claim_').innerHTML = data.credibility + ' (' + data.perCred + '%)';
       document.getElementById('noncredit-claim_').innerHTML = data.nonCredibility + ' (' + data.perNonCred + '%)';
-      document.getElementById('uncertainty').innerHTML = data.uncertainty + '%';
+      document.getElementById('uncertainty').innerHTML = data.uncertainty;
   });
 }
 
@@ -902,11 +902,11 @@ function drawModelProb(){
                   label: '#Claims',
                   data: data.histogram,
                   backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
+                    '#1a80ce',
+                    '#4ca7e8',
+                    '#84c2f4',
+                    '#39a3ef',
+                    '#3d9ce5'
                   ],
                   borderColor: [
                     'rgba(255,99,132,1)',
@@ -915,15 +915,18 @@ function drawModelProb(){
                     'rgba(75, 192, 192, 1)',
                     'rgba(153, 102, 255, 1)',
                   ],
-                  borderWidth: 0.5
+                  borderWidth: 0.0
                 }]
               },
               options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                legend: {
+                    display: false
+                },
                 title: {
                   display: true,
-                  text: 'Histogram Probability'
+                  text: 'Credibility Histogram'
                 },
                 scales: {
                   xAxes: [{
@@ -1129,7 +1132,6 @@ function drawNeuralNetwork(claim_id){
     );
   
     function zoomed() {
-      console.log("zoom",d3.event.transform);
       g.attr("transform", d3.event.transform);
     }
   // svg = g;
@@ -1200,19 +1202,34 @@ function drawNeuralNetwork(claim_id){
                         .data(graph.links)
                         .enter().append("line")
                         .attr('id',function(d){return d.source + '' + d.target + '' + d.value;})
-                        .style("stroke",function(d){ return "#999999"/*get_color(d.value)*/;})
+                        .style("stroke",function(d){ return "#333333"/*get_color(d.value)*/;})
                         .style("stroke-width",function(d) { return d.value / 200 + 'px'});
 
           var node = g.append("g")
                     .attr("class", "nodes")
-          .selectAll("circle")
-                    .data(graph.nodes)
-          .enter().append("circle")
-                  .attr("r", 2)
-                  .call(d3.drag()
-                      .on("start", dragstarted)
-                      .on("drag", dragged)
-                      .on("end", dragended));
+                    .selectAll("circle")
+                              .data(graph.nodes.filter(function(e){
+                                return e.category == "source";
+                              }))
+                    .enter().append("circle")
+                            .attr("r", 2)
+                            .call(d3.drag()
+                                .on("start", dragstarted)
+                                .on("drag", dragged)
+                                .on("end", dragended));
+
+          var nodeClaim = g.append("g")
+                .attr("class","nodes")
+                .selectAll("rect")
+                    .data(graph.nodes.filter(function(e){
+                      return e.category == "claim";
+                    }))
+                .enter().append("rect")
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+                    
           
           var label = g.append("g")
               .attr("class", "labels")
@@ -1255,18 +1272,31 @@ function drawNeuralNetwork(claim_id){
                 .on("click", nodeClick)
                 .attr("cx", function (d) { return d.x+5; })
                 .attr("cy", function(d) { return d.y-3; });
+
+            nodeClaim
+                .attr("rx",2)
+                .attr("ry",2)
+                .attr("width",12)
+                .attr("height",12)
+                .attr("style","fill: rgb(106, 203, 68); stroke-width: 1; stroke: #333;")
+                .style("fill",function(d){return colorClaim(d.group);})
+                .on("mouseover", mouseover)
+                .on('mouseout',mouseout)
+                .on("click", nodeClick)
+                .attr("x",function(d){return d.x - 2;})
+                .attr("y",function(d){return d.y - 3;});
             
             label
                 .attr("x", function(d) { return d.x; })
                     .attr("y", function (d) { return d.y; })
                     .style("font-size",function(d){ return d.category == "source" ? '18px' : '8px'})
                     .style("font-weight", function(d){ return d.category == "source" ? '500' : '300'})
-                    .style("fill", function(d){return d.category == "source" ? "#DB1430" : "#ddd"});
+                    .style("fill", function(d){return d.category == "source" ? "#DB1430" : "#44444"});
           }
 
           function mouseover(d) {
             for (var i = 0; i < graph.links.length; i++)
-              if(d.id == graph.links[i].source.id){
+              if(d.id == graph.links[i].source.id || d.id == graph.links[i].target.id){
                 d3.select('[id="' + graph.links[i].source.id + '' + graph.links[i].target.id +'' + graph.links[i].value + '"]')
                   .style("stroke-width", "1px")
                   .style("stroke", "#0da4d3");
@@ -1275,7 +1305,7 @@ function drawNeuralNetwork(claim_id){
         
           function mouseout(d) {
             for (var i = 0; i < graph.links.length; i++)
-            if(d.id == graph.links[i].source.id){
+            if(d.id == graph.links[i].source.id || d.id == graph.links[i].target.id){
               d3.select('[id="' + graph.links[i].source.id + '' + graph.links[i].target.id +'' + graph.links[i].value + '"]')
                 .style("stroke-width", '0.2px')
                 .style("stroke", "#999999");

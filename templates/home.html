@@ -151,7 +151,7 @@
                                             <input type="text" id="input-sourceFilter" onkeyup="filterSource()"
                                             placeholder="Search for names.." title="Type in a name"> <br>
                                             <button class="button" style="margin-left: 30px; margin-bottom: 0px;width: 300px; border-radius:0" onclick="triggerMatrix(1)">
-                                                Open Matrix Factorization
+                                                Open Matrix Reordering
                                             </button>
                                         </div>
                                             <div class="overview-source">
@@ -231,10 +231,10 @@
                                         <div class="tab">
                                             <button class="tablinkclaims" onclick="openTabClaim(event,'info-claim')"
                                                 id="defaultDetails">Meta-data</button>
+                                            <!-- <button class="tablinkclaims"
+                                                onclick="openTabClaim(event, 'sources-claim')">Related Sources</button> -->
                                             <button class="tablinkclaims"
-                                                onclick="openTabClaim(event, 'sources-claim')">Related Sources</button>
-                                            <button class="tablinkclaims"
-                                                onclick="openTabClaim(event, 'neural-network')">Neural Network</button>
+                                                onclick="openTabClaim(event, 'neural-network')">Related Graph</button>
                                         </div>
                                         <!-- id="info-claim" -->
                                         <div id="info-claim" class="tabclaims item-tab">
@@ -294,7 +294,7 @@
                                             </div>
                                         </div>
                                         <div id="neural-network" class="tabclaims item-tab" style="display: none;">
-                                            <svg width="618" height="560" style="background: #333333;" id="svg-neural-network"></svg>
+                                            <svg width="618" height="560" style="background: #f9f9fc;" id="svg-neural-network"></svg>
                                         </div>
                                         <div id="question">
                                             <div id="question-validate">
@@ -395,7 +395,7 @@
                                             <div class="title-detail-item-analysis">
                                                 #Non-validated
                                             </div>
-                                            <div class="claims total-claim-detail" id="remain-claim-source-item"> {{ analysis.remains }} 
+                                            <div class="claims total-claim-detail" id="remain-claim-source-item"> {{ analysis.remains }} ({{analysis.perNonValidated}}%)
                                             </div>
                                         </div>
                                     </div>
@@ -409,7 +409,7 @@
                                                 Uncertainty
                                             </div>
                                             <div class="claims total-claim-detail" id="uncertainty">
-                                                {{ analysis.uncertainty }}%
+                                                {{ analysis.uncertainty }}
                                             </div>
                                         </div>
                                     </div>
@@ -450,9 +450,9 @@
 
                     <!-- matrix factorization  -->
                     <div id="matrix-factorization" style="display:none;z-index: 10;max-height: 702px;">
-                        <div style="display: grid; grid-template-columns: 30% auto;">
-                            <h3>Matrix Canvas</h3>
-                            <aside style="margin-top: 0.2em;">
+                        <div style="display: grid; grid-template-columns: 40% auto;">
+                            <h3>Matrix Reordering</h3>
+                            <aside style="margin-top: 0.2em;margin-left: 232px;">
                                 <p>Order by: <select id="order">
                                 <option class="top-level-option" value="name">Name</option>
                                 <option class="top-level-option" value="count">Number of links</option>

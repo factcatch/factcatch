@@ -37,8 +37,7 @@ def getClaimFromData(data):
     if "Prob Model" in data:
         claim.prob_model = data["Prob Model"] 
     else:
-        claim.prob_model = claim.credibility if claim.credibility > -1 else 0.5
-        #float("{0:.2f}".format(random.uniform(0.0, 1.0)))
+        claim.prob_model = claim.credibility if claim.credibility > -1 else float("{0:.2f}".format(random.uniform(0.0, 1.0)))
     return claim
 
 def getGoogleResultsFromData(claim_id,data):
@@ -72,7 +71,7 @@ def saveToDatabase(file):
 
         db.session.add(claim)
     db.session.commit()
-    doHITS(100)
+    # doHITS(100)
 
 def getGoogleResultsClaim(claim_id):
     return GoogleResult.query.filter_by(claim_id=claim_id).all()
@@ -104,7 +103,7 @@ def getListClaim():
     return claims
 
 def calculateEntropy(p):
-    return p if(p==0 or p==1) else - p*math.log(p) - (1-p)*math.log(1-p)
+    return 0 if (p==0 or p==1) else - p*math.log10(p) - (1-p)*math.log10(1-p)
 
 def analysis():
     claims = Claim.query.count()
@@ -112,14 +111,14 @@ def analysis():
     cred = Claim.query.filter_by(credibility=1).count()
     nonCred = Claim.query.filter_by(credibility=0).count()
     sources = GoogleResult.query.with_entities(GoogleResult.domain).distinct().count()
-    # perCred = (float(cred) / claims)*100
     nonValidatedClaims = Claim.query.filter_by(credibility=-1).all()
     uncertainty = 0
     for claim in nonValidatedClaims:
         uncertainty +=  calculateEntropy(claim.prob_model)
-    uncertainty = float("{0:.2f}".format(uncertainty*100/remains))
-    perCred = float("{0:.2f}".format((float(cred) / (cred + nonCred))*100))
-    perNon = float("{0:.2f}".format(100 - perCred))
+    uncertainty = float("{0:.2f}".format(uncertainty))
+    perCred = float("{0:.2f}".format((float(cred) /claims)*100))
+    perNon = float("{0:.2f}".format((float(nonCred)/claims)*100))
+    perNonValidated = float("{0:.2f}".format(100 - perCred - perNon))
     return {
         'claims' : claims,
         'sources' : sources,
@@ -128,7 +127,8 @@ def analysis():
         'perCred' : perCred,
         'nonCredibility' : nonCred,
         'perNonCred' : perNon,
-        'uncertainty' : uncertainty
+        'uncertainty' : uncertainty,
+        'perNonValidated' : perNonValidated
     }
 
 def getUserCredAndModel():
@@ -200,7 +200,7 @@ def validateClaim(claim_id,credibility):
     claim.credibility = credibility
     claim.prob_model = credibility if credibility > -1 else 0.5
     db.session.commit()
-    doHITS(10)
+    # doHITS(10)
     return True
 
 def databaseIsEmpty():
@@ -247,15 +247,18 @@ def doHITS(n):
 
 def getHistogram():
     claims = Claim.query.all()
-    # histogram = {'0.0':0,'0.1':0,'0.2':0,'0.3':0,'0.4':0,'0.5':0,'0.6':0,'0.7':0,'0.8':0,'0.9':0,'1.0':0}
-    histogram = {'0.0':0,'0.2':0,'0.4':0,'0.6':0,'0.8':0}
+    histogram = {'0.0':0,'0.1':0,'0.2':0,'0.3':0,'0.4':0,'0.5':0,'0.6':0,'0.7':0,'0.8':0,'0.9':0}
     for c in claims:
-        f = (math.floor(math.floor(c.prob_model*10)/2))/10
-        if c.prob_model == 1:
-            f = 0.8
+        f = c.prob_model if c.credibility > -1 else math.floor(c.prob_model*10)/10
+        f = f - 0.1 if f==1.0 else f
         histogram[str(f)] += 1
-
-    return list(histogram.values())
+    hRange = {'0' : histogram['0.0'] + histogram['0.1'],
+        '1' : histogram['0.2'] + histogram['0.3'],
+        '2' : histogram['0.4'] + histogram['0.5'],
+        '3' : histogram['0.6'] + histogram['0.7'],
+        '4' : histogram['0.8'] + histogram['0.9'],
+    }
+    return list(hRange.values())
 
 def getNeural_deprecated(claim_id):
     domains = GoogleResult.query.with_entities(GoogleResult.domain).filter_by(claim_id=claim_id).distinct().all()
@@ -281,14 +284,9 @@ def getNeural_deprecated(claim_id):
         nodes[c] = {"name":c, "group" : claims[c],"category" : "claim", "index" : i }
         i += 1
     
-    # for node in nodes.values():
-        # print(node)
     links = []
     for r in rDB:
         links.append({"source":nodes[r[0]]["index"],"target": nodes[r[1]]["index"],"weight":1})
-    # for link in links:
-    # print('links',links)
-    # print('nodes',nodes)
     nodes = [node for node in nodes.values()]
     return {
         'nodes' : nodes,
@@ -307,9 +305,6 @@ def getNeural(claim_id):
             sources[r[0]] = sources[r[0]] + 1
         except:
             sources[r[0]] = 1
-        # try:
-            # claims[r[1]] = claims[r[1]] + 1
-        # except:
         claims[r[1]] = r[2]
     
     i = 0
@@ -323,8 +318,6 @@ def getNeural(claim_id):
     links = []
     for r in rDB:
         links.append({"source":nodes[r[0]]["id"],"target": nodes[r[1]]["id"],"value":nodes[r[0]]["group"]})
-    # print('links',len(links))
-    # print('nodes',len(nodes))
     nodes = [node for node in nodes.values()]
     return {
         'nodes' : nodes,
