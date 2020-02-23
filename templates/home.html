@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale = 1.0">
+    <!-- <meta charset="UTF-8"> -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/matrix.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/font.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <!-- <script src="//d3js.org/d3-scale-chromatic.v1.min.js"></script> -->
+
+    <!-- conversation -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>FactCATCH</title>
+    <link rel='stylesheet' id='style-css' href="{{ url_for('static', filename='styles/style_conservation.css') }}"
+        type='text/css' media='all' />
+    <script>
+        'use strict';
+
+        window.chartColors = {
+            red: 'rgb(255, 99, 132)',
+            orange: 'rgb(255, 159, 64)',
+            yellow: 'rgb(255, 205, 86)',
+            green: 'rgb(75, 192, 192)',
+            blue: 'rgb(54, 162, 235)',
+            purple: 'rgb(153, 102, 255)',
+            grey: 'rgb(201, 203, 207)'
+        };
+
+        (function (global) {
+            var MONTHS = [
+                '100',
+                '200',
+                '300',
+                '400',
+                '500',
+                '600',
+                '700',
+            ];
+
+            var COLORS = [
+                '#4dc9f6',
+                '#f67019',
+                '#f53794',
+                '#537bc4',
+                '#acc236',
+                '#166a8f',
+                '#00a950',
+                '#58595b',
+                '#8549ba'
+            ];
+
+            var Samples = global.Samples || (global.Samples = {});
+            var Color = global.Color;
+
+            // DEPRECATED
+            window.randomScalingFactor = function () {
+                return Math.round(Samples.utils.rand(-100, 100));
+            };
+
+            // INITIALIZATION
+
+            // Samples.utils.srand(Date.now());
+
+            // Google Analytics
+            /* eslint-disable */
+            if (document.location.hostname.match(/^(www\.)?chartjs\.org$/)) {
+                (function (i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+                ga('create', 'UA-28909194-3', 'auto');
+                ga('send', 'pageview');
+            }
+            /* eslint-enable */
+
+        }(this));
+
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
+</head>
+
+<body>
+    <div id="budget-modal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Optimize Budget Allocation</h2>
+            </div>
+            <div class="modal-body">
+                <form method=post action="/" enctype=multipart/form-data> <h4>Budget</h4>
+                    <input type=number value=0 name=budget style="font-size: 18px;">
+                    <input type="submit" value="OK" class="button">
+                </form>
+            </div>
+        </div>
+    </div>
+        <div>
+            <div class="header">
+                <div class="grid-header">
+                    <div style="display: grid; padding: 20px 0px 0px 0px; grid-template-columns: auto auto;grid-column-gap: 3px;">
+                            <div class="tab-main-content" onclick="selectTab(event,'overview-sources')" id="defaultOpen">
+                                Sources</div>
+                            <div id="tab-claims" class="tab-main-content" onclick="selectTab(event,'claim-detail')">Claims</div>
+                    </div>
+                    <div id="logo-griffith">
+                        <a href="/">
+                            <div>FactCATCH</div>
+                        </a>
+                    </div>
+                    <div id="select-file" class="header-content">
+                        <form method=post action="/upload" enctype=multipart/form-data> <input type="file" name="file"
+                            id="file" class="inputfile" data-multiple-caption="{count} files selected" multiple />
+                        <input type=submit value=Upload id="upload-btn">
+                        </form>
+                    </div>
+                    
+                    <div class="header-content" style="text-align: right;">
+                        <button class="button">
+                            <a href="/download" style="color: white">Take Snapshot</a>
+                        </button>
+                        <!-- <a class="button" href="/download">Take Snapshot</a> -->
+                        <button class="button" id="myBtn">Optimize Budget Allocation</button>
+                        <button class="button">Stop Feedback</button>
+                    </div>
+                </div>
+            </div>
+            <div id="block-content">
+                <div id="fact-checking">
+                    <div id="fact-checking-body" style="min-height: 700px;">
+                        <!-- id="overview-sources" -->
+                        <div style="height: 700px;" id="all-sources" class="overview-sources tabcontent item-tab">
+                            <div>
+                                <div>
+                                    <div style="display: grid;grid-template-columns:50% 50%;">
+                                        <div style="padding:20px 10px 0px 10px;">
+                                            <input type="text" id="input-sourceFilter" onkeyup="filterSource()"
+                                            placeholder="Search for names.." title="Type in a name"> <br>
+                                            <button class="button" style="margin-left: 30px; margin-bottom: 0px;width: 300px; border-radius:0" onclick="triggerMatrix(1)">
+                                                Open Matrix Reordering
+                                            </button>
+                                        </div>
+                                            <div class="overview-source">
+                                                <div class="overview-source__details overview-source__">
+                                                    <div class="overview-source__info">
+                                                        <div class="overview-source__title" id="title-source-item">
+                                                            Source
+                                                        </div>
+                                                        <span class="overview-source__desc">
+                                                            #Claims
+                                                        </span>
+                                                    </div>
+                            
+                                                    <span class="overview-source__stats kt-font-brand" id="total-claim-source-item">
+                                                        $7M
+                                                    </span>
+                                                </div>
+                            
+                                                <div class="progress progress--sm">
+                                                    <div class="progressbar" style="padding: 0;">
+                                                            <div id="source-credibility-progress"
+                                                                style="width:78%; height: 6px;  background-color:#6ACB44;opacity: 0.8; ">
+                                                            </div>
+                                                    </div>
+                                                </div>
+                            
+                                                <div class="overview-source__action overview-source__">
+                                                    <span class="overview-source__change">
+                                                        Trustworthiness
+                                                    </span>
+                                                    <span class="overview-source__number" id="credibility-per">
+                                                        78%
+                                                    </span>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    
+                                    <div class="loader" id="loader-source"></div>
+                                    <div style="width: 100%;height: 560px;overflow: auto;">
+                                        <table id="heatmap-sources">
+                                        </table>
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                        <!-- id="claims" -->
+                        <div style="height: 700px;" class="claim-detail tabcontent item-tab">
+                            <div class="loader" id="loader-claim" style="display: none;"></div>
+                            <div id="block-content2" style="display: grid;">
+                                <div>
+                                    <div id="title-list-claim">
+                                        <!-- <span>Claims</span> -->
+                                        <input type="text" id="input-for-claim" onkeyup="searchClaim()"
+                                            placeholder="Search for claims.." title="Type in a name">
+                                       
+                                    </div>
+                                    <div id="ranking">
+                                        <div style="text-align: right;">
+                                            Ranking by:
+                                        </div>
+                                        <div>
+                                            <select name="Ranking" id="ranking-select" onchange="sortListClaim(this.value)">
+                                                <option value="0" selected>Entropy</option>
+                                                <option value="1" >Credibility</option>
+                                                <option value="2" >Random</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div id="block-list-claim">
+                                        <ul id="list-claim">
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="detail content">
+                                    <div id="content-claim">
+                                        <div class="tab">
+                                            <button class="tablinkclaims" onclick="openTabClaim(event,'info-claim')"
+                                                id="defaultDetails">Meta-data</button>
+                                            <!-- <button class="tablinkclaims"
+                                                onclick="openTabClaim(event, 'sources-claim')">Related Sources</button> -->
+                                            <button class="tablinkclaims"
+                                                onclick="openTabClaim(event, 'neural-network')">Related Graph</button>
+                                        </div>
+                                        <!-- id="info-claim" -->
+                                        <div id="info-claim" class="tabclaims item-tab">
+                                            <div>
+                                                <div>
+                                                    <h4>
+                                                        Origins
+                                                    </h4>
+                                                    <p id="origins-claim">
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <h4>
+                                                        Description
+                                                    </h4>
+                                                    <span>
+                                                        <span id="description-short">
+                                                        </span>
+                                                        <span id="dots">...</span>
+                                                        <span id="more">
+                                                        </span>
+
+                                                        <button onclick="readMore()" id="btn-readmore"
+                                                            class="button">Read
+                                                            more</button>
+                                                </div>
+                                                <div>
+                                                    <h4>
+                                                        Example
+                                                    </h4>
+                                                    <p id="example-claim">
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <h4>
+                                                        Originally Published
+                                                    </h4>
+                                                    <p id="originally-published-claim">
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <h4>
+                                                        Last Updated
+                                                    </h4>
+                                                    <p id="last-updated-claim">
+                                                    </p>
+                                                </div>
+                                                <div id="tag-claim">
+                                                    <span class="tag-claim-item"> #{{ tag }} </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- id="sources-claim" -->
+                                        <div id="sources-claim" class="tabclaims item-tab" style="display: none;">
+                                            <div class="chart-sources-claim"
+                                                style="grid-column-start:1;grid-column-end: 3;text-align: center;background-color: #fff;">
+                                            </div>
+                                        </div>
+                                        <div id="neural-network" class="tabclaims item-tab" style="display: none;">
+                                            <svg width="618" height="560" style="background: #f9f9fc;" id="svg-neural-network"></svg>
+                                        </div>
+                                        <div id="question">
+                                            <div id="question-validate">
+                                                <div style="text-align: center;">
+                                                    Do you think this claim is credible ?
+                                                </div>
+                                                <div id="submit-validation">
+                                                    <input type="hidden" id="input_claim_id_for_form" name="id" value="haha">
+                                                    <div style="text-align: right;padding-right: 10px;">
+                                                        <input type=submit onclick="validateClaim(1)" class="btn-form" id="submit_yes" style="padding: 8px 4px;background-color:#db1430; color: #ffffff;" name="credible" value="Yes">
+                                                    </div>
+                                                    <div style="text-align: left;padding-left: 10px;">
+                                                        <input type=submit onclick="validateClaim(0)" class="btn-form" id="submit_no" style="padding: 8px 4px; background-color: #ccd0d5; color: #000000;" name="credible" value="No">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p id="loading-validate-claim" class="loading" style="display: none;">Validating claim</p>
+                                            <div id="after-validated" style="display: none;">
+                                                <div>
+                                                    You validated this claim!
+                                                </div>
+                                                <div>
+                                                    <button class="button" onclick="setStatusQuestion(status_question.QUESTION)">Revalidate</button>
+                                                    <button class="button" onclick="validateClaim(-1)">Invalidate</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- </div> -->
+
+
+                        <div style="border-left: 1px solid lightgray;">
+                            <!-- <div style="text-align: right;" onclick="triggerMatrix(1)">Open matrix factorization</div> -->
+                            <div style="padding:20px 20px;text-align: center; height: 300px;" id="chart-overview">
+                                <!-- <div>
+                                    <div class="chartjs-size-monitor">
+                                        <div class="chartjs-size-monitor-expand">
+                                            <div class=""></div>
+                                        </div>
+                                        <div class="chartjs-size-monitor-shrink">
+                                            <div class=""></div>
+                                        </div>
+                                    </div>
+                                    <canvas id="canvas" style="display: block; width: 100%; height: 400px;" width="800"
+                                        height="600" class="chartjs-render-monitor"></canvas>
+                                </div> -->
+                                <canvas id="myChart" width="600" height="600"></canvas>
+                            </div>
+                            <div id="detail-source" class="overview-sources claim-detail sources-claim detail-action-tab" style="display: none;">
+                                <!-- <div id="title-source-item-fake">
+                                    Source
+                                </div> -->
+                                <div class="source-credit " style="margin-bottom: 20px;font-size:18px;margin-left: 120px;">
+                                    <span>Overview</span> 
+                                    <!-- <span class="credit" id="overall-source">80%</span> -->
+                                </div>
+                                <div class="row-analysis-source">
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/listing.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Claims
+                                            </div>
+                                            <div class="claims total-claim-detail" id="total-claim-source-item-fake"> {{ analysis.claims }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/network.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Sources
+                                            </div>
+                                            <div class="claims total-claim-detail" id="analysis-sources">
+                                                {{ analysis.sources }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                                <div class="row-analysis-source">
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/remain.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Non-validated
+                                            </div>
+                                            <div class="claims total-claim-detail" id="remain-claim-source-item"> {{ analysis.remains }} ({{analysis.perNonValidated}}%)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/statistic.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                Uncertainty
+                                            </div>
+                                            <div class="claims total-claim-detail" id="uncertainty">
+                                                {{ analysis.uncertainty }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-analysis-source">
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/credit.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Credibility
+                                            </div>
+                                            <div class="claims credit-claim" id="credit-claim_">
+                                                {{ analysis.credibility }} ({{ analysis.perCred }}%)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-analysis-source">
+                                        <div class="icon-item-analysis-source">
+                                            <img src="{{ url_for('static', filename='img/danger2.png') }}" width="32px"
+                                                style="opacity: 0.5;">
+                                        </div>
+                                        <div class="detail-item-analysis-source">
+                                            <div class="title-detail-item-analysis">
+                                                #Non-Credibility
+                                            </div>
+                                            <div class="claims noncredit-claim" id="noncredit-claim_">
+                                                {{ analysis.nonCredibility }} ({{ analysis.perNonCred }}%)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- matrix factorization  -->
+                    <div id="matrix-factorization" style="display:none;z-index: 10;max-height: 702px;">
+                        <div style="display: grid; grid-template-columns: 40% auto;">
+                            <h3>Matrix Reordering</h3>
+                            <aside style="margin-top: 0.2em;margin-left: 232px;">
+                                <p>Order by: <select id="order">
+                                <option class="top-level-option" value="name">Name</option>
+                                <option class="top-level-option" value="count">Number of links</option>
+                                <option class="top-level-option" value="group">Entropy</option>
+                                <!-- <option class="top-level-option" value="distance">by Distance to...</option>  -->
+                                </select>
+                            </aside>
+                           
+                        </div>
+                        <img src="{{ url_for('static', filename='img/close.png') }}" width="24px"
+                        style="opacity: 0.7;position: absolute; right: 36px; top: 55px;" onclick="triggerMatrix(0)">
+                        <div id="for-svg-matrix" class="svg-matrix">
+
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+   
+
+    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.min.js') }}"></script> -->
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/fact.js') }}"></script>
+    
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/selection-js/dist/selection.min.js"></script>
+    <script>
+		const selection = new Selection({
+			class : 'box-wrap',
+            selectables: ['g.row','g.column'],
+            boundaries : ['#for-svg-matrix']
+		});
+		selection.on('stop', e => {filterForHeatmap(e.selected);})
+    </script>
+    <script>
+        renderSources();
+        var randomScalingFactor = function () {
+            return Math.random();
+      // return Math.ceil(Math.random() * 10.0) * Math.pow(10, Math.ceil(Math.random() * 5));
+        };
+        drawModelProb();
+    </script>
+    <script src="{{ url_for('static', filename='js/matrix/ShortestPathCalculator.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/matrix/tabletop.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/matrix/matrix.js') }}"></script>
+    
+</body>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/search.js') }}"></script>
+
+</html>
