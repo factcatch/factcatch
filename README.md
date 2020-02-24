@@ -1,6 +1,6 @@
 
 # factcatch
-FactCatch: Incremental Anytime Fact Checking with Minimal User Effort
+FactCatch: Incremental Pay-as-You-Go Fact Checking with Minimal User Effort
 
 # Prerequisites
 ### Installation
@@ -43,7 +43,7 @@ Your app will be run on the url: <!-- markdownlint-capture --> [http://localhost
 If you first run the app, your database will be empty. So you need to import data from the `datasets` folder which contain a lot of claims. <br>
 The app uses the template of *Snopes* datasets, you can find *Snopes* datasets at [here](http://resources.mpi-inf.mpg.de/impact/web_credibility_analysis/Snopes.tar.gz).
 
-### Data Subsampling
+### Data Sampling
 If you would like to test the app with a subset of data, you can sample the dataset by using the following command with the argument `--num_of_claims` and `--path_datasets`: 
 ```
 python ./utils/make_data.py 
