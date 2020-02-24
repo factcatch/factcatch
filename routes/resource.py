@@ -32,5 +32,6 @@ def getSnapshot():
         os.remove(app.static_folder + '\snapshot.json')
     except Exception as e:
         pass
-    path_to_file = ClaimServices.export_to_json()
+    mode = request.args.get('type')
+    path_to_file = ClaimServices.exportDatabase(mode)
     return send_file(path_to_file,as_attachment=True,cache_timeout=-1)

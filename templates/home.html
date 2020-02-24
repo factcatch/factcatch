@@ -131,11 +131,14 @@
                     
                     <div class="header-content" style="text-align: right;">
                         <button class="button">
-                            <a href="/download" style="color: white">Take Snapshot</a>
+                            <a href="/download?type=full" style="color: white">Export Database</a>
                         </button>
-                        <!-- <a class="button" href="/download">Take Snapshot</a> -->
-                        <button class="button" id="myBtn">Optimize Budget Allocation</button>
-                        <button class="button">Stop Feedback</button>
+                        <button class="button">
+                            <a href="/download?type=fact" style="color: white">Instantiate Facts</a>
+                        </button>
+                        <button class="button">
+                            <a href="/download?type=fake" style="color: white">Report Fake News</a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -506,7 +509,7 @@
     
 </body>
 
-<script type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script>
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script> -->
 <script type="text/javascript" src="{{ url_for('static', filename='js/search.js') }}"></script>
 
 </html>

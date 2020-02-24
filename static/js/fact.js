@@ -59,7 +59,7 @@ function findIndexClaimById(claim_id) {
 }
 
 function selectClaim(index) {
-  drawRelation(index);
+  // drawRelation(index);
   // document.getElementById("input_claim_id_for_form").setAttribute
   var claim = claims[index];
   drawNeuralNetwork(claim.id);
@@ -890,7 +890,16 @@ function validateClaim(c) {
 }
 
 function drawModelProb(){
+
   d3.json("http://localhost:5050/claim/getHistogram", function (data) {
+          let min = 10000000,max=-1;
+          data.histogram.forEach(function(e){
+            max = Math.max(e,max);
+            min = Math.min(e,min);
+          });
+          var colorBar = d3.scaleLinear()
+                .domain([min,max])
+                .range(["#84c2f4","#1a80ce"])
           var ctx = document.getElementById("myChart").getContext('2d');
           ctx.canvas.parentNode.style.height = '340px';
           ctx.canvas.parentNode.style.width = '380px';
@@ -902,20 +911,17 @@ function drawModelProb(){
                   label: '#Claims',
                   data: data.histogram,
                   backgroundColor: [
-                    '#1a80ce',
-                    '#4ca7e8',
-                    '#84c2f4',
-                    '#39a3ef',
-                    '#3d9ce5'
+                    colorBar(data.histogram[0]),
+                    colorBar(data.histogram[1]),
+                    colorBar(data.histogram[2]),
+                    colorBar(data.histogram[3]),
+                    colorBar(data.histogram[4])
+                    // "#1a80ce"
+                    // '#4ca7e8',
+                    // '#84c2f4',
+                    // '#39a3ef',
+                    // '#3d9ce5'
                   ],
-                  borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                  ],
-                  borderWidth: 0.0
                 }]
               },
               options: {
@@ -945,51 +951,6 @@ function drawModelProb(){
               }
             });
   });
-
-//         var ctx = document.getElementById("myChart").getContext('2d');
-  //         ctx.canvas.parentNode.style.height = '300px';
-  //         ctx.canvas.parentNode.style.width = '380px';
-  //         var dataValues = data.histogram;
-  //         var dataLabels = [0.0, 0.1, 0.2, 0.3, 0.4,0.5,0.6,0.7,0.8,0.9,1.0];
-  //         var myChart = new Chart(ctx, {
-  //           type: 'bar',
-  //           data: {
-  //             labels: dataLabels,
-  //             datasets: [{
-  //               label: 'Claims',
-  //               data: dataValues,
-  //               backgroundColor: '#4575B4',
-  //             }]
-  //           },
-  //           options: {
-  //             responsive: true,
-  //             maintainAspectRatio: false,
-  //             scales: {
-  //               gridLines:{
-  //                 offsetGridLines: false
-  //               },
-  //               xAxes: [{
-  //                 display: true,
-  //                 barPercentage: 1.3,
-  //                 ticks: {
-  //                     // max: 5,
-  //                     autoSkip: true,
-  //                     // maxTicksLimit: 5,
-  //                 }
-  //             }],
-  //               yAxes: [{
-  //                 ticks: {
-  //                   beginAtZero:true
-  //                 }
-  //               }]
-  //             }
-  //           }
-  //         });
-         
-  //   });
-
-
-
 
     // d3.json("http://localhost:5050/claim/getUserCredAndModel", function (data) {
     //   d3.select("#chart-overview > div > canvas").html('');

@@ -5,6 +5,7 @@ from sqlalchemy.orm import load_only
 import random
 import math
 import pathlib
+import os
 
 def getCredibility(credibility):
     credible = -1
@@ -30,7 +31,7 @@ def getClaimFromData(data):
     claim.referred_links = data["Referred Links"]
     claim.example = data["Example"]
     claim.last_updated = data["Last Updated"]
-    claim.credibility = getCredibility(data["Credibility"])
+    claim.credibility = data["Credibility"] if "Prob Model" in data else getCredibility(data["Credibility"])
     claim.claim = data["Claim"]
     claim.tags = data["Tags"]
     claim.url = data["URL"]
@@ -92,7 +93,7 @@ def getAllClaims():
     claims = Claim.query.all()
     for id,claim in enumerate(claims):
         claims[id].tags = claim.tags.split(";")[:-1]
-        claims[id].documents = getSourcesRelations(claim.id)
+        claims[id].documents = [] #getSourcesRelations(claim.id)
     return claims
 
 def getListClaim():
@@ -151,8 +152,20 @@ def getUserCredAndModel():
         "modelProb" : modelProb,
     }
 
-def export_to_json():
-    path_to_file = app.static_folder + "\snapshot.json"
+def exportDatabase(mode):
+    condition = {
+        'full' : '',
+        'fact' : 'AND claim.credibility > 0.75',
+        'fake' : 'AND claim.credibility < 0.25'
+    }[mode]
+
+    filename = {
+        'full' : 'database',
+        'fact' : 'facts',
+        'fake' : 'fake_news'
+    }[mode]
+
+    path_to_file = os.path.join(app.static_folder,filename + ".json")
     query = """
         COPY(
             SELECT 
@@ -182,12 +195,12 @@ def export_to_json():
                     FROM 
                         google_result
                     ) gg
-                WHERE claim.id = gg.claim_id
+                WHERE claim.id = gg.claim_id """ + condition + """
                 GROUP BY claim.id
             ) fact_checking
         ) TO :path CSV QUOTE '$'
     """
-    db.session.execute(query,{'path':path_to_file})
+    db.session.execute(query,{'path':path_to_file,'condition' : condition})
     data = None
     with open(path_to_file) as f:
         data = f.read()
@@ -198,7 +211,10 @@ def export_to_json():
 def validateClaim(claim_id,credibility):
     claim = Claim.query.get(claim_id)
     claim.credibility = credibility
-    claim.prob_model = credibility if credibility > -1 else 0.5
+    claim.prob_model = credibility if credibility > -1 else claim.prob_model
+    claimsDB = Claim.query.all()
+    for claim in claimsDB:
+        claim.prob_model = claim.prob_model if claim.credibility > -1 else float("{0:.2f}".format(random.uniform(0.0, 1.0)))
     db.session.commit()
     # doHITS(10)
     return True
