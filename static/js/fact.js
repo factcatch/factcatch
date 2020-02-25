@@ -890,8 +890,11 @@ function validateClaim(c) {
 }
 
 function drawModelProb(){
-
+  d3.select("#chart-overview").html('');
   d3.json("http://localhost:5050/claim/getHistogram", function (data) {
+          d3.select("#chart-overview").html(
+            '<canvas id="myChart" width="600" height="600"></canvas>'
+          );
           let min = 10000000,max=-1;
           data.histogram.forEach(function(e){
             max = Math.max(e,max);
@@ -1277,6 +1280,7 @@ function drawNeuralNetwork(claim_id){
             if(d.category == "claim"){
               let index_claim = findIndexClaimById(d.name);
               selectClaim(index_claim);
+              // console.log(d.name);
               scrollToClaim(d.name);
             } else {
               window.open("https://" + d.name);
