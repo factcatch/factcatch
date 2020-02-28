@@ -31,6 +31,7 @@ def getClaimFromData(data):
     claim.referred_links = data["Referred Links"]
     claim.example = data["Example"]
     claim.last_updated = data["Last Updated"]
+    # claim.credibility = random.randint(0,1)
     claim.credibility = data["Credibility"] if "Prob Model" in data else getCredibility(data["Credibility"])
     claim.claim = data["Claim"]
     claim.tags = data["Tags"]

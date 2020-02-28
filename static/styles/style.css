@@ -1286,3 +1286,10 @@ select:focus, select:active {
   border: 1px solid #ccc;
   border-top: none;
 }
+
+#status-validated-claim {
+  color: #FFFFFF;
+  background-color: #6ACB44;
+  padding: 0px 4px;
+  border-radius: 3px;
+}

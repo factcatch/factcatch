@@ -58,11 +58,19 @@ function findIndexClaimById(claim_id) {
   return index_;
 }
 
+function setStatusCredibility(c){
+  // console.log('click claim',c);
+  e = document.getElementById('status-validated-claim');
+  e.innerHTML = (c == 1) ? 'credible' : 'non-credible';
+  e.style.backgroundColor = (c==1) ? '#6ACB44' : '#F72A38';
+}
+
 function selectClaim(index) {
   // drawRelation(index);
   // document.getElementById("input_claim_id_for_form").setAttribute
   var claim = claims[index];
   drawNeuralNetwork(claim.id);
+  setStatusCredibility(claim.credibility);
   let status_ = (claim.credibility == -1) ? status_question.QUESTION : status_question.AFTER; 
   setStatusQuestion(status_);
   var itemClicked = document.getElementsByClassName("row-clicked");
