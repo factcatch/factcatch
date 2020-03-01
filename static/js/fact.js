@@ -611,7 +611,7 @@ function filterSource() {
 
 // source map 
 
-var sourcesHeatmap,fullSources,batchData,batchClaim = [],fullClaims=claims;
+var sourcesHeatmap = [],fullSources,batchData,batchClaim = [],fullClaims=claims;
 
 function showInfoSource(source) {
   document.getElementById("title-source-item").innerHTML = source.source;
@@ -1165,7 +1165,32 @@ function drawNeuralNetwork(claim_id){
           // graph.links.forEach(function(d){
         //     d.source = d.source_id;    
         //     d.target = d.target_id;
-          // });           
+          // });
+          
+          // graph.nodes.forEach(function(d){
+
+          // })
+
+
+        //   console.log('graph nodes before',graph.nodes);
+        //  graph.nodes = JSON.parse(JSON.stringify(
+        //    graph.nodes.filter(function(e){
+        //     let flag = false;
+        //     claims.forEach(function(c){
+        //       // console.log(c.id);
+        //       if (c.id == e.name)
+        //         flag = true;
+        //     });
+        //     sourcesHeatmap.forEach(function(s){
+        //       if (s.source == e.name)
+        //         flag = true;
+        //     })
+        //     return flag;
+        //   })
+        //  ));
+        //  console.log('graph nodes after',graph.nodes);
+
+          
 
           var link = g.append("g")
                         .attr("class", "links")
@@ -1175,6 +1200,20 @@ function drawNeuralNetwork(claim_id){
                         .enter().append("line")
                         .attr('id',function(d){return d.source + '' + d.target + '' + d.value;})
                         .style("stroke",function(d){ return "#333333"/*get_color(d.value)*/;})
+                        .style('display',function(d){
+                            let flagClaim = false,flagSource = false;
+                            claims.forEach(function(c){
+                              // console.log(graph.nodes[d.target]);
+                              if (c.id == graph.nodes[d.target].name)
+                                flagClaim = true;
+                            });
+                            sourcesHeatmap.forEach(function(s){
+                              if (s.source == graph.nodes[d.source].name)
+                                flagSource = true;
+                            })
+                          
+                            return (flagClaim && flagSource) ? '' : 'none';
+                        })
                         .style("stroke-width",function(d) { return d.value / 200 + 'px'});
 
           var node = g.append("g")
@@ -1243,7 +1282,25 @@ function drawNeuralNetwork(claim_id){
                 .on('mouseout',mouseout)
                 .on("click", nodeClick)
                 .attr("cx", function (d) { return d.x+5; })
-                .attr("cy", function(d) { return d.y-3; });
+                .attr("cy", function(d) { return d.y-3; })
+                .style("display",function(d){
+                  let isShowed = false;
+                  sourcesHeatmap.forEach(function(s){
+                    if(s.source == d.name)
+                      isShowed = true;
+                  })
+                  let hasLink = false;
+                  let claimsForSources = graph.links.filter(function(l){
+                    return l.source.name == d.name; 
+                  });
+                  claimsForSources.forEach(function(l){
+                    claims.forEach(function(c){
+                      if (c.id == l.target.name)
+                        hasLink = true;
+                    })
+                  })
+                  return (isShowed && hasLink ) ? '' : 'none';
+                });
 
             nodeClaim
                 .attr("rx",2)
@@ -1256,14 +1313,66 @@ function drawNeuralNetwork(claim_id){
                 .on('mouseout',mouseout)
                 .on("click", nodeClick)
                 .attr("x",function(d){return d.x - 2;})
-                .attr("y",function(d){return d.y - 3;});
+                .attr("y",function(d){return d.y - 3;})
+                .style("display",function(d){
+                  let isShowed = false;
+                  claims.forEach(function(c){
+                    if(c.id == d.name)
+                      isShowed = true;
+                  });
+                  let hasLink = false;
+                  let sourcesForClaims = graph.links.filter(function(l){
+                    return l.target.name == d.name; 
+                  });
+                  sourcesForClaims.forEach(function(l){
+                    sourcesHeatmap.forEach(function(s){
+                      if (s.source == l.source.name)
+                        hasLink = true;
+                    });
+                  });
+                  return (isShowed && hasLink ) ? '' : 'none';
+                });
             
             label
                 .attr("x", function(d) { return d.x; })
                     .attr("y", function (d) { return d.y; })
                     .style("font-size",function(d){ return d.category == "source" ? '18px' : '8px'})
                     .style("font-weight", function(d){ return d.category == "source" ? '500' : '300'})
-                    .style("fill", function(d){return d.category == "source" ? "#DB1430" : "#44444"});
+                    .style("fill", function(d){return d.category == "source" ? "#DB1430" : "#44444"})
+                    .style("display",function(d){
+                      let isShowed = false;
+                      claims.forEach(function(c){
+                        if(c.id == d.name)
+                          isShowed = true;
+                      });
+                      sourcesHeatmap.forEach(function(s){
+                        if(s.source == d.name)
+                          isShowed = true;
+                      });
+                      let hasLink = false;
+                      if (d.category == "source"){
+                        let claimsForSources = graph.links.filter(function(l){
+                          return l.source.name == d.name; 
+                        });
+                        claimsForSources.forEach(function(l){
+                          claims.forEach(function(c){
+                            if (c.id == l.target.name)
+                              hasLink = true;
+                          })
+                        })
+                      } else {
+                        let sourcesForClaims = graph.links.filter(function(l){
+                          return l.target.name == d.name; 
+                        });
+                        sourcesForClaims.forEach(function(l){
+                          sourcesHeatmap.forEach(function(s){
+                            if (s.source == l.source.name)
+                              hasLink = true;
+                          });
+                        });
+                      }
+                      return (isShowed && hasLink) ? '' : 'none';
+                    });
           }
 
           function mouseover(d) {
